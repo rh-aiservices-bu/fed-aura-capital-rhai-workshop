@@ -1,0 +1,95 @@
+= Module 1: Model Catalog and Deployment
+:navtitle: Model Catalog and Deployment
+:imagesdir: ../assets/images
+:toc:
+:toc-placement: preamble
+:icons: font
+
+Model choices and compression - smaller size, same intelligence.
+
+Fed Aura Capital needs to stop paying per-token to external vendors.
+This module walks through deploying models in-house on Red Hat OpenShift AI, from browsing the Model Catalog to benchmarking quantized inference.
+
+Estimated time: *25 minutes*
+
+== Learning Objectives
+
+By the end of this module you will be able to:
+
+* Navigate the RHOAI Model Catalog and identify validated models
+* Deploy an LLM on CPU and understand hardware profile selection
+* Deploy with GPU and llm-d distributed inference
+* Benchmark quantized vs unquantized models and interpret TTFT metrics
+
+== Exercise 1: Explore the Model Catalog
+
+Browse the RHOAI Model Catalog, filter by task type, and identify NVIDIA Nemotron models available for deployment.
+
+TBD
+
+== Exercise 2: Deploy a Model on CPU
+
+Walk through the Deploy wizard, select a CPU hardware profile, and configure a vLLM ServingRuntime for inference.
+
+TBD
+
+== Exercise 3: Deploy with GPU and llm-d
+
+Configure a GPU hardware profile, enable "Distributed Inference with llm-d", and set the number of replicas.
+
+TBD
+
+== Exercise 4: Benchmark Quantized vs Unquantized
+
+Run a live benchmark against both model variants and compare results.
+Key metrics to observe: TTFT of 35.6ms (quantized) vs 60.4ms (unquantized), a 1.69x speedup, and prefix cache hit rate.
+
+TBD
+
+== Contrast: Cloud API vs Self-hosted on RHOAI
+
+[cols="1,2,2", options="header"]
+|===
+| Dimension
+| Without (Cloud API)
+| With (Self-hosted on RHOAI)
+
+| Cost
+| Per-token billing
+| Fixed infrastructure
+
+| Latency
+| Network round-trip
+| Local inference 35.6ms TTFT
+
+| Data Sovereignty
+| Data leaves network
+| Stays in-cluster
+
+| Model Choice
+| Vendor's selection only
+| Full catalog
+
+| Scaling
+| Vendor-managed
+| llm-d with controlled replicas
+|===
+
+== Module Summary
+
+=== What You Accomplished
+
+* Browsed the RHOAI Model Catalog and located validated Nemotron models
+* Deployed an LLM using both CPU and GPU hardware profiles
+* Enabled llm-d distributed inference with configurable replicas
+* Ran quantized vs unquantized benchmarks and measured TTFT improvements
+
+=== Key Takeaways
+
+* Quantized models deliver comparable quality at significantly lower latency (1.69x speedup in TTFT)
+* Self-hosted inference eliminates per-token costs and keeps data inside the cluster
+* llm-d provides scalable, distributed inference without manual load-balancing
+
+=== What's Next
+
+In the next module you will publish the deployed model as a Models as a Service (MaaS) endpoint, enabling governed access for every team in the organization.

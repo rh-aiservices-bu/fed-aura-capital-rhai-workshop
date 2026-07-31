@@ -1,0 +1,96 @@
+= Module 3: GenAI Playground
+:navtitle: GenAI Playground
+:imagesdir: ../assets/images
+:toc:
+:toc-placement: preamble
+:icons: font
+
+Taming model behaviors with prompts.
+
+You deployed and served a model in the previous modules. But right now, the model is completely generic. It knows nothing about mortgage lending, Fed Aura Capital's products, or lending regulations. When a borrower asks Lenora about mortgage rates, she gives textbook answers with disclaimers instead of actionable guidance. In this module, you will shape the model's behavior using system prompts and temperature controls in the GenAI Playground.
+
+== Learning Objectives
+
+By the end of this module, you will be able to:
+
+* Access the GenAI Playground and interact with a deployed model
+* Apply a domain-specific system prompt for mortgage lending
+* Understand the effect of temperature on response consistency
+* Select and use MaaS subscriptions within the Playground
+
+== Exercise 1: Experience the Generic Model
+
+TBD
+
+// Open the GenAI Playground, select the deployed model, and ask:
+// "What is the current rate for fixed, 5-year mortgages?"
+// Observe the generic response with disclaimers.
+
+== Exercise 2: Apply a Domain-Specific System Prompt
+
+TBD
+
+// Replace the default system prompt with the Fed Aura Capital AI Loan Officer persona.
+// Ask the same question: "What is the current rate for fixed, 5-year mortgages?"
+// Compare the response to the generic version from Exercise 1.
+
+== Exercise 3: Adjust Temperature and Compare
+
+TBD
+
+// Set temperature to 0.2 (deterministic) and ask a mortgage question. Record the response.
+// Set temperature to 0.8 (creative) and ask the same question. Record the response.
+// Compare both responses and observe the impact on financial advice consistency.
+
+== Exercise 4: Select a MaaS Subscription in Playground
+
+TBD
+
+// Navigate to Configure > Model tab.
+// Switch to a MaaS model.
+// Observe the difference between Free and Premium subscription tiers.
+
+== Before and After: Generic vs Domain Prompt
+
+[cols="1,1,1",options="header"]
+|===
+| Dimension | Without (Generic Prompt) | With (Domain Prompt)
+
+| Response Quality
+| Generic advice, disclaimers
+| Domain-specific, actionable
+
+| Persona
+| None
+| Fed Aura Capital AI Loan Officer
+
+| Regulatory Awareness
+| None
+| References lending regulations
+
+| User Trust
+| Low ("verify with a professional")
+| High ("I'll use our pricing engine")
+|===
+
+== Module Summary
+
+=== What You Accomplished
+
+* Interacted with a generic model in the GenAI Playground and observed its limitations for mortgage lending
+* Applied a domain-specific system prompt that transformed generic responses into actionable, persona-driven guidance
+* Experimented with temperature settings and observed how lower values produce more consistent financial advice
+* Configured MaaS subscriptions within the Playground interface
+
+=== Key Takeaways
+
+* A deployed model without a domain-specific prompt is not useful for production workloads - it gives generic advice with disclaimers
+* System prompts are the simplest and most impactful way to shape model behavior for a specific domain
+* Temperature controls are critical for financial applications where consistency and accuracy matter more than creativity
+* MaaS subscriptions provide a managed way to access models with different tiers and access controls
+
+=== What's Next
+
+The model now speaks like a Fed Aura Capital loan officer, but it still cannot predict loan outcomes. In Module 4, you will use AutoML to build a predictive model that automates underwriting decisions based on historical loan data.
+
+Estimated time: *20 minutes*

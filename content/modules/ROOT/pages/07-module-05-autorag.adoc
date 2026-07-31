@@ -1,0 +1,100 @@
+= Module 5: RAG and AutoRAG
+:navtitle: RAG and AutoRAG
+:imagesdir: ../assets/images
+:toc:
+:toc-placement: preamble
+:icons: font
+
+Private data for best results.
+
+Lenora can now act as a domain expert thanks to the system prompt, and AutoML provides predictive underwriting. But she still cannot answer questions about Fed Aura Capital's specific policies, current rates, or regulatory requirements like FHA guidelines and TRID disclosures. When asked "What is the current rate for a fixed, 30-year mortgage?", she either hallucates a number or responds with a generic disclaimer. In this module, you will ground the model in private policy documents using RAG, enabled through the Knowledge tab in the GenAI Playground.
+
+== Learning Objectives
+
+By the end of this module, you will be able to:
+
+* Understand the difference between generic model knowledge and RAG-grounded responses
+* Enable RAG via the Knowledge tab in the GenAI Playground
+* Upload private policy documents and test domain-specific queries
+* Validate that responses are grounded in source documents
+
+== Exercise 1: Ask Without RAG
+
+TBD
+
+// In the Playground, ask: "What is the current rate for a fixed, 30-year mortgage?"
+// Observe the generic response - the model will either hallucinate a rate or give a disclaimer.
+
+== Exercise 2: Enable RAG via the Knowledge Tab
+
+TBD
+
+// Navigate to Configure > Knowledge
+// Toggle RAG ON
+// Upload documents:
+//   - internal-policies.txt
+//   - fha.txt
+//   - fannie-mae.txt
+//   - trid.txt
+//   - freddie-reporting.txt
+
+== Exercise 3: Ask With RAG
+
+TBD
+
+// Ask the same question: "What is the current rate for a fixed, 30-year mortgage?"
+// Observe the grounded response referencing "our pricing engine" and citing specific policy documents.
+
+== Exercise 4: Test Domain-Specific Knowledge
+
+TBD
+
+// Ask compliance-specific questions:
+//   - "What are the FHA down payment minimums?"
+//   - "What disclosures are required under TRID?"
+// Verify that responses cite the uploaded documents rather than generic training data.
+
+== Before and After: Without RAG vs With RAG
+
+[cols="1,1,1",options="header"]
+|===
+| Dimension | Without RAG | With RAG / AutoRAG
+
+| Knowledge Source
+| Model's training data (generic, stale)
+| Private documents (current, specific)
+
+| Accuracy on Policy Questions
+| Low, prone to hallucination
+| High, grounded in source documents
+
+| Update Cycle
+| Retrain model (days/weeks)
+| Upload new documents (minutes)
+
+| Regulatory Risk
+| High (incorrect policy statements)
+| Low (answers cite internal policies)
+|===
+
+== Module Summary
+
+=== What You Accomplished
+
+* Observed the model's limitations when answering policy-specific questions without access to private documents
+* Enabled RAG through the Knowledge tab in the GenAI Playground with a simple toggle
+* Uploaded Fed Aura Capital's internal policy documents including FHA guidelines, TRID disclosures, and Fannie Mae/Freddie Mac reporting requirements
+* Validated that RAG-grounded responses cite specific source documents instead of hallucinating or giving generic disclaimers
+
+=== Key Takeaways
+
+* A model with a good system prompt still cannot answer organization-specific questions without access to private documents
+* AutoRAG in the GenAI Playground removes the complexity of setting up vector databases, chunking strategies, and embedding pipelines - you toggle it on and upload files
+* RAG-grounded responses dramatically reduce regulatory risk because every answer traces back to a source document
+* Knowledge updates happen in minutes (upload a new document) instead of days or weeks (retrain the model)
+
+=== What's Next
+
+In Module 6, you will explore OGX capabilities within Red Hat OpenShift AI.
+
+Estimated time: *20 minutes*

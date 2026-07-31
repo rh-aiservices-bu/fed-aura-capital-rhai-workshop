@@ -1,0 +1,152 @@
+= Workshop overview
+:imagesdir: ../assets/images
+:navtitle: Workshop Overview
+:toc:
+:toc-placement: preamble
+:icons: font
+
+== What is this workshop about?
+
+Traditional AI demos show a model answering questions. Production AI requires a complete platform: model serving, governed access, domain grounding, tool integration, observability, evaluation, and security. Each capability solves a real business problem, and they must work together.
+
+This workshop takes you through the full Red Hat OpenShift AI product portfolio, from deploying your first model to securely onboarding agents in production. Every module starts from zero and builds a real capability, contrasting what life looks like without it and what changes when you have it.
+
+== Your role and mission
+
+You're a senior engineer at *Fed Aura Capital*, the largest fictitious bank in the world. The company has deployed an AI-powered mortgage lending platform with an AI assistant named *Lenora* that serves four distinct personas across the lending lifecycle.
+
+Your CTO has called an all-hands: "We've proven AI works in our prototype. Now we need to take it to production. That means deploying our own models instead of paying per-token to third-party APIs. It means making the AI actually know our products, policies, and regulations instead of giving generic advice. It means letting agents take real actions with full traceability. And it means securing everything before regulators and the CISO sign off. I need this done in four phases."
+
+*Your assignment*: Build Fed Aura Capital's production AI platform using Red Hat OpenShift AI, progressing through four transformation waves.
+
+*The objective*: Go from a prototype chatbot that gives generic financial advice to a production-grade, multi-agent system that serves precise mortgage guidance, predicts loan outcomes, calls real tools, traces every decision, and runs with defense-in-depth security.
+
+== The four transformation waves
+
+This workshop is structured around four progressive waves, each building on the previous:
+
+=== Wave 1 - Inference: "From token consumer to token producer"
+
+Fed Aura Capital currently pays per-token to external LLM vendors. Every API call leaves the network, costs are unpredictable, and there's no control over which model version serves a request.
+
+*Goal*: Deploy, benchmark, and serve models in-house. Expose them as managed services so every team at the bank can access AI without deploying their own model copies.
+
+[cols="1,1",options="header"]
+|===
+| Without (current state) | With (target state)
+| Per-token billing to external vendors | Fixed infrastructure cost, self-hosted models
+| ~60ms time-to-first-token (network + vendor queue) | ~35ms TTFT with quantized models (1.69x speedup)
+| Data leaves the network on every call | Data stays in-cluster, full sovereignty
+| Every team deploys its own model copy | Single deployment shared via MaaS gateway
+| No usage metering or access control | Subscription tiers with API key management
+|===
+
+*Modules*: 1 (Model Catalog & Deployment), 2 (Models as a Service)
+
+=== Wave 2 - Data: "From generic to useful AI"
+
+A deployed model is still generic. When a borrower asks "What is the current rate for 5-year mortgages?", Lenora cannot quote Fed Aura Capital's rates, does not know internal policies, and cannot predict loan outcomes. She gives textbook answers with disclaimers like "for precise numbers, verify with a mortgage professional."
+
+*Goal*: Shape Lenora into a domain expert. Configure prompts for mortgage lending personas, build predictive models for underwriting decisions, and ground responses in the bank's private policy documents.
+
+[cols="1,1",options="header"]
+|===
+| Without (current state) | With (target state)
+| Generic system prompt ("You are a helpful AI assistant") | Domain-specific persona (Fed Aura Capital AI Loan Officer)
+| Manual underwriting: 5+ days per application | AutoML prediction: 91.7% accuracy, sub-second
+| Hallucinated policy answers | RAG-grounded responses citing internal documents
+| No way to update model knowledge without retraining | Upload new documents, knowledge updates in minutes
+|===
+
+*Modules*: 3 (GenAI Playground), 4 (AutoML), 5 (RAG & AutoRAG), 6 (OGX)
+
+=== Wave 3 - Agentic: "From useful to productive AI"
+
+Lenora can now answer domain-specific questions and predict loan outcomes, but she cannot take action. When a borrower asks "How much house can I afford?", a regular chatbot estimates "$390K-$410K" with assumptions. An agentic chatbot calls the affordability calculator and returns "$488,000" with a precise DTI breakdown. But agents that take actions must also be traceable and evaluated.
+
+*Goal*: Connect agents to real tools via MCP, trace every decision path with MLflow, and evaluate quality with automated pipelines.
+
+[cols="1,1",options="header"]
+|===
+| Without (current state) | With (target state)
+| Regular chatbot: estimates with disclaimers | Agentic chatbot: precise calculations from real tools
+| Black-box agent decisions | Full MLflow traces showing every tool call and LLM invocation
+| Manual quality spot-checking | Automated evaluation pipelines with EvalHub
+|===
+
+*Modules*: 7 (MCP Ecosystem), 8 (Evaluations & Tracing)
+
+=== Wave 4 - Safety: "From prototype to production-grade"
+
+Agents that take actions in a regulated industry must be secured before production. The CISO has blocked deployment until a proper security model is in place. Regulators require evidence that the AI cannot be manipulated, does not produce discriminatory outputs, and maintains a full audit trail.
+
+*Goal*: Deploy guardrails at the inference boundary, adversarially test before deployment, and securely onboard agents with OpenShell for defense-in-depth production readiness.
+
+[cols="1,1",options="header"]
+|===
+| Without (current state) | With (target state)
+| No input/output filtering | NemoGuardrails input_shield and output_shield
+| Untested adversarial robustness | Garak adversarial test suite with pass/fail evidence
+| Agents deployed as ad-hoc containers | OpenShell secure agent onboarding with SPIFFE/SPIRE identity, deny-by-default policies, and OCSF audit
+| No security observability | OCSF v1.7.0 structured audit events, SIEM-ready
+| Hardcoded credentials in agent code | Supervisor proxy injects credentials at network boundary
+|===
+
+*Modules*: 9 (AI Safety & Secure Agent Onboarding)
+
+== Fed Aura Capital's personas
+
+The Fed Aura Capital platform serves four distinct personas, each with different needs and different interactions with the AI system:
+
+[cols="1,1,2,2",options="header"]
+|===
+| Persona | Name | Role | AI Interaction
+
+| Borrower
+| Sarah Mitchell
+| Customer applying for a mortgage
+| Asks about rates, uploads documents, gets pre-qualified, interacts with Lenora for guidance
+
+| Loan Officer
+| James Torres
+| Reviews borrower applications, manages pipeline
+| Uses AI assistant for pipeline status, borrower summaries, compliance questions
+
+| Underwriter
+| Maria Chen
+| Evaluates risk, runs compliance checks, makes decisions
+| Triggers AI risk assessments (credit, capacity, collateral, auto-underwriting), runs ECOA/ATR/QM/TRID compliance checks
+
+| CEO
+| David Park
+| Executive oversight, analytics
+| Requests pipeline analytics, denial trends, performance metrics
+|===
+
+== Current challenges
+
+Fed Aura Capital's prototype has proven that AI adds value, but the engineering team faces real obstacles taking it to production:
+
+* *Vendor lock-in and cost*: Every LLM call goes to an external API. Costs are growing 40% month-over-month, and the vendor's model version changes broke the borrower chatbot twice last quarter.
+
+* *Generic, unreliable answers*: Lenora gives textbook financial advice but cannot reference Fed Aura Capital's actual products, rates, or policies. Last week she told a borrower the FHA minimum down payment was 5% instead of 3.5%. There are no guardrails to catch this.
+
+* *No predictive capability*: Underwriters manually evaluate every application. Average review time is 5+ days. The board wants a predictive model but the data science team says "we don't have the ML engineering resources to build one from scratch."
+
+* *Blind agent workflows*: The prototype agent can call tools, but nobody can trace what it did. When a risk assessment returned "Deny" for a VA loan applicant, regulators asked for the decision trail. The team had no answer.
+
+* *No security posture*: Agents run as standard containers with no sandboxing, no deny-by-default policies, and no audit trail. The CISO has blocked production deployment until a proper security model is in place.
+
+== The opportunity
+
+Red Hat OpenShift AI provides an integrated platform that addresses each of these challenges:
+
+* *Model Catalog and Serving*: Deploy validated models from the catalog, benchmark quantized variants, scale with llm-d distributed inference
+* *Models as a Service*: Publish deployed models through a managed gateway with subscription tiers and API key authentication
+* *GenAI Playground*: Experiment with system prompts, temperature, and RAG configuration without writing code
+* *AutoML*: Train predictive models through a guided wizard - upload a CSV, select a prediction type, get a ranked leaderboard of models
+* *AutoRAG*: Ground model responses in private documents with a toggle in the Playground - no vector database setup required
+* *MCP Ecosystem*: Register MCP servers as Kubernetes resources, route through a centralized gateway
+* *MLflow Tracing & EvalHub*: Full end-to-end traces of agent decisions, automated evaluation pipelines
+* *NemoGuardrails & Garak*: Runtime input/output shields plus pre-deployment adversarial testing
+* *OpenShell*: Secure agent onboarding with kernel-level sandboxing, SPIFFE/SPIRE identity, deny-by-default policies, and OCSF audit logging

@@ -1,0 +1,100 @@
+= Module 2: Models as a Service
+:navtitle: Models as a Service
+:imagesdir: ../assets/images
+:toc:
+:toc-placement: preamble
+:icons: font
+
+Tokens on demand - governed access for every team.
+
+Multiple teams at Fed Aura Capital need model access without deploying their own copies.
+This module covers publishing a deployed model as a MaaS endpoint, managing subscriptions and API keys, and consuming the endpoint from a development environment.
+
+Estimated time: *20 minutes*
+
+== Learning Objectives
+
+By the end of this module you will be able to:
+
+* Publish a deployed model as a MaaS endpoint
+* Explore AI asset endpoints and subscription management
+* Generate ephemeral and permanent API keys
+* Consume a MaaS endpoint from a development environment
+
+== Exercise 1: Publish as MaaS
+
+Open the Deploy wizard, navigate to Advanced settings, enable the "Publish as MaaS" checkbox, and configure token authentication.
+
+TBD
+
+== Exercise 2: Explore AI Asset Endpoints
+
+Navigate to Gen AI Studio > AI asset endpoints, view the list of deployed models, and use the "Try in playground" option.
+
+TBD
+
+== Exercise 3: Generate an API Key
+
+Select a subscription tier and generate an ephemeral API key.
+
+Available tiers:
+
+* *Free Tier* - 100 tokens/min
+* *Premium Tier* - 10000 tokens/min
+
+TBD
+
+== Exercise 4: Consume the MaaS Endpoint
+
+Configure OpenCode or VS Code to use the MaaS endpoint.
+Set up `opencode.json` with the MaaS URL and API key, then send a test request.
+
+TBD
+
+== Contrast: Per-team Deployment vs MaaS Gateway
+
+[cols="1,2,2", options="header"]
+|===
+| Dimension
+| Without (Per-team Deployment)
+| With (MaaS Gateway)
+
+| Resource Usage
+| N model copies for N teams
+| 1 deployment, N consumers
+
+| Access Control
+| None/ad hoc
+| Subscriptions + API keys
+
+| Metering
+| Invisible
+| Per-subscription token tracking
+
+| External Access
+| Custom ingress per team
+| Single gateway URL
+
+| Onboarding
+| Days (new deployment)
+| Minutes (new subscription)
+|===
+
+== Module Summary
+
+=== What You Accomplished
+
+* Published a deployed model as a MaaS endpoint with token authentication
+* Explored AI asset endpoints in Gen AI Studio
+* Generated API keys under different subscription tiers
+* Consumed the MaaS endpoint from a local development environment
+
+=== Key Takeaways
+
+* MaaS eliminates duplicate model deployments across teams
+* Subscription tiers and API keys provide governed, metered access
+* Onboarding a new team takes minutes instead of days
+
+=== What's Next
+
+In the next module you will build on this MaaS endpoint to integrate model access into automated pipelines and production workflows.

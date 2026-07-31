@@ -28,3 +28,4 @@ asciidoc:
     mlflow_route: "mlflow-redhat-ods-applications.apps.cluster.example.com"
     maas_url: "https://maas.apps.cluster.example.com"
     fed_aura_url: "https://fed-aura-capital.apps.cluster.example.com"
+    ogx_url: "https://ogx.apps.cluster.example.com"

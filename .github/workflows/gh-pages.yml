@@ -44,7 +44,7 @@ jobs:
         with:
           path: www
   deploy:
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && github.event_name != 'pull_request'
+    if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && github.event_name != 'pull_request' }}
     needs: build
     environment:
       name: github-pages

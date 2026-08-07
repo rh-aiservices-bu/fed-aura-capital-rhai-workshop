@@ -158,8 +158,8 @@ TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depen
 |===
 | Role | Name
 | Primary Author | Red Hat AI Business Unit
-| Workshop Lead | Roberto Carratala
-| Contributors | Taylor Smith
+| Workshop Lead | CAI Team
+| Contributors | CAI Team
 |===
 
 Last Updated: July 2026

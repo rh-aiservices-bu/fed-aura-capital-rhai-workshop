@@ -1,4 +1,4 @@
-= Module 2: Models as a Service
+== Module 2: Models as a Service
 :navtitle: Models as a Service
 :imagesdir: ../assets/images
 :toc:
@@ -7,8 +7,15 @@
 
 Tokens on demand - governed access for every team.
 
-Multiple teams at Fed Aura Capital need model access without deploying their own copies.
-This module covers publishing a deployed model as a MaaS endpoint, managing subscriptions and API keys, and consuming the endpoint from a development environment.
+Module 1 created the self-hosted inference layer that powers Lenora.
+The next challenge is making that shared model safely available to every authorized agent and development team without duplicating deployments.
+Models as a Service (MaaS) provides that governed access path between consumers and the model runtime.
+
+.Module 2 focus: governed model access through MaaS
+image::fed-aura-platform-architecture-maas-focus.svg[The Fed Aura Capital platform architecture with the MaaS gateway and its path to self-hosted models highlighted,align=center]
+
+In this module, you will publish the deployed model as a MaaS endpoint, assign subscription tiers, issue API keys, and consume the shared endpoint from a development environment.
+The model remains a single managed deployment while MaaS controls who can reach it, how they authenticate, and how much they consume.
 
 Estimated time: *20 minutes*
 

@@ -9,7 +9,7 @@
 
 Traditional AI demos show a model answering questions. Production AI requires a complete platform: model serving, governed access, domain grounding, tool integration, observability, evaluation, and security. Each capability solves a real business problem, and they must work together.
 
-This workshop takes you through the full Red Hat OpenShift AI product portfolio by putting you inside a real production deployment. You've just joined *Fed Aura Capital* as an engineer: the AI platform is already running, and your job is to understand every layer of it. Each module introduces a capability, shows you what Fed Aura Capital's setup looks like in practice, and gives you hands-on time with the same tools. By the end, you'll know why the platform looks the way it does and what each component contributes.
+This workshop takes you through the full Red Hat OpenShift AI product portfolio by putting you inside a real production deployment. You've just joined *Fed Aura Capital* as an engineer — the AI platform is already running, and your job is to understand every layer of it. Each module introduces a capability, shows you what Fed Aura Capital's setup looks like in practice, and gives you hands-on time with the same tools. By the end, you'll know why the platform looks the way it does and what each component contributes.
 
 == Meet Fed Aura Capital
 
@@ -17,11 +17,9 @@ Fed Aura Capital is one of the largest fictitious banks in the country. Over the
 
 Lenora started as a prototype chatbot connected to an external model. Today, she is a production-grade AI system running entirely on Red Hat OpenShift AI with self-hosted models, domain-grounded knowledge, tool-calling agents, full observability, and defense-in-depth security.
 
-*Your job*: as a new joiner, understand this platform well enough to support it.
-
 == Your first day: the CTO briefing
 
-On your first morning, your CTO calls an all-hands. She brings up a slide titled *"How we got here"* and says:
+As part of your onboarding, your team shares a link to a recorded all-hands from six months ago — the kickoff where your CTO announced the platform rebuild. You hit play.
 
 [quote]
 ____
@@ -29,115 +27,10 @@ When we started, Lenora was a chatbot connected to an external API. Every borrow
 
 We rebuilt the platform in four phases. First, we took control of our own inference — deployed our own models, stopped paying per-token, and exposed them as a managed service. Second, we made the AI actually useful — gave it our policies, our products, our data. Third, we connected it to real tools and made every decision traceable. Fourth, we locked it down: guardrails, adversarial testing, sandboxed agents, full audit trail.
 
-Each of these phases solved a real problem. Today you're going to experience each one.
+Each of these phases solved a real problem.
 ____
 
-This briefing frames the four transformation waves you'll explore throughout the workshop.
-
-== The four transformation waves
-
-=== Wave 1 — Fast, Flexible, and Efficient Inferencing
-
-_"From token consumer to token producer"_
-
-Fed Aura Capital used to pay per-token to an external LLM vendor. Every API call left the network, costs were unpredictable, and there was no control over which model version served a request.
-
-In this wave, you'll experience what the platform deploys today: self-hosted models with vLLM, a distributed inference layer with llm-d, and a managed API gateway through Models as a Service (MaaS). You'll see how models are served, how teams access them via API keys, and how usage is governed.
-
-[cols="1,1",options="header"]
-|===
-| Before | After
-| Per-token billing to external vendors | Fixed infrastructure cost, self-hosted models
-| Data leaves the network on every call | Data stays in-cluster, full sovereignty
-| Every team deploys its own model copy | Single deployment shared via MaaS gateway
-| No usage metering or access control | Subscription tiers with API key management
-|===
-
-*Modules*: Model Catalog & Deployment, Models as a Service
-
-=== Wave 2 — Connecting Data to Models and Agents
-
-_"From generic to useful AI"_
-
-A deployed model is still generic. Before this wave, Lenora could not quote Fed Aura Capital's rates, did not know internal policies, and could not predict loan outcomes. She gave textbook answers with disclaimers.
-
-In this wave, you'll explore how the platform shapes Lenora into a domain expert. You'll experiment with system prompts in the GenAI Playground, understand how prompts are managed through a Prompt Registry, and experience RAG in action — seeing how uploaded documents ground Lenora's responses in actual bank policy. You'll also look at how AutoRAG handles this at pipeline scale, and how OGX ties it together.
-
-[cols="1,1",options="header"]
-|===
-| Before | After
-| Generic system prompt ("You are a helpful AI assistant") | Domain-specific persona configured for mortgage lending
-| Hallucinated policy answers | RAG-grounded responses citing internal documents
-| No way to update model knowledge without retraining | Upload new documents; knowledge updates in minutes
-|===
-
-*Modules*: GenAI Playground, RAG & AutoRAG, OGX
-
-=== Wave 3 — Accelerate Agentic AI Innovation
-
-_"From useful to productive AI"_
-
-Lenora can answer domain-specific questions, but she still cannot take action. When a borrower asks "How much house can I afford?", a regular chatbot estimates a range with assumptions. An agentic Lenora calls the affordability calculator and returns a precise figure with a DTI breakdown.
-
-In this wave, you'll see how the platform connects agents to real tools through the MCP Ecosystem, how every decision path is captured in MLflow traces, and how evaluation pipelines continuously measure quality. You'll send prompts as different personas, observe tool calls, and check traces in MLflow.
-
-[cols="1,1",options="header"]
-|===
-| Before | After
-| Regular chatbot: estimates with disclaimers | Agentic chatbot: precise results from real tool calls
-| Black-box agent decisions | Full MLflow traces showing every tool call and LLM invocation
-| Manual quality spot-checking | Automated evaluation pipelines with EvalHub
-|===
-
-*Modules*: MCP Ecosystem, Evaluations & Tracing
-
-=== Wave 4 — Securing AI from Sandbox to Production
-
-_"From prototype to production-grade"_
-
-Agents that take real actions in a regulated industry must be secured before production. The CISO blocked deployment until a proper security model was in place. Regulators required evidence that the AI cannot be manipulated and maintains a full audit trail.
-
-In this wave, you'll experience how access controls, NeMo Guardrails, and OpenShell protect the platform. You'll log in as different personas and observe what gets through and what gets blocked, check traces to understand why, and explore the sandboxed execution environment that governs what agents are allowed to do.
-
-[cols="1,1",options="header"]
-|===
-| Before | After
-| No input/output filtering | NeMo Guardrails at the inference boundary
-| Untested adversarial robustness | Garak adversarial test results available for review
-| Agents deployed as ad-hoc containers | OpenShell with deny-by-default policies and OCSF audit logging
-| No security observability | Structured audit events, SIEM-ready
-|===
-
-*Modules*: AI Safety & Secure Agent Onboarding
-
-== The personas you'll encounter
-
-Throughout the workshop, you'll interact with the platform as different Fed Aura Capital employees. Each persona has different access levels and sees different behavior from Lenora — this is intentional, and understanding why is part of the lab.
-
-[cols="1,1,2,2",options="header"]
-|===
-| Persona | Name | Role | What you'll observe
-
-| Borrower
-| Sarah Mitchell
-| Customer applying for a mortgage
-| Asks about rates, gets policy-grounded answers, sees RAG in action
-
-| Loan Officer
-| James Torres
-| Reviews borrower applications, manages pipeline
-| Sends prompts that trigger tool calls, checks MLflow traces
-
-| CEO
-| David Park
-| Executive oversight and analytics
-| Queries produce analytics responses grounded in internal data
-
-| Engineer
-| You
-| Supporting the AI platform
-| Observes all of the above, checks traces, explores guardrail configs
-|===
+*Your job*: explore each of those four phases throughout this workshop and understand the platform well enough to support it.
 
 == A quick orientation: try this first
 
@@ -151,4 +44,4 @@ Then log in as David Park (CEO) and ask:
 
 * _"What is our loan approval rate this quarter?"_
 
-Notice what's different. Hold those observations — the modules ahead will explain exactly why Lenora responds the way she does to each persona.
+Notice what's different. Hold those observations — the next section and the modules ahead will explain exactly why Lenora responds the way she does to each persona.

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1400" height="850" viewBox="0 0 1400 850" role="img" aria-labelledby="title desc">
+  <title id="title">Fed Aura Capital architecture with the MLflow Prompt Registry highlighted</title>
+  <desc id="desc">The complete Lenora AI platform is dimmed except for the MLflow Prompt Registry, where tested system prompts are saved and versioned.</desc>
+  <defs>
+    <mask id="spotlight-mask">
+      <rect width="1400" height="850" fill="white"/>
+      <rect x="460" y="730" width="208" height="62" rx="22" fill="black"/>
+    </mask>
+    <filter id="focus-shadow" x="-25%" y="-50%" width="150%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#00b9b9" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <image href="fed-aura-platform-architecture.svg" xlink:href="fed-aura-platform-architecture.svg" width="1400" height="850"/>
+  <rect width="1400" height="850" fill="#151515" opacity="0.6" mask="url(#spotlight-mask)"/>
+
+  <g id="prompt-registry-focus" font-family="RedHatText, 'Red Hat Text', Arial, sans-serif">
+    <rect x="462" y="732" width="204" height="58" rx="20" fill="none" stroke="#00b9b9" stroke-width="7" filter="url(#focus-shadow)"/>
+    <rect x="762" y="704" width="410" height="66" rx="33" fill="#009596"/>
+    <text x="967" y="731" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">MODULE 3 FOCUS · PROMPT REGISTRY</text>
+    <text x="967" y="753" text-anchor="middle" font-size="14" fill="#ffffff">Save · version · compare system prompts</text>
+    <path d="M 762 748 L 670 756" fill="none" stroke="#00b9b9" stroke-width="5" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,4 +1,4 @@
-= Module 1: Model Catalog and Deployment
+== Module 1: Model Catalog and Deployment
 :navtitle: Model Catalog and Deployment
 :imagesdir: ../assets/images
 :toc:
@@ -7,8 +7,16 @@
 
 Model choices and compression - smaller size, same intelligence.
 
-Fed Aura Capital needs to stop paying per-token to external vendors.
-This module walks through deploying models in-house on Red Hat OpenShift AI, from browsing the Model Catalog to benchmarking quantized inference.
+Lenora depends on language models for every conversation, reasoning step, and tool decision.
+In the complete platform architecture, those models sit behind the MaaS gateway and provide inference to all five persona-specific agents.
+This module zooms in on that model-serving layer.
+
+.Module 1 focus: self-hosted model inference
+image::fed-aura-platform-architecture-models-focus.svg[The Fed Aura Capital platform architecture with the self-hosted models layer highlighted,align=center]
+
+Fed Aura Capital wants to replace per-token dependence on external model vendors with private, self-hosted inference.
+You will browse the Red Hat OpenShift AI Model Catalog, deploy models on CPU and GPU, scale inference with llm-d, and measure the effect of quantization on latency.
+The endpoint produced here becomes the intelligence layer that later modules govern, connect to tools and knowledge, observe, and secure.
 
 Estimated time: *25 minutes*
 

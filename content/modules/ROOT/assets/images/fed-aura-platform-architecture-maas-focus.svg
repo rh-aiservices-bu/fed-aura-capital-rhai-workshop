@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1400" height="850" viewBox="0 0 1400 850" role="img" aria-labelledby="title desc">
+  <title id="title">Fed Aura Capital architecture with Models as a Service highlighted</title>
+  <desc id="desc">The complete Lenora AI platform is dimmed except for the MaaS gateway and self-hosted models. A highlighted path shows governed model access from consumers through MaaS to the shared model runtime.</desc>
+  <defs>
+    <mask id="spotlight-mask">
+      <rect width="1400" height="850" fill="white"/>
+      <rect x="562" y="126" width="252" height="102" rx="20" fill="black"/>
+      <rect x="56" y="478" width="394" height="220" rx="24" fill="black"/>
+    </mask>
+    <marker id="focus-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f0ab00"/>
+    </marker>
+    <filter id="focus-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="#f0ab00" flood-opacity="0.65"/>
+    </filter>
+  </defs>
+
+  <image href="fed-aura-platform-architecture.svg" xlink:href="fed-aura-platform-architecture.svg" width="1400" height="850"/>
+  <rect width="1400" height="850" fill="#151515" opacity="0.58" mask="url(#spotlight-mask)"/>
+
+  <g id="maas-focus" font-family="RedHatText, 'Red Hat Text', Arial, sans-serif">
+    <rect x="564" y="128" width="248" height="98" rx="18" fill="none" stroke="#f0ab00" stroke-width="7" filter="url(#focus-shadow)"/>
+    <rect x="58" y="480" width="390" height="216" rx="22" fill="none" stroke="#f0ab00" stroke-width="7" filter="url(#focus-shadow)"/>
+
+    <!-- The route bends around the agent cards to make MaaS visibly mediate model access. -->
+    <path d="M 955 250 C 940 226, 850 188, 814 177" fill="none" stroke="#f0ab00" stroke-width="7" stroke-linecap="round" marker-end="url(#focus-arrow)"/>
+    <path d="M 562 177 C 490 190, 464 236, 464 326 L 464 445 C 464 475, 448 500, 420 518" fill="none" stroke="#f0ab00" stroke-width="7" stroke-linecap="round" marker-end="url(#focus-arrow)"/>
+
+    <rect x="776" y="438" width="402" height="58" rx="29" fill="#f0ab00"/>
+    <text x="977" y="463" text-anchor="middle" font-size="18" font-weight="700" fill="#151515">MODULE 2 FOCUS · MODELS AS A SERVICE</text>
+    <text x="977" y="484" text-anchor="middle" font-size="14" fill="#151515">Shared endpoint · subscriptions · API keys · metering</text>
+  </g>
+</svg>

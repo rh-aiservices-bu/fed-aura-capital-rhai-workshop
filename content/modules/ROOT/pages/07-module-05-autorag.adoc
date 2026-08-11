@@ -7,52 +7,97 @@
 
 Private data for best results.
 
-Lenora can now act as a domain expert thanks to the system prompt, and AutoML provides predictive underwriting. But she still cannot answer questions about Fed Aura Capital's specific policies, current rates, or regulatory requirements like FHA guidelines and TRID disclosures. When asked "What is the current rate for a fixed, 30-year mortgage?", she either hallucates a number or responds with a generic disclaimer. In this module, you will ground the model in private policy documents using RAG, enabled through the Knowledge tab in the GenAI Playground.
+Lenora's base model understands mortgage concepts, but Fed Aura Capital's internal policies were never part of its training data.
+Retrieval-augmented generation (RAG) gives Lenora relevant passages from trusted documents at request time, allowing her to answer with current, organization-specific facts.
+
+You will first experience RAG in the existing Fed Aura application as the CEO.
+Then you will return to GenAI Studio and reproduce the same before-and-after behavior by uploading a policy document yourself.
+
+.Module 5 focus: trusted knowledge through RAG
+image::fed-aura-platform-architecture-rag-focus.svg[The Fed Aura Capital platform architecture with the RAG and PostgreSQL pgvector knowledge layer highlighted,align=center]
+
+Estimated time: *20 minutes*
 
 == Learning Objectives
 
 By the end of this module, you will be able to:
 
 * Understand the difference between generic model knowledge and RAG-grounded responses
-* Enable RAG via the Knowledge tab in the GenAI Playground
-* Upload private policy documents and test domain-specific queries
-* Validate that responses are grounded in source documents
+* Recognize document-grounded behavior in the Fed Aura application
+* Compare an unsupported model response with a RAG-enabled response
+* Enable RAG and upload a private document in GenAI Studio
+* Validate retrieved facts against the source document
 
-== Exercise 1: Ask Without RAG
+== Exercise 1: Experience RAG in Fed Aura
 
-TBD
+Open the Fed Aura Capital application and sign in as the *CEO, David Park*.
+Open Lenora and send this prompt:
 
-// In the Playground, ask: "What is the current rate for a fixed, 30-year mortgage?"
-// Observe the generic response - the model will either hallucinate a rate or give a disclaimer.
+[source,text]
+----
+What is Fed Aura Capital's maximum back-end DTI ratio for a conventional loan?
+Who can approve an exception above that limit, and how often are exception
+approvals reviewed by the Risk Committee?
+----
 
-== Exercise 2: Enable RAG via the Knowledge Tab
+Observe that Lenora's response is grounded in *Company Underwriting Manual, Rev. 2024-Q4*.
+The response should identify these document-backed facts:
 
-TBD
+* The standard maximum back-end DTI ratio is *40%*.
+* A DTI override up to *45%* can be approved by the Underwriting Manager.
+* Major exceptions require approval from the Chief Credit Officer.
+* Exception approvals are audited quarterly and reported to the Risk Committee.
 
-// Navigate to Configure > Knowledge
-// Toggle RAG ON
-// Upload documents:
-//   - internal-policies.txt
-//   - fha.txt
-//   - fannie-mae.txt
-//   - trid.txt
-//   - freddie-reporting.txt
+Do not treat a fluent answer alone as proof of retrieval.
+Look for a source citation or retrieved passage and compare the claims with the source document.
 
-== Exercise 3: Ask With RAG
+== Exercise 2: Ask Without RAG in GenAI Studio
 
-TBD
+Now experience the workflow yourself.
+Return to *GenAI Studio* and open the GenAI Playground you created earlier.
+Make sure RAG is disabled, then ask:
 
-// Ask the same question: "What is the current rate for a fixed, 30-year mortgage?"
-// Observe the grounded response referencing "our pricing engine" and citing specific policy documents.
+[source,text]
+----
+What is Fed Aura Capital's maximum back-end DTI ratio for a conventional loan,
+and who can approve an exception?
+----
 
-== Exercise 4: Test Domain-Specific Knowledge
+The model does not have the internal manual, so a responsible response should say that it cannot verify Fed Aura Capital's policy.
+It may instead provide a generic industry threshold or invent a company-specific answer.
+Record what happens so you can compare it with the grounded response.
 
-TBD
+== Exercise 3: Enable RAG and Upload the Policy
 
-// Ask compliance-specific questions:
-//   - "What are the FHA down payment minimums?"
-//   - "What disclosures are required under TRID?"
-// Verify that responses cite the uploaded documents rather than generic training data.
+In the Playground:
+
+. Open *Configure* and select the *Knowledge* tab.
+. Enable RAG.
+. Download xref:attachment$fed-aura-internal-policy.txt[the Fed Aura internal policy document].
+. Upload `fed-aura-internal-policy.txt` to the Playground knowledge source.
+. Wait until the document has finished processing.
+
+== Exercise 4: Ask the Same Question Again
+
+With RAG enabled, send the exact question from Exercise 2 again:
+
+[source,text]
+----
+What is Fed Aura Capital's maximum back-end DTI ratio for a conventional loan,
+and who can approve an exception?
+----
+
+The response should now state the 40% company limit and distinguish the approval levels described in the uploaded document.
+Inspect the citation or retrieved passage and verify the answer against the source.
+
+For one more retrieval test, ask:
+
+[source,text]
+----
+How long must Fed Aura retain loan files, HMDA data, and audit trail records?
+----
+
+Confirm that the response returns *7 years*, *3 years*, and *10 years*, respectively, and attributes those facts to the uploaded policy.
 
 == Before and After: Without RAG vs With RAG
 
@@ -81,20 +126,18 @@ TBD
 
 === What You Accomplished
 
-* Observed the model's limitations when answering policy-specific questions without access to private documents
-* Enabled RAG through the Knowledge tab in the GenAI Playground with a simple toggle
-* Uploaded Fed Aura Capital's internal policy documents including FHA guidelines, TRID disclosures, and Fannie Mae/Freddie Mac reporting requirements
-* Validated that RAG-grounded responses cite specific source documents instead of hallucinating or giving generic disclaimers
+* Experienced document-grounded answers in the Fed Aura application as the CEO
+* Asked an internal-policy question without RAG and recorded the unsupported response
+* Enabled RAG and uploaded Fed Aura Capital's internal underwriting policy
+* Repeated the same question and verified the answer against retrieved source text
 
 === Key Takeaways
 
 * A model with a good system prompt still cannot answer organization-specific questions without access to private documents
 * AutoRAG in the GenAI Playground removes the complexity of setting up vector databases, chunking strategies, and embedding pipelines - you toggle it on and upload files
-* RAG-grounded responses dramatically reduce regulatory risk because every answer traces back to a source document
+* RAG-grounded responses reduce regulatory risk by making answers traceable to source documents
 * Knowledge updates happen in minutes (upload a new document) instead of days or weeks (retrain the model)
 
 === What's Next
 
 In Module 6, you will explore OGX capabilities within Red Hat OpenShift AI.
-
-Estimated time: *20 minutes*

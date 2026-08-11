@@ -9,7 +9,7 @@
 
 Traditional AI demos show a model answering questions. Production AI requires a complete platform: model serving, governed access, domain grounding, tool integration, observability, evaluation, and security. Each capability solves a real business problem, and they must work together.
 
-This workshop takes you through the full Red Hat OpenShift AI product portfolio by putting you inside a real production deployment. You've just joined *Fed Aura Capital* as a platform engineer — the AI platform is already running, and your job is to understand every layer of it. Each module introduces a capability, shows you what Fed Aura Capital's setup looks like in practice, and gives you hands-on time with the same tools. By the end, you'll know why the platform looks the way it does and what each component contributes.
+This workshop takes you through the full Red Hat OpenShift AI product portfolio by putting you inside a real production deployment. You've just joined *Fed Aura Capital* as an engineer: the AI platform is already running, and your job is to understand every layer of it. Each module introduces a capability, shows you what Fed Aura Capital's setup looks like in practice, and gives you hands-on time with the same tools. By the end, you'll know why the platform looks the way it does and what each component contributes.
 
 == Meet Fed Aura Capital
 
@@ -133,7 +133,7 @@ Throughout the workshop, you'll interact with the platform as different Fed Aura
 | Executive oversight and analytics
 | Queries produce analytics responses grounded in internal data
 
-| Platform Engineer
+| Engineer
 | You
 | Supporting the AI platform
 | Observes all of the above, checks traces, explores guardrail configs

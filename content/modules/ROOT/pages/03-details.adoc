@@ -5,26 +5,6 @@
 :toc-placement: preamble
 :icons: font
 
-== Workshop structure
-
-This workshop is organized in three progressive tiers. Each module builds on the previous, but includes verification steps so you can confirm your progress before moving on.
-
-=== Tier 1 (Modules 1-2): Fast, Flexible, and Efficient Inferencing
-
-Deploy models, benchmark performance, and expose them as managed services. After these modules, you have a working inference platform that any team can consume.
-
-=== Tier 2 (Modules 3-6): Connecting Data to Models and Agents
-
-Shape model behavior with prompts, build predictive models, ground responses in private documents, and unify the API surface with ogx. After these modules, your AI assistant is domain-specific and production-useful.
-
-=== Tier 3 (Modules 7-8): Accelerate Agentic AI Innovation
-
-Connect agents to tools, trace every decision, and evaluate quality with automated pipelines. After these modules, your AI agents are observable and measurable.
-
-=== Tier 4 (Module 9): Securing AI from Sandbox to Production
-
-Deploy guardrails, run adversarial testing, and securely onboard agents with OpenShell. After this module, your AI system is production-ready with defense-in-depth security.
-
 == Workshop interface
 
 Your workshop environment provides multiple views:

@@ -41,6 +41,12 @@ Walk through the Deploy wizard, select a CPU hardware profile, and configure a v
 
 TBD
 
+=== Quick Test: GenAI Playground
+
+Before moving on, open the GenAI Playground from the RHOAI dashboard and point it at the CPU model you just deployed.
+Send a simple prompt - something like _"What is a fixed-rate mortgage?"_ - and confirm that the model responds.
+This is the fastest way to verify that the inference endpoint is live, and in Module 3 you will return to the Playground to compare multiple models and shape Lenora's behavior with system prompts.
+
 == Exercise 3: Deploy with GPU and llm-d
 
 Configure a GPU hardware profile, enable "Distributed Inference with llm-d", and set the number of replicas.

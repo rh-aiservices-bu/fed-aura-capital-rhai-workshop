@@ -15,4 +15,5 @@ spec:
     - garak
     - garak-kfp
     - lm-evaluation-harness
+    - ragas
   replicas: 1

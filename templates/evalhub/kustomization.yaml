@@ -8,3 +8,4 @@ resources:
   - 04-rbac-mlflow.yaml
   - 05-secret-patcher.yaml
   - 06-rbac-tenant.yaml
+  - 07-netpol-evalhub-ui.yaml

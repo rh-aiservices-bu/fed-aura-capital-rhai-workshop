@@ -3,6 +3,7 @@ apiVersion: serving.kserve.io/v1alpha1
 kind: ServingRuntime
 metadata:
   name: tinyllama
+  namespace: wksp-user1
   annotations:
     opendatahub.io/kserve-runtime: vllm
     opendatahub.io/apiProtocol: REST

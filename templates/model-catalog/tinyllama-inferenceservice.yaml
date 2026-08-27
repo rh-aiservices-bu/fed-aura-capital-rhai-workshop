@@ -3,6 +3,7 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   name: tinyllama
+  namespace: wksp-user1
   annotations:
     openshift.io/display-name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
     opendatahub.io/model-type: generative

@@ -7,8 +7,8 @@ metadata:
     opendatahub.io/supported-topologies: '["workload-single-node"]'
     openshift.io/description: Optimized baseline scheduling policy with queue, KV
       cache utilization, prefix cache, and LRU scoring.
-    openshift.io/display-name: llm-d-scheduling-policy
-  name: llm-d-scheduling-policy
+    openshift.io/display-name: cpu-llm-d-scheduling-policy
+  name: cpu-llm-d-scheduling-policy
   namespace: redhat-ods-applications
   labels:
     opendatahub.io/config-type: router

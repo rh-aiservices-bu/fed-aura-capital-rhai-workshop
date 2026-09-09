@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: openshell-gw
+  namespace: wskp-user1
+  annotations:
+    haproxy.router.openshift.io/enable-h2c: "true"
+spec:
+  to:
+    kind: Service
+    name: openshell
+  port:
+    targetPort: grpc

@@ -2,11 +2,11 @@
 #
 # Deploy with:
 #   helm upgrade --install mortgage-ai deployments/mortgage-ai/ \
-#     -n wksp-user1 --create-namespace \
+#     -n wskp-user1 --create-namespace \
 #     -f templates/mortgage-ai/values-fedaura.yaml
 #
 # Prerequisites:
-#   - templates/minio deployed (shared S3 in wksp-user1)
+#   - templates/minio deployed (shared S3 in wskp-user1)
 #   - MaaS LLM endpoint available (replace REPLACE_ME values below)
 #   - MLflow operator running in redhat-ods-applications
 #
@@ -20,13 +20,13 @@ secrets:
 
   # S3 - shared MinIO from templates/minio
   S3_ENDPOINT: "http://minio-service:9000"
-  S3_ACCESS_KEY: "user1"
-  S3_SECRET_KEY: "thisisthepassword"
+  S3_ACCESS_KEY: "minio"
+  S3_SECRET_KEY: "IJrixDGbADAkgey5"
 
-  # LLM - replace with your MaaS endpoint
-  LLM_BASE_URL: "REPLACE_ME"
-  LLM_API_KEY: "REPLACE_ME"
-  LLM_MODEL: "REPLACE_ME"
+  # LLM - MaaS Data Science Gateway (gpt-oss-120b)
+  LLM_BASE_URL: "https://rh-ai.apps.ocp.nss6n.sandbox1466.opentlc.com/v1"
+  LLM_API_KEY: "sk-vscwBfcw2oPAcKju5PIdUw"
+  LLM_MODEL: "gpt-oss-120b"
 
   # MCP risk server - deployed in mcp-servers namespace (templates/mcp)
   MCP_RISK_SERVER_URL: "http://mcp-risk-server.mcp-servers.svc.cluster.local:8081/mcp"
@@ -34,12 +34,12 @@ secrets:
   # MLflow - RHOAI MLflow in-cluster
   # Note: MLFLOW_TRACKING_AUTH "kubernetes" requires mlflow-kubernetes-auth pip package.
   # If not installed in the image, use token auth instead:
-  #   oc create token mortgage-ai-mlflow-client -n wksp-user1 --duration=8760h
+  #   oc create token mortgage-ai-mlflow-client -n wskp-user1 --duration=8760h
   MLFLOW_TRACKING_URI: "https://mlflow.redhat-ods-applications.svc.cluster.local:8443/mlflow"
   MLFLOW_TRACKING_AUTH: ""
-  MLFLOW_TRACKING_TOKEN: "REPLACE_ME"
+  MLFLOW_TRACKING_TOKEN: ""
   MLFLOW_EXPERIMENT_NAME: "mortgage-ai"
-  MLFLOW_WORKSPACE: "wksp-user1"
+  MLFLOW_WORKSPACE: "wskp-user1"
   MLFLOW_TRACKING_INSECURE_TLS: "true"
 
 # Disable components handled by other templates
@@ -51,6 +51,10 @@ mcpRiskServer:
   enabled: false
 mcpWeatherServer:
   enabled: false
+
+# Route hostname for path-based routing
+routes:
+  sharedHost: "mortgage-ai-wskp-user1.apps.ocp.nss6n.sandbox1466.opentlc.com"
 
 # Enable demo data
 seed:

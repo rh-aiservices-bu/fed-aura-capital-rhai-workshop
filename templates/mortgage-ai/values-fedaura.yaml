@@ -20,12 +20,12 @@ secrets:
 
   # S3 - shared MinIO from templates/minio
   S3_ENDPOINT: "http://minio-service:9000"
-  S3_ACCESS_KEY: "minio"
-  S3_SECRET_KEY: "IJrixDGbADAkgey5"
+  S3_ACCESS_KEY: "REPLACE_ME"
+  S3_SECRET_KEY: "REPLACE_ME"
 
-  # LLM - MaaS Data Science Gateway (gpt-oss-120b)
-  LLM_BASE_URL: "https://rh-ai.apps.ocp.nss6n.sandbox1466.opentlc.com/v1"
-  LLM_API_KEY: "sk-vscwBfcw2oPAcKju5PIdUw"
+  # LLM - upstream MaaS provider (gpt-oss-120b)
+  LLM_BASE_URL: "REPLACE_ME"
+  LLM_API_KEY: "REPLACE_ME"
   LLM_MODEL: "gpt-oss-120b"
 
   # MCP risk server - deployed in mcp-servers namespace (templates/mcp)

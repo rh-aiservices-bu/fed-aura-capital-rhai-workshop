@@ -40,6 +40,17 @@ helm upgrade --install openshell oci://ghcr.io/nvidia/openshell/helm-chart \
 
 wait_for_rollout statefulset openshell "$NAMESPACE" 300
 
+step "Configure gateway auth (no OIDC)"
+oc -n "$NAMESPACE" get configmap openshell-config -o jsonpath='{.data.gateway\.toml}' > /tmp/gw-config-$$.toml
+if ! grep -q 'allow_unauthenticated_users' /tmp/gw-config-$$.toml; then
+    printf '\n[openshell.gateway.auth]\nallow_unauthenticated_users = true\n' >> /tmp/gw-config-$$.toml
+    oc create configmap openshell-config --from-file=gateway.toml=/tmp/gw-config-$$.toml \
+        -n "$NAMESPACE" --dry-run=client -o yaml | oc apply -f -
+    oc delete pod openshell-0 -n "$NAMESPACE"
+    wait_for_rollout statefulset openshell "$NAMESPACE" 120
+fi
+rm -f /tmp/gw-config-$$.toml
+
 step "Expose gateway via Route"
 oc -n "$NAMESPACE" apply -f "$SCRIPT_DIR/manifests/openshell/route.yaml"
 sleep 2

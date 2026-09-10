@@ -6,6 +6,9 @@ metadata:
   annotations:
     haproxy.router.openshift.io/enable-h2c: "true"
 spec:
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
   to:
     kind: Service
     name: openshell

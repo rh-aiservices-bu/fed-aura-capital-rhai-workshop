@@ -179,6 +179,10 @@ openshell sandbox upload "$SANDBOX_NAME" /tmp/sandbox-init.sh /sandbox/.sandbox-
 
 step "Auto-source environment on login"
 openshell sandbox exec --name "$SANDBOX_NAME" -- sh -c '
+    grep -q "sandbox-init.sh" /sandbox/.bashrc 2>/dev/null || \
+    printf "\n# Auto-load sandbox credentials\nif [ -f /sandbox/.sandbox-init.sh ] && [ -z \"\$SANDBOX_ENV_LOADED\" ]; then\n    . /sandbox/.sandbox-init.sh\n    export SANDBOX_ENV_LOADED=1\nfi\n" >> /sandbox/.bashrc
+'
+openshell sandbox exec --name "$SANDBOX_NAME" -- sh -c '
     grep -q "sandbox-init.sh" /sandbox/.profile 2>/dev/null || \
     cat >> /sandbox/.profile << '"'"'PROFILE'"'"'
 

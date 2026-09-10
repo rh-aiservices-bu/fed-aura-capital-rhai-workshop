@@ -2,7 +2,7 @@
 site:
   title: "Fed Aura Capital AI Workshop with Red Hat AI"
   url: https://rh-aiservices-bu.github.io/fed-aura-capital-rhai-workshop
-  start_page: modules::index.adoc
+  start_page: modules::01-overview/index.adoc
 
 content:
   sources:

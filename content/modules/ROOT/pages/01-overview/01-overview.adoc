@@ -26,6 +26,8 @@ This workshop takes you through the full Red Hat AI product portfolio by putting
 
 {assistant_name} started as a prototype chatbot connected to an external model. Today, she is a production-grade AI system running entirely on Red Hat AI with self-hosted models, domain-grounded knowledge, tool-calling agents, full observability, and defense-in-depth security.
 
+image::agentic-app2.png[{company_name} landing page with {assistant_name} assistant responding to a mortgage product inquiry,link=self,window=blank,width=700]
+
 == Your first day: the CTO briefing
 
 As part of your onboarding, your team shares a link to a recorded all-hands from six months ago - the kickoff where your CTO announced the platform rebuild. You hit play.

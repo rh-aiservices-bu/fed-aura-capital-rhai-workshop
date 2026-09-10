@@ -19,7 +19,7 @@ The right panel includes the following tabs:
 | Tab | Purpose
 | OCP Console | OpenShift Container Platform web console for cluster management
 | Terminal | Command-line access for `oc` commands and debugging
-| RHOAI Console | Red Hat OpenShift AI dashboard for model management, experiments, and pipelines
+| RHOAI Console | Red Hat AI dashboard for model management, experiments, and pipelines
 | Fed Aura Capital App | The mortgage lending web application with all four personas
 | MLflow Console | MLflow tracking server for traces, evaluations, and prompt registry
 | Grafana | Dashboards for metrics and monitoring
@@ -33,7 +33,7 @@ TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depen
 |===
 | Component | Version
 | Red Hat OpenShift Container Platform | {ocp_version}
-| Red Hat OpenShift AI | {rhoai_version}
+| Red Hat AI | {rhoai_version}
 | MLflow | {mlflow_version}
 | vLLM | 0.18.0
 | LangGraph / LangChain | Latest
@@ -50,7 +50,7 @@ TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depen
 | Term | Definition
 
 | Agent Sandbox
-| A secure execution environment for AI agents managed by the Agent Sandbox Controller. Provides pod scheduling with optional warmpool support for lower cold-start times. Combined with OpenShell's application-level isolation and optionally Kata Containers for hardware-level isolation, it forms the production runtime for agents on Red Hat OpenShift AI.
+| A secure execution environment for AI agents managed by the Agent Sandbox Controller. Provides pod scheduling with optional warmpool support for lower cold-start times. Combined with OpenShell's application-level isolation and optionally Kata Containers for hardware-level isolation, it forms the production runtime for agents on Red Hat AI.
 
 | AI Agent
 | A software system that uses an LLM to reason about tasks, decide which tools to call, and take actions autonomously. Unlike a simple chatbot, an agent can chain multiple tool calls and LLM invocations to accomplish complex goals.
@@ -142,4 +142,4 @@ TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depen
 | Contributors | CAI Team
 |===
 
-Last Updated: July 2026
+Last Updated: September 2026

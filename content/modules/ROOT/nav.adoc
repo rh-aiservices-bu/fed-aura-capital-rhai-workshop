@@ -2,7 +2,8 @@
 * xref:01-overview/index.adoc[Welcome]
 * xref:01-overview/01-overview.adoc[Workshop Overview]
 * xref:01-overview/02-fed-aura.adoc[Fed Aura Capital]
-* xref:01-overview/03-details.adoc[Workshop Details]
+* xref:01-overview/03-explore-platform.adoc[Explore the Platform]
+* xref:01-overview/04-details.adoc[Workshop Details]
 
 .Fast, Flexible, and Efficient Inferencing
 * xref:02-inference/01-model-deployment.adoc[Module 1: Model Catalog & Deployment]

@@ -1,21 +1,21 @@
-= Fed Aura Capital & Lenora
+= {company_name} & {assistant_name}
 :imagesdir: ../assets/images
-:navtitle: Fed Aura Capital
+:navtitle: {company_name}
 :toc:
 :toc-placement: preamble
 :icons: font
 
 == The platform you're joining
 
-Fed Aura Capital's AI platform didn't arrive fully formed. It was built in four transformation waves, each solving a specific production problem that the prototype couldn't handle. Understanding those waves is the fastest way to understand why the platform looks the way it does today.
+{company_name}'s AI platform didn't arrive fully formed. It was built around four transformation pillars, each solving a specific production problem that the prototype couldn't handle. Understanding those pillars is the fastest way to understand why the platform looks the way it does today.
 
-== The four transformation waves
+== The four transformation pillars
 
-=== Wave 1 — Fast, Flexible, and Efficient Inferencing
+=== Pillar 1 - Fast, Flexible, and Efficient Inferencing
 
 _"From token consumer to token producer"_
 
-Fed Aura Capital used to pay per-token to an external LLM vendor. Every API call left the network, costs were unpredictable, and there was no control over which model version served a request.
+{company_name} used to pay per-token to an external LLM vendor. Every API call left the network, costs were unpredictable, and there was no control over which model version served a request.
 
 The platform now runs self-hosted models with vLLM, a distributed inference layer with llm-d, and exposes them through a managed API gateway via Models as a Service (MaaS).
 
@@ -30,13 +30,13 @@ The platform now runs self-hosted models with vLLM, a distributed inference laye
 
 *Modules*: Model Catalog & Deployment, Models as a Service
 
-=== Wave 2 — Connecting Data to Models and Agents
+=== Pillar 2 - Connecting Data to Models and Agents
 
 _"From generic to useful AI"_
 
-A deployed model is still generic. Lenora could not quote Fed Aura Capital's rates, did not know internal policies, and gave textbook answers with disclaimers.
+A deployed model is still generic. {assistant_name} could not quote {company_name}'s rates, did not know internal policies, and gave textbook answers with disclaimers.
 
-The platform now shapes Lenora into a domain expert through configured system prompts stored in the Prompt Registry, and grounds her responses in the bank's private documents via RAG. AutoRAG handles this at pipeline scale. OGX ties the API surface together.
+The platform now shapes {assistant_name} into a domain expert through configured system prompts stored in the Prompt Registry, and grounds her responses in the bank's private documents via RAG. AutoRAG handles this at pipeline scale. OGX ties the API surface together.
 
 [cols="1,1",options="header"]
 |===
@@ -48,11 +48,11 @@ The platform now shapes Lenora into a domain expert through configured system pr
 
 *Modules*: GenAI Playground, RAG & AutoRAG, OGX
 
-=== Wave 3 — Accelerate Agentic AI Innovation
+=== Pillar 3 - Accelerate Agentic AI Innovation
 
 _"From useful to productive AI"_
 
-Lenora could answer domain-specific questions, but could not take action. When a borrower asked "How much house can I afford?", she estimated a range with assumptions. An agentic Lenora calls the affordability calculator and returns a precise figure with a DTI breakdown.
+{assistant_name} could answer domain-specific questions, but could not take action. When a borrower asked "How much house can I afford?", she estimated a range with assumptions. An agentic {assistant_name} calls the affordability calculator and returns a precise figure with a DTI breakdown.
 
 The platform connects agents to real tools through the MCP Ecosystem, captures every decision path in MLflow traces, and continuously measures quality with automated evaluation pipelines.
 
@@ -66,7 +66,7 @@ The platform connects agents to real tools through the MCP Ecosystem, captures e
 
 *Modules*: MCP Ecosystem, Evaluations & Tracing
 
-=== Wave 4 — Securing AI from Sandbox to Production
+=== Pillar 4 - Securing AI from Sandbox to Production
 
 _"From prototype to production-grade"_
 
@@ -87,7 +87,7 @@ The platform now deploys NeMo Guardrails at the inference boundary, uses Garak f
 
 == The personas
 
-Throughout the workshop, you'll interact with the platform as different Fed Aura Capital employees. Each persona has different access levels and sees different behavior from Lenora — this is intentional, and understanding why is part of the lab.
+Throughout the workshop, you'll interact with the platform as different {company_name} employees. Each persona has different access levels and sees different behavior from {assistant_name} - this is intentional, and understanding why is part of the lab.
 
 [cols="1,1,2,2",options="header"]
 |===
@@ -114,10 +114,71 @@ Throughout the workshop, you'll interact with the platform as different Fed Aura
 | Observes all of the above, checks traces, explores guardrail configs
 |===
 
+== Deployed components
+
+The mortgage-ai system runs as a set of cooperating services in your OpenShift namespace:
+
+[cols="1,2",options="header"]
+|===
+|Component |Purpose
+
+|mortgage-ai-api
+|**One FastAPI pod** containing all 5 agent implementations, routes by persona via WebSocket
+
+|mortgage-ai-ui
+|React frontend for interacting with agents through persona-specific interfaces
+
+|mortgage-ai-db
+|PostgreSQL with pgvector for document storage and RAG embeddings
+
+|minio
+|S3-compatible object storage for uploaded documents
+
+|keycloak
+|Identity provider for persona-based authentication and role-based access control
+|===
+
+[#api-endpoints]
+**API endpoints (all served by the same `mortgage-ai-api` pod):**
+
+[source,text]
+----
+/api/prospect/chat    - Prospect Agent (initial inquiries)
+/api/borrower/chat    - Borrower Agent (application intake)
+/api/loanofficer/chat - Loan Officer Agent (pipeline management)
+/api/underwriter/chat - Underwriter Agent (risk assessment)
+/api/ceo/chat         - Executive Agent (analytics)
+----
+
 == Platform architecture
 
 [#fed-aura-platform-architecture]
-.Fed Aura Capital AI platform architecture
-image::fed-aura-platform-architecture.svg[Diagram showing Lenora connected to persona agents, self-hosted models, MCP tools, a RAG vector database, MLflow observability, and platform security layers,align=center]
+.{company_name} AI platform architecture
+image::fed-aura-platform-architecture.svg[Diagram showing {assistant_name} connected to persona agents, self-hosted models, MCP tools, a RAG vector database, MLflow observability, and platform security layers,align=center]
 
-The platform is built around a set of cooperating components. At the center is Lenora — a set of persona-specific agents orchestrated with LangGraph and powered by self-hosted models served through vLLM. Each agent has access to domain knowledge via RAG, can call real tools via MCP, and is observable through MLflow tracing. All inference goes through the MaaS gateway, which enforces access control and usage metering. NeMo Guardrails filter inputs and outputs at the boundary. OpenShell sandboxes agent execution with deny-by-default policies.
+The platform is built around a set of cooperating components. At the center is {assistant_name} - a set of persona-specific agents orchestrated with LangGraph and powered by self-hosted models served through vLLM. Each agent has access to domain knowledge via RAG, can call real tools via MCP, and is observable through MLflow tracing. All inference goes through the MaaS gateway, which enforces access control and usage metering. NeMo Guardrails filter inputs and outputs at the boundary. OpenShell sandboxes agent execution with deny-by-default policies.
+
+=== Architecture deep-dives
+
+TIP: Each module zooms in on one layer of this architecture. You can refer back to these diagrams at any time.
+
+[cols="1,1,2",options="header"]
+|===
+|Focus Area |Diagram |Relevant Modules
+
+|Self-hosted models
+|image:fed-aura-platform-architecture-models-focus.svg[Models focus,width=200,link=self,window=blank]
+|Module 1 (Model Catalog), Module 2 (MaaS)
+
+|MaaS Gateway
+|image:fed-aura-platform-architecture-maas-focus.svg[MaaS focus,width=200,link=self,window=blank]
+|Module 2 (Models as a Service)
+
+|Prompt Registry
+|image:fed-aura-platform-architecture-prompt-registry-focus.svg[Prompt Registry focus,width=200,link=self,window=blank]
+|Module 3 (GenAI Playground)
+
+|RAG Pipeline
+|image:fed-aura-platform-architecture-rag-focus.svg[RAG focus,width=200,link=self,window=blank]
+|Module 5 (RAG & AutoRAG)
+|===

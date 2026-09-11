@@ -13,7 +13,6 @@ By the end of this section, you will be able to:
 * Log in to OpenShift and verify that all platform components are running
 * Confirm API and database health using the health endpoint
 * Interact with {assistant_name} as different personas and observe how responses change based on role
-* Navigate the MLflow tracing UI and identify the components of a request trace
 * Connect running pods to the platform architecture diagram
 
 == Exercise 1: Access the environment and verify the deployment
@@ -194,34 +193,11 @@ The responses look great. But stop and think about what happened behind the scen
 * What if the response was **wrong**? How would you trace back to the root cause?
 * What if a tool call **failed silently**? Would you even know?
 
-The platform captured all of it automatically. The next exercise shows you where.
+The platform captured all of it automatically. You will trace every step in Module 8 (Evaluations & Tracing).
 
-== Exercise 3: Peek behind the scenes with MLflow
+== Exercise 3: Understand the architecture in context
 
-You interacted with {assistant_name} as three different personas. Each conversation triggered a different agent, different tool calls, and different model invocations. MLflow captured all of it automatically. In this exercise, you will find one of those traces and see what happened behind the response.
-
-NOTE: You will explore MLflow in depth in Module 8 (Evaluations & Tracing). This is a quick orientation to show you what is already being recorded.
-
-. Navigate to the **MLflow Console** tab. If prompted, log in with `{user}` / `{password}`.
-// TODO: capture screenshot of MLflow workspace selection (explore-mlflow-workspace.png)
-
-. Click **Traces** in the left sidebar. You will see a list of all traced requests. Look for the traces from your CEO conversation - they will be the most recent entries:
-// TODO: capture screenshot of MLflow traces list (explore-mlflow-traces.png)
-
-. Click on one of those traces (for example, the "Show me the current pipeline status" request). The trace detail view shows:
-+
---
-* **Inputs**: the user context and message
-* **Span sequence**: the chain of operations - ChatOpenAI (LLM reasoning), tool call (data retrieval), ChatOpenAI (response composition)
-* **Outputs**: the complete response sent back to the user
---
-// TODO: capture screenshot of MLflow trace detail (explore-mlflow-trace-detail.png)
-+
-**What this result means:** A single user question triggered multiple operations. The LLM decided which tool to call (first ChatOpenAI span), the tool fetched pipeline data from the database (tool call span), and the LLM composed a natural-language response from the raw data (second ChatOpenAI span). MLflow captured every step automatically.
-
-== Exercise 4: Understand the architecture in context
-
-Now that you have seen the platform running and traced a request, let's connect what you observed to the architecture.
+Now that you have seen the platform running, let's connect what you observed to the architecture.
 
 . Return to the **Terminal** tab. List all pods and their containers:
 +
@@ -358,7 +334,6 @@ IMPORTANT: You do not need to understand every component now. Each module focuse
 * Logged in to OpenShift and verified all platform components are running and healthy
 * Confirmed API and database health via the health endpoint
 * Interacted with {assistant_name} as Prospect, Borrower, and CEO, observing how responses change by persona
-* Found your first MLflow trace and identified the tool calls and LLM invocations behind a CEO query
 * Connected running pods to the platform architecture diagram
 
 **Key takeaways:**

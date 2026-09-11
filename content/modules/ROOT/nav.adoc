@@ -12,7 +12,9 @@
 * xref:02-inference/08-module-06-ogx.adoc[Module 6: OGX]
 
 .Connecting Data to Models and Agents
-* xref:03-data/07-module-05-autorag.adoc[Module 5: From Prompts to RAG]
+* xref:03-data/07-module-05-system-prompts.adoc[Module 5: System Prompts]
+* xref:03-data/07-module-05-rag.adoc[Module 5: RAG & Knowledge Grounding]
+* xref:03-data/07-module-05-data-autorag.adoc[Module 5: Data Preprocessing & AutoRAG]
 
 .Accelerate Agentic AI Innovation
 * xref:04-agents/06-module-04-automl.adoc[Module 4: Predictive AI with AutoML]

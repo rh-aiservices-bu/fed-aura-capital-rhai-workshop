@@ -219,12 +219,6 @@ NOTE: You will explore MLflow in depth in Module 8 (Evaluations & Tracing). This
 +
 **What this result means:** A single user question triggered multiple operations. The LLM decided which tool to call (first ChatOpenAI span), the tool fetched pipeline data from the database (tool call span), and the LLM composed a natural-language response from the raw data (second ChatOpenAI span). MLflow captured every step automatically.
 
-[%collapsible]
-.Under the hood: How MLflow autolog works (click to expand)
-====
-The mortgage-ai application enables automatic tracing with a single line of code: `mlflow.langchain.autolog()`. This instruments all LangGraph and LangChain operations - every LLM call, tool invocation, and agent routing decision is captured as a span within a trace. No manual instrumentation is required for standard operations.
-====
-
 == Exercise 4: Understand the architecture in context
 
 Now that you have seen the platform running and traced a request, let's connect what you observed to the architecture.
@@ -236,11 +230,47 @@ Now that you have seen the platform running and traced a request, let's connect 
 oc get pods -n {user_project} -o custom-columns="NAME:.metadata.name,STATUS:.status.phase,CONTAINERS:.spec.containers[*].name"
 ----
 +
-You should see 5 core pods running. Each one maps to a box in the architecture diagram.
+You should see 5 core pods running. Here is what each one does:
++
+[cols="1,2",options="header"]
+|===
+|Component |Purpose
+
+|mortgage-ai-api
+|**One FastAPI pod** containing all 5 agent implementations, routes by persona via WebSocket
+
+|mortgage-ai-ui
+|React frontend for interacting with agents through persona-specific interfaces
+
+|mortgage-ai-db
+|PostgreSQL with pgvector for document storage and RAG embeddings
+
+|minio
+|S3-compatible object storage for uploaded documents
+
+|keycloak
+|Identity provider for persona-based authentication and role-based access control
+|===
++
+[#api-endpoints]
+**API endpoints (all served by the same `mortgage-ai-api` pod):**
++
+[source,text]
+----
+/api/prospect/chat    - Prospect Agent (initial inquiries)
+/api/borrower/chat    - Borrower Agent (application intake)
+/api/loanofficer/chat - Loan Officer Agent (pipeline management)
+/api/underwriter/chat - Underwriter Agent (risk assessment)
+/api/ceo/chat         - Executive Agent (analytics)
+----
 
 . Review the architecture diagram below. Each pod you just listed maps to a component in this diagram:
 +
-image::fed-aura-platform-architecture.svg[{company_name} AI platform architecture,align=center]
+[#fed-aura-platform-architecture]
+.{company_name} AI platform architecture
+image::fed-aura-platform-architecture.svg[Diagram showing {assistant_name} connected to persona agents, self-hosted models, MCP tools, a RAG vector database, MLflow observability, and platform security layers,align=center]
++
+The platform is built around a set of cooperating components. At the center is {assistant_name} - a set of persona-specific agents orchestrated with LangGraph and powered by self-hosted models served through vLLM. Each agent has access to domain knowledge via RAG, can call real tools via MCP, and is observable through MLflow tracing. All inference goes through the MaaS gateway, which enforces access control and usage metering. NeMo Guardrails filter inputs and outputs at the boundary. OpenShell sandboxes agent execution with deny-by-default policies.
 
 **Mapping pods to architecture:**
 
@@ -291,6 +321,33 @@ image::fed-aura-platform-architecture.svg[{company_name} AI platform architectur
 |NeMo Guardrails, Garak, OpenShell
 |Module 9 (AI Safety)
 |===
+
+[%collapsible]
+.Architecture deep-dives: focused diagrams per layer (click to expand)
+====
+Each module zooms in on one layer of this architecture. You can refer back to these diagrams at any time.
+
+[cols="1,1,2",options="header"]
+|===
+|Focus Area |Diagram |Relevant Modules
+
+|Self-hosted models
+|image:fed-aura-platform-architecture-models-focus.svg[Models focus,width=200,link=self,window=blank]
+|Module 1 (Model Catalog), Module 2 (MaaS)
+
+|MaaS Gateway
+|image:fed-aura-platform-architecture-maas-focus.svg[MaaS focus,width=200,link=self,window=blank]
+|Module 2 (Models as a Service)
+
+|Prompt Registry
+|image:fed-aura-platform-architecture-prompt-registry-focus.svg[Prompt Registry focus,width=200,link=self,window=blank]
+|Module 3 (GenAI Playground)
+
+|RAG Pipeline
+|image:fed-aura-platform-architecture-rag-focus.svg[RAG focus,width=200,link=self,window=blank]
+|Module 5 (RAG & AutoRAG)
+|===
+====
 
 IMPORTANT: You do not need to understand every component now. Each module focuses on one layer. This exercise gives you the map so you know where each module fits in the bigger picture.
 

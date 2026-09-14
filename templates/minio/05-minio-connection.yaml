@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: pipeline
-  namespace: wskp-user1
+  namespace: wksp-user1
   labels:
     opendatahub.io/dashboard: "true"
     opendatahub.io/managed: "true"
@@ -17,5 +17,5 @@ stringData:
   AWS_ACCESS_KEY_ID: minio
   AWS_SECRET_ACCESS_KEY: IJrixDGbADAkgey5
   AWS_DEFAULT_REGION: wonderland
-  AWS_S3_ENDPOINT: http://minio-service.wskp-user1.svc.cluster.local:9000
+  AWS_S3_ENDPOINT: http://minio-service.wksp-user1.svc.cluster.local:9000
   AWS_S3_BUCKET: pipeline

@@ -1,9 +1,8 @@
 == Module 1: Model Catalog and Deployment
 :navtitle: Model Catalog and Deployment
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Lenora depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other module in this workshop.
 

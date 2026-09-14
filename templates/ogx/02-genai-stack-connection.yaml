@@ -11,4 +11,4 @@ metadata:
 type: Opaque
 stringData:
   OGX_CLIENT_API_KEY: REPLACE_ME
-  OGX_CLIENT_BASE_URL: http://lsd-genai-playground-service.<NAMESPACE>.svc.cluster.local:8321
+  OGX_CLIENT_BASE_URL: http://lsd-genai-playground-service.wksp-user1.svc.cluster.local:8321

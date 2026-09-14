@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio
-  namespace: wskp-user1
+  namespace: wksp-user1
 spec:
   replicas: 1
   strategy:

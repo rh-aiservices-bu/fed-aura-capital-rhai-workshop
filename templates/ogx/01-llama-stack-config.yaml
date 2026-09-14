@@ -30,13 +30,6 @@ data:
           base_url: https://maas-rhdp.apps.maas.redhatworkshops.io/v1
           max_tokens: ${env.VLLM_MAX_TOKENS_1:=4096}
           tls_verify: ${env.VLLM_TLS_VERIFY:=true}
-      - provider_id: vllm-inference-2
-        provider_type: remote::vllm
-        config:
-          api_token: ${env.VLLM_API_TOKEN_2:=fake}
-          base_url: https://gpt-oss-20b-kserve-workload-svc.llm.svc.cluster.local:8000/v1
-          max_tokens: ${env.VLLM_MAX_TOKENS_2:=4096}
-          tls_verify: false
       - provider_id: vllm-inference-tinyllama
         provider_type: remote::vllm
         config:
@@ -149,11 +142,6 @@ data:
         model_type: llm
         metadata:
           display_name: gpt-oss-120b
-      - provider_id: vllm-inference-2
-        model_id: gpt-oss-20b
-        model_type: llm
-        metadata:
-          display_name: OpenAI gpt-oss-20b
       - provider_id: vllm-inference-tinyllama
         model_id: tinyllama
         model_type: llm

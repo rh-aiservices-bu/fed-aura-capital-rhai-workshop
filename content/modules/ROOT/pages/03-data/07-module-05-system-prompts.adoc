@@ -1,9 +1,8 @@
 = System Prompts
-:navtitle: System Prompts
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:navtitle: System Prompts
+:toc: macro
+:toclevels: 1
 
 Private data for best results.
 

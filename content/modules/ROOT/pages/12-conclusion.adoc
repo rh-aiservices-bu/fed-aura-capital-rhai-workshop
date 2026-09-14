@@ -1,9 +1,8 @@
 = Conclusion
 :imagesdir: ../assets/images
 :navtitle: Conclusion
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Congratulations! You have completed the Fed Aura Capital AI Workshop and built a production-ready AI platform on Red Hat OpenShift AI.
 

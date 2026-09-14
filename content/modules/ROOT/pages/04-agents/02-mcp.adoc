@@ -1,0 +1,137 @@
+= Exercise 3: Tools and MCP
+:navtitle: MCP and Tool Access
+:imagesdir: ../assets/images
+:toc:
+:toc-placement: preamble
+:icons: font
+
+Lenora called five tools in her risk assessment. Those tools did not come from the LLM — they came from external servers that the platform connected her to through a standard protocol called MCP.
+
+**MCP — Model Context Protocol** is an open standard that defines how AI agents discover and call external tools. Before MCP, connecting an agent to a tool meant hardcoding the tool's definition into the agent's code — every agent had to know about every tool it might ever use. MCP changes this: any agent that speaks the protocol can connect to any server that speaks it, without any custom integration code. Think of it like USB for AI tool access — a universal connector that works regardless of what is on either end.
+
+The platform hosts an MCP gateway that registers tool servers centrally. Agents connect to the gateway, the gateway routes calls to the appropriate server, and the results come back through the same channel. Adding a new tool means registering a new server with the gateway — no changes to any agent.
+
+== Exercise 3: Explore the MCP Catalog
+
+. Navigate to *Gen AI Studio > AI Asset Endpoints* and select the *MCP Servers* tab:
++
+// TODO: screenshot of AI Asset Endpoints with MCP Servers tab selected (mcp-catalog-tab.png)
+image::mcp-catalog-tab.png[AI Asset Endpoints showing the MCP Servers tab with registered tool servers,link=self,window=blank,width=700]
+
+. Browse the registered MCP servers. You will see a catalog of available tool servers — some built by Red Hat, and some from the broader MCP ecosystem.
+
+. There are also already 2 MCP servers deployed in your environment. Go to AI Asset endpoints > MCP servers in order to see them. The two servers are:
++
+* *Risk Server MCP* — provides DTI calculation, asset sufficiency assessment, and ML-backed loan approval prediction
+* *Weather MCP* — provides weather and climate data, used by Lenora to flag flood risk and climate exposure for property locations
++
+// TODO: screenshot of Risk Server MCP and Weather MCP in the catalog (mcp-catalog-deployed.png)
+image::mcp-catalog-deployed.png[MCP catalog showing the Risk Server and Weather MCP servers with active status,link=self,window=blank,width=700]
+
+TIP: The MCP catalog is the governance layer for tools — the same way the Model Catalog governs which models teams can deploy, the MCP catalog governs which tool servers are registered, who can access them, and through which subscription tier.
+
+== Exercise 4: Understand the Risk MCP Server
+
+The Risk Server MCP is not just a calculation engine. It has a predictive AI model running behind one of its tools.
+
+When Lenora calls `uw_predict_loan_approval`, the MCP server does not apply a rules-based formula — it passes the application metrics through a scikit-learn classification model trained on historical loan application data. That model was trained using AutoML (which you can explore in the Advanced section at the end of this module). This is how Fed Aura connects classical machine learning to generative AI: the LLM orchestrates and decides what to ask, and the ML model predicts.
+
+The Risk Server exposes four tools:
+
+[cols="1,2",options="header"]
+|===
+| Tool | What it does
+
+| `calculate_dti`
+| Calculates debt-to-income ratio from monthly income and total debt obligations
+
+| `assess_asset_sufficiency`
+| Verifies that the applicant's cash reserves meet the minimum threshold for the loan type
+
+| `uw_predict_loan_approval`
+| Passes application metrics through the AutoML model to produce an approval prediction
+
+| `generate_risk_recommendation`
+| Synthesizes the outputs of the other tools into a structured recommendation
+|===
+
+Now let's use it directly through the Playground.
+
+. Go to *Gen AI Studio > Playground* and create a new Playground with the `gpt-oss-20b` model.
+
+. Click *Configure > MCP* and connect to the *Risk Server MCP*:
++
+// TODO: screenshot of Playground MCP configuration (mcp-playground-connect.png)
+image::mcp-playground-connect.png[Playground Configure panel showing the MCP tab with Risk Server MCP connected,link=self,window=blank,width=700]
+
+. Send the following prompt:
++
+[source,text]
+----
+I have a client earning $8,000/month with $2,400 in monthly debts. What's their debt-to-income ratio and is it acceptable for a conventional mortgage?
+----
+
+. Observe the response. The model calls `calculate_dti` and `assess_asset_sufficiency`, returns the exact DTI figure, and grounds its assessment in Fed Aura's actual underwriting thresholds — not general guidance from training data:
++
+// TODO: screenshot of response with MCP tool calls (mcp-risk-response.png)
+image::mcp-risk-response.png[Playground response showing tool calls to calculate_dti and the grounded DTI assessment,link=self,window=blank,width=700]
+
+NOTE: The Risk MCP server in this exercise requires no authentication. In production, Fed Aura's MCP gateway enforces API key authentication scoped per MCP server. It is the xxx bits on the traces.
+
+== Exercise 5: Playground With and Without MCP
+
+The difference between a chatbot and an agent is not the model — it is tool access. Let's see that difference directly.
+
+=== Without MCP
+
+. Create a fresh Playground with `gpt-oss-20b`. Do *not* connect any MCP tools.
+
+. Send:
++
+[source,text]
+----
+I have a client earning $8,000/month with $2,400 in monthly debts. What's their debt-to-income ratio and is it acceptable for a conventional mortgage?
+----
+
+. Observe the response. The model calculates DTI from the numbers you gave (30%) but hedges: "this is generally considered acceptable, but you should verify with your specific underwriting guidelines." It is doing arithmetic from the prompt — there is no tool call, no lookup against Fed Aura's actual thresholds, and no certainty.
++
+// TODO: screenshot of response without MCP (mcp-without-response.png)
+image::mcp-without-response.png[Playground response without MCP showing estimated DTI with hedge language,link=self,window=blank,width=700]
+
+=== With MCP
+
+. In the same Playground, click *Configure > MCP* and connect to the *Risk Server MCP*.
+
+. Send the exact same prompt again.
+
+. Observe the difference. The model now calls `calculate_dti` and `assess_asset_sufficiency`, returns values grounded in Fed Aura's underwriting rules, and gives a clear assessment — acceptable or not — without hedging:
++
+// TODO: screenshot of response with MCP (mcp-with-response.png)
+image::mcp-with-response.png[Playground response with MCP showing tool-backed DTI assessment without hedge language,link=self,window=blank,width=700]
+
+[cols="1,1,1",options="header"]
+|===
+| Dimension | Without MCP | With MCP
+
+| Answer precision
+| Estimated from prompt arithmetic
+| Calculated by `calculate_dti` tool
+
+| Source of truth
+| Model training data
+| Fed Aura's underwriting rules
+
+| Tool calls
+| None
+| `calculate_dti`, `assess_asset_sufficiency`
+
+| Hedge language
+| "verify with your guidelines"
+| Clear pass/fail against defined thresholds
+|===
+
+TIP: The question was identical. The model was identical. The only difference was whether Lenora had tool access. This is why MCP matters — it is not about making the model smarter, it is about giving it access to real systems with real data.
+
+=== What's Next?
+
+Lenora can call tools and deliver precise, grounded answers. But how do you know those answers are correct across the full range of questions she might face? How do you catch a regression when someone edits the system prompt? That is what continuous evaluation provides. In the next section, you will run model capability benchmarks, evaluate RAG quality, and use an LLM to judge Lenora's own responses.

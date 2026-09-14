@@ -41,7 +41,7 @@ spec:
       - name: HF_DATASETS_OFFLINE
         value: "1"
       - name: PGVECTOR_HOST
-        value: genai-pgvector.<NAMESPACE>.svc.cluster.local
+        value: genai-pgvector.wksp-user1.svc.cluster.local
       - name: PGVECTOR_PORT
         value: "5432"
       - name: PGVECTOR_DB

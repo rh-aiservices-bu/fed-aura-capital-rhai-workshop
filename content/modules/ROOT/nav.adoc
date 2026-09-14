@@ -6,16 +6,16 @@
 * xref:01-overview/04-details.adoc[Workshop Details]
 
 .Fast, Flexible, and Efficient Inferencing
-* xref:02-inference/01-model-deployment.adoc[Module 1: Model Catalog & Deployment]
-* xref:02-inference/04-module-02-maas.adoc[Module 2: Models as a Service]
-* xref:02-inference/05-module-03-playground.adoc[Module 3: GenAI Playground]
-* xref:02-inference/08-module-06-ogx.adoc[Module 6: OGX]
+* xref:02-inference/01-model-deployment.adoc[1. Model Catalog & Deployment]
+* xref:02-inference/02-deploy-model-cpu.adoc[2. Deploy a Model]
+* xref:02-inference/03-deploy-a-model-with-llmd.adoc[3. Deploy a Model with llm-d]
+* xref:02-inference/04-access-a-model-through-maas.adoc[4. Models as a Service]
 
 .Connecting Data to Models and Agents
 * xref:03-data/07-module-05-autorag.adoc[Module 5: RAG & AutoRAG]
 
 .Accelerate Agentic AI Innovation
-* xref:04-agents/06-module-04-automl.adoc[Module 4: Predictive AI with AutoML]
+* xref:04-agents/06-module-04-automl.adoc[Module 6: Predictive AI with AutoML]
 * xref:04-agents/09-module-07-mcp-ecosystem.adoc[Module 7: MCP Ecosystem]
 * xref:04-agents/10-module-08-evaluations-tracing.adoc[Module 8: Evaluations & Tracing]
 

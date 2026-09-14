@@ -1,9 +1,8 @@
 == Module 1: Model Catalog and Deployment
 :navtitle: Model Catalog and Deployment
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Model choices and compression - smaller size, same intelligence.
 

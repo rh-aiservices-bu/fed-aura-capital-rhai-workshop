@@ -1,9 +1,8 @@
 = Module 6: OGX - Unified Agentic API Surface
 :navtitle: OGX
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 One API. Any framework. Any backend.
 

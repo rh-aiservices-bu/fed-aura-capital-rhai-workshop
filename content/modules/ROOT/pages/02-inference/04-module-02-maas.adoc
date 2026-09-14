@@ -1,9 +1,8 @@
 == Module 2: Models as a Service
 :navtitle: Models as a Service
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Tokens on demand - governed access for every team.
 

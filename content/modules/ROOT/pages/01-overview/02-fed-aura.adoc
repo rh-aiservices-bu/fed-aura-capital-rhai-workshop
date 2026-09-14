@@ -1,9 +1,8 @@
 = {company_name} & {assistant_name}
 :imagesdir: ../assets/images
 :navtitle: {company_name}
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 == The platform you're joining
 

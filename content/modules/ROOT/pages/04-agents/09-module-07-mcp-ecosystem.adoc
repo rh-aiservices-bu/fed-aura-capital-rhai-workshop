@@ -1,9 +1,8 @@
 = Module 7: MCP Ecosystem
 :navtitle: MCP Ecosystem
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Tools that let agents interact with other systems.
 

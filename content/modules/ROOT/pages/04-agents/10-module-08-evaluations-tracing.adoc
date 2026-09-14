@@ -1,9 +1,8 @@
 = Module 8: Evaluations and Tracing with MLflow
 :navtitle: Evaluations and Tracing
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Monitoring and measuring every AI decision.
 

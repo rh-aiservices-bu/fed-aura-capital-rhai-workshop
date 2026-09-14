@@ -1,9 +1,8 @@
 = Workshop Overview
 :imagesdir: ../assets/images
 :navtitle: Workshop Overview
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 == Learning objectives
 

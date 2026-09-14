@@ -1,9 +1,8 @@
 = Module 9: AI Safety and Secure Agent Onboarding
 :navtitle: AI Safety
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Protecting customers and the business.
 

@@ -1,9 +1,8 @@
 = Workshop details
 :imagesdir: ../assets/images
 :navtitle: Workshop Details
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 == Workshop interface
 

@@ -1,9 +1,8 @@
 == Module 3: GenAI Playground
 :navtitle: GenAI Playground
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Taming model behaviors with prompts.
 

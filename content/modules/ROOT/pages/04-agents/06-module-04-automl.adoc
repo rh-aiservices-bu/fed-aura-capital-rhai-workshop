@@ -1,9 +1,8 @@
 = Module 4: Predictive AI with AutoML
 :navtitle: AutoML
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
-:icons: font
+:toc: macro
+:toclevels: 1
 
 Less gut feelings, more math.
 

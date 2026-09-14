@@ -14,7 +14,7 @@ metadata:
   name: genai-pgvector-credentials
 type: Opaque
 stringData:
-  password: REPLACE_ME
+  password: pgvector123
 ---
 apiVersion: apps/v1
 kind: Deployment

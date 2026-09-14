@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: automl-bucket-setup
-  namespace: wskp-user1
+  namespace: wksp-user1
 spec:
   ttlSecondsAfterFinished: 300
   backoffLimit: 4
@@ -31,7 +31,7 @@ spec:
             - name: AWS_DEFAULT_REGION
               value: wonderland
             - name: AWS_S3_ENDPOINT
-              value: http://minio-service.wskp-user1.svc.cluster.local:9000
+              value: http://minio-service.wksp-user1.svc.cluster.local:9000
           volumeMounts:
             - name: training-data
               mountPath: /data

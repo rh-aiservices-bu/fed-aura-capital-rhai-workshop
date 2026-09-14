@@ -6,7 +6,7 @@ resources:
   - 01-automl-bucket-job.yaml
 configMapGenerator:
   - name: automl-training-data
-    namespace: wskp-user1
+    namespace: wksp-user1
     files:
       - cleaned_loan_data.csv
     options:

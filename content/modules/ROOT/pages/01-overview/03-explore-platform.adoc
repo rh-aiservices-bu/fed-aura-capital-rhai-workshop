@@ -99,10 +99,19 @@ image::mortgage-app.png[]
 . Scroll down a bit. Try a sample conversation by clicking the **Explore Products** button:
 +
 image::explore-products.png[Explore Products button on the {company_name} landing page,link=self,window=blank,width=400]
+
+. In the chat panel, ask {assistant_name} about mortgage products:
++
+[source,text]
+----
+What mortgage products do you offer? I'd like to compare my options.
+----
 +
 The Prospect Agent should respond with mortgage product options:
 +
-image::agentic-app2.png[Chat interface with Prospect Agent responding with loan options,link=self,window=blank,width=700]
+image::module5-prospect-products.png[{assistant_name} responding with mortgage product options,link=self,window=blank,width=700]
++
+Remember this question - you will ask it again in Module 5 under different configurations to see how the answer changes when you add system prompts and RAG.
 
 NOTE: The LLM backend has rate limiting and may occasionally time out. If the agent does not respond or you see an error, reload the page and ask the question again.
 
@@ -110,7 +119,7 @@ NOTE: Because the application uses generative AI, responses are non-deterministi
 
 === Try the Borrower experience (Sarah Mitchell)
 
-[start=3]
+[start=4]
 . From the application landing page, click **Sign In**:
 +
 image::sign-in.png[]
@@ -142,7 +151,7 @@ Notice the response includes precise numbers from the affordability calculator, 
 
 === Try the CEO experience (David Park)
 
-[start=7]
+[start=8]
 . Sign out of the Borrower persona. Click **Sign In** again, and this time select the **CEO** persona:
 +
 image::ceo-sign-in.png[]
@@ -166,7 +175,7 @@ image::agentic-app6.png[CEO Assistant responding with portfolio health overview,
 
 Before we move on, let's generate a richer session with multiple conversation exchanges (called "turns" in AI terminology - each turn is one question from you and one response from the agent). This will give us more data to explore when we get to tracing in Module 8.
 
-[start=10]
+[start=11]
 . In the same chat, ask a follow-up question:
 +
 [source,console,role=execute,subs=attributes+]
@@ -287,7 +296,7 @@ The platform is built around a set of cooperating components. At the center is {
 
 |Data
 |pgvector, RAG, Prompt Registry
-|Module 3 (GenAI Playground), Module 5 (RAG & AutoRAG)
+|Module 5 (System Prompts, RAG & AutoRAG)
 
 |Agentic
 |LangGraph, MCP, MLflow
@@ -317,7 +326,7 @@ Each module zooms in on one layer of this architecture. You can refer back to th
 
 |Prompt Registry
 |image:fed-aura-platform-architecture-prompt-registry-focus.svg[Prompt Registry focus,width=200,link=self,window=blank]
-|Module 3 (GenAI Playground)
+|Module 5 (System Prompts)
 
 |RAG Pipeline
 |image:fed-aura-platform-architecture-rag-focus.svg[RAG focus,width=200,link=self,window=blank]

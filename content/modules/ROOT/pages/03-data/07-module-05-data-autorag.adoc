@@ -1,0 +1,147 @@
+= Data Preprocessing & AutoRAG
+:navtitle: Data Preprocessing & AutoRAG
+:imagesdir: ../assets/images
+:toc:
+:toc-placement: preamble
+:icons: font
+
+From clean text to messy enterprise documents.
+
+In the previous section, you uploaded a plain text product catalog and RAG worked perfectly. Real enterprise data is rarely that clean. This section covers how to preprocess complex documents for RAG and how to automate the entire pipeline.
+
+Estimated time: *5 minutes* (plus optional 12+ minutes for AutoRAG)
+
+== Learning Objectives
+
+By the end of this section, you will be able to:
+
+* Understand the role of document preprocessing (Docling) in enterprise RAG pipelines
+
+== Data Preprocessing and Document Intelligence
+
+The product catalog you uploaded was plain text - clean, structured, and ready for chunking. That made RAG straightforward. But look at the document again: it is a simple `.txt` file with clear headings and consistent formatting.
+
+In a real enterprise, documents rarely look like that. Mortgage companies deal with:
+
+* PDF rate sheets with tables and footnotes
+* Scanned compliance documents that need OCR
+* Underwriting manuals with charts, decision trees, and embedded images
+* PowerPoint presentations from product launches
+* HTML pages from regulatory databases
+
+LLMs are fundamentally text-in, text-out systems. Before a model can reason about a chart in a PDF, that chart needs to be converted to structured text. This is where document preprocessing comes in.
+
+=== Docling: Document intelligence for RAG
+
+Red Hat AI includes **Docling** for document preprocessing. Docling uses vision models and layout analysis to identify text blocks, tables, figures, and headers in complex documents. It preserves document structure so that chunking for RAG retains semantic boundaries - it does not split mid-table or mid-paragraph.
+
+IMPORTANT: Explore document preprocessing with Docling in this interactive demo: https://app.arcade.software/flows/RK066swfARYNhOwhilvK/view[Docling Arcade Demo,window=blank]
+
+[%collapsible]
+.Enterprise document formats Docling handles (click to expand)
+====
+[cols="1,2",options="header"]
+|===
+| Format | Challenge
+
+| PDF with tables
+| Tables must be linearized or converted to structured text while preserving row-column relationships
+
+| Scanned PDFs
+| OCR is required before any text extraction can happen
+
+| PDFs with charts
+| Chart data must be described in text form so the model can reason about trends and values
+
+| PowerPoint
+| Slides contain mixed text, images, and layouts that need to be separated and processed individually
+
+| HTML
+| Boilerplate navigation and ads must be stripped while preserving the semantic content structure
+|===
+====
+
+== Before and After: The Four Configurations
+
+Across the previous sections, you asked the same question in four configurations. Here is how each one performed:
+
+[cols="1,1,1,1,1",options="header"]
+|===
+| Dimension | No Prompt | System Prompt Only | RAG Only | RAG + Global Prompt
+
+| Knowledge Source
+| Model training data
+| Hardcoded in prompt text
+| Retrieved from documents
+| Retrieved from documents
+
+| Accuracy
+| Generic, may hallucinate
+| Correct only if prompt is current
+| Grounded in source documents
+| Grounded in source documents
+
+| Persona & Style
+| None
+| Defined by prompt
+| None
+| Consistent with {assistant_name}
+
+| Maintenance
+| None
+| Manual prompt updates
+| Upload new documents
+| Upload documents + version prompts
+
+| Scalability
+| N/A
+| Limited by token window
+| Scales with document volume
+| Scales with document volume
+|===
+
+== Optional: AutoRAG Pipeline
+
+WARNING: The AutoRAG pipeline takes at least *12 minutes* to complete. This section is optional and intended for participants who want to explore the automated pipeline approach.
+
+The Playground's RAG toggle is a manual workflow - you upload files one at a time and the system processes them on the spot. This works for experimentation, but production RAG systems need to handle hundreds of documents, update automatically when new files arrive, and manage chunking and embedding parameters at scale.
+
+AutoRAG provides the same RAG capability as an automated pipeline. You define a data source, configure chunking and embedding parameters, and the pipeline processes documents continuously. When new documents are added, the pipeline re-indexes automatically.
+
+// TODO: Add step-by-step AutoRAG pipeline instructions with screenshots.
+// The user will provide screenshots and detailed steps later.
+// Steps should cover:
+// 1. Navigate to AutoRAG in the RHOAI dashboard
+// 2. Create a new AutoRAG pipeline
+// 3. Configure the data source (point to document storage)
+// 4. Set chunking parameters (chunk size, overlap)
+// 5. Select embedding model
+// 6. Run the pipeline and wait for completion (~12 minutes)
+// 7. Connect the pipeline output to a Playground or model endpoint
+// 8. Test with the thread prompt and verify results match manual RAG
+
+// TODO: capture screenshot of AutoRAG pipeline creation (module5-autorag-create.png)
+// TODO: capture screenshot of AutoRAG pipeline running (module5-autorag-running.png)
+// TODO: capture screenshot of AutoRAG pipeline complete (module5-autorag-complete.png)
+
+== Module Summary
+
+=== What You Accomplished
+
+* Tested system prompts for injecting domain knowledge and discovered their limits - token window, maintenance burden, staleness
+* Enabled RAG in the GenAI Playground and uploaded {company_name}'s product catalog
+* Verified that RAG-grounded responses contain accurate, document-backed facts
+* Combined RAG with {company_name}'s global system prompt to reproduce {assistant_name}'s production behavior
+* Learned how Docling handles enterprise document preprocessing for RAG pipelines
+
+=== Key Takeaways
+
+* System prompts define behavior and persona but are not the right tool for large, changing knowledge bases
+* RAG grounds model responses in retrieved documents, providing current, organization-specific answers traceable to source text
+* A production AI assistant combines RAG (for facts) with a tuned system prompt (for persona and style)
+* Enterprise RAG pipelines require document preprocessing to handle PDFs, images, tables, and other complex formats
+* Knowledge updates happen in minutes (upload a new document) instead of days or weeks (retrain the model)
+
+=== What's Next
+
+In Module 6, you will explore OGX - the unified agentic API surface that provides the governed API layer beneath {company_name}'s agents, including the RAG capabilities you just used in the Playground.

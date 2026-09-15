@@ -4,18 +4,12 @@
 :toc: macro
 :toclevels: 1
 
-Model choices and compression - smaller size, same intelligence.
-
-Lenora depends on language models for every conversation, reasoning step, and tool decision.
-In the complete platform architecture, those models sit behind the MaaS gateway and provide inference to all five persona-specific agents.
-This module zooms in on that model-serving layer.
+Lenora depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other module in this workshop.
 
 .Module 1 focus: self-hosted model inference
 image::fed-aura-platform-architecture-models-focus.svg[The Fed Aura Capital platform architecture with the self-hosted models layer highlighted,align=center]
 
-Fed Aura Capital wants to replace per-token dependence on external model vendors with private, self-hosted inference.
-You will browse the Red Hat OpenShift AI Model Catalog, deploy models on CPU and GPU, scale inference with llm-d, and measure the effect of quantization on latency.
-The endpoint produced here becomes the intelligence layer that later modules govern, connect to tools and knowledge, observe, and secure.
+You will browse the Red Hat OpenShift AI Model Catalog, deploy models, scale inference with llm-d, and learn about Models as a Service concept.
 
 Estimated time: *25 minutes*
 
@@ -24,85 +18,48 @@ Estimated time: *25 minutes*
 By the end of this module you will be able to:
 
 * Navigate the RHOAI Model Catalog and identify validated models
-* Deploy an LLM on CPU and understand hardware profile selection
-* Deploy with GPU and llm-d distributed inference
-* Benchmark quantized vs unquantized models and interpret TTFT metrics
+* Deploy an LLM on CPU and use Gen AI Playground to interact with the model
+* Deploy the same model with llm-d distributed inference
+* Access the deployed model through Models as a Service (MaaS) and observe usage in the dashboard
 
 == Exercise 1: Explore the Model Catalog
 
-Browse the RHOAI Model Catalog, filter by task type, and identify NVIDIA Nemotron models available for deployment.
+Red Hat AI comes with a curated set of models that are ready for production use. Before deploying anything, you need to know what models are available and how to evaluate them. In this exercise, you will explore the Model Catalog and learn how to identify the right model for your use case.
 
-TBD
+. Navigate to the *OpenShift AI Dashboard* tab. On the left menu, select *AI Hub > Models*:
++
+image::model-catalog-overview.png[Model Catalog showing available models with tags,link=self,window=blank,width=700]
 
-== Exercise 2: Deploy a Model on CPU
+. Look at the tags on the model cards. There are two types of certified models:
++
+* *Red Hat AI models* — fully supported by Red Hat with legal indemnification included
+* *Validated Models* — third-party models verified by Red Hat to ensure reliable performance and compatibility on OpenShift AI
 
-Walk through the Deploy wizard, select a CPU hardware profile, and configure a vLLM ServingRuntime for inference.
+. Click on any model to open its model card. Notice what information is available:
++
+** *Description and tags* — what the model is for, its size, and its architecture
+** *License and documentation* — the terms under which you can use and distribute the model
+** *Performance insights* — Red Hat benchmarks this model on different hardware across common use cases such as chatbot, code generation, and document summarization, so you can compare expected throughput and latency before committing to a deployment
++
+image::model-card-detail.png[Model card showing description, license, and performance benchmarks,link=self,window=blank,width=700]
++
+TIP: The performance benchmarks on the model card tell you how the model performs on specific hardware profiles. Use these numbers to size your deployment before you provision GPU capacity.
 
-TBD
+. Go back to the Catalog and select the *Other Models* tab. This tab shows models that are not Large Language Models, but rather guardian models, embedding models, or the models that you make available within your organization:
++
+image::model-catalog-other-tab.png[Other Models tab showing organization-uploaded models including Qwen3 0.6B,link=self,window=blank,width=700]
 
-=== Quick Test: GenAI Playground
+. Locate the model called *Qwen3 0.6B*. This is a small open-source LLM — at 0.6 billion parameters, it is compact enough to run on CPU, which makes it a good choice for a quick hands-on deployment without requiring a GPU.
 
-Before moving on, open the GenAI Playground from the RHOAI dashboard and point it at the CPU model you just deployed.
-Send a simple prompt - something like _"What is a fixed-rate mortgage?"_ - and confirm that the model responds.
-This is the fastest way to verify that the inference endpoint is live, and in Module 3 you will return to the Playground to compare multiple models and shape Lenora's behavior with system prompts.
+=== What's in the catalog?
 
-== Exercise 3: Deploy with GPU and llm-d
+Before moving on, take a moment to understand what you just saw:
 
-Configure a GPU hardware profile, enable "Distributed Inference with llm-d", and set the number of replicas.
+* The Model Catalog is not just a list of downloads — it is a governed library where each model carries metadata about its origin, license, hardware requirements, and Red Hat validation status
+* When Fed Aura Capital's platform team adds a new model, it appears in *Other Models*
 
-TBD
+== What's Next?
 
-== Exercise 4: Benchmark Quantized vs Unquantized
+You have found the model. Now let's deploy it.
 
-Run a live benchmark against both model variants and compare results.
-Key metrics to observe: TTFT of 35.6ms (quantized) vs 60.4ms (unquantized), a 1.69x speedup, and prefix cache hit rate.
-
-TBD
-
-== Contrast: Cloud API vs Self-hosted on RHOAI
-
-[cols="1,2,2", options="header"]
-|===
-| Dimension
-| Without (Cloud API)
-| With (Self-hosted on RHOAI)
-
-| Cost
-| Per-token billing
-| Fixed infrastructure
-
-| Latency
-| Network round-trip
-| Local inference 35.6ms TTFT
-
-| Data Sovereignty
-| Data leaves network
-| Stays in-cluster
-
-| Model Choice
-| Vendor's selection only
-| Full catalog
-
-| Scaling
-| Vendor-managed
-| llm-d with controlled replicas
-|===
-
-== Module Summary
-
-=== What You Accomplished
-
-* Browsed the RHOAI Model Catalog and located validated Nemotron models
-* Deployed an LLM using both CPU and GPU hardware profiles
-* Enabled llm-d distributed inference with configurable replicas
-* Ran quantized vs unquantized benchmarks and measured TTFT improvements
-
-=== Key Takeaways
-
-* Quantized models deliver comparable quality at significantly lower latency (1.69x speedup in TTFT)
-* Self-hosted inference eliminates per-token costs and keeps data inside the cluster
-* llm-d provides scalable, distributed inference without manual load-balancing
-
-=== What's Next
-
-In the next module you will publish the deployed model as a Models as a Service (MaaS) endpoint, enabling governed access for every team in the organization.
+In the next exercise, you will deploy Qwen3 0.6B using vLLM on CPU, interact with it through GenAI Playground, and then clean up before deploying the same model again using llm-d distributed inference.

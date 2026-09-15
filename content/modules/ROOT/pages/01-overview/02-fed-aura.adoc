@@ -27,7 +27,7 @@ The platform now runs self-hosted models with vLLM, a distributed inference laye
 | No usage metering or access control | Subscription tiers with API key management
 |===
 
-*Modules*: Model Catalog & Deployment, Models as a Service
+*Sections*: 2.1 Model Catalog & Deployment, 2.4 Models as a Service
 
 === Pillar 2 - Connecting Data to Models and Agents
 
@@ -45,7 +45,7 @@ The platform now shapes {assistant_name} into a domain expert through configured
 | No way to update model knowledge without retraining | Upload new documents; knowledge updates in minutes
 |===
 
-*Modules*: GenAI Playground, RAG & AutoRAG, OGX
+*Sections*: 3.1 System Prompts, 3.2 RAG & Knowledge Grounding, 3.3 AutoRAG
 
 === Pillar 3 - Accelerate Agentic AI Innovation
 
@@ -63,7 +63,7 @@ The platform connects agents to real tools through the MCP Ecosystem, captures e
 | Manual quality spot-checking | Automated evaluation pipelines with EvalHub
 |===
 
-*Modules*: MCP Ecosystem, Evaluations & Tracing
+*Sections*: 4.1 Agentic AI & Tracing, 4.2 Tools and MCP, 4.3 Continuous Evaluation
 
 === Pillar 4 - Securing AI from Sandbox to Production
 
@@ -82,7 +82,7 @@ The platform now deploys NeMo Guardrails at the inference boundary, uses Garak f
 | No security observability | Structured audit events, SIEM-ready
 |===
 
-*Modules*: AI Safety & Secure Agent Onboarding
+*Sections*: 5.1 AI Safety & Secure Agent Onboarding
 
 == The personas
 

@@ -1,4 +1,4 @@
-= Module 4: Accelerate Agentic AI Innovation
+= Accelerate Agentic AI Innovation
 :navtitle: Accelerate Agentic AI Innovation
 :imagesdir: ../assets/images
 :toc:
@@ -7,13 +7,13 @@
 
 From answering questions to taking action.
 
-The data module showed RAG grounding Lenora with documents. But Lenora doesn't just look up facts — she calls tools, runs calculations, and coordinates across systems. This module covers the agentic layer: tool access via MCP, continuous evaluation with EvalHub, and the predictive AI model powering risk assessments.
+The data section showed RAG grounding Lenora with documents. But Lenora doesn't just look up facts - she calls tools, runs calculations, and coordinates across systems. This section covers the agentic layer: tool access via MCP, continuous evaluation with EvalHub, and the predictive AI model powering risk assessments.
 
 Estimated time: *45 minutes*
 
 == Learning Objectives
 
-By the end of this module, you will be able to:
+By the end of this section, you will be able to:
 
 * Observe Lenora making tool calls as the Loan Officer persona
 * Trace a multi-step agent decision end-to-end in MLflow

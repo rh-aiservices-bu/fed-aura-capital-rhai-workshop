@@ -34,7 +34,7 @@ TIP: The MCP catalog is the governance layer for tools — the same way the Mode
 
 The Risk Server MCP is not just a calculation engine. It has a predictive AI model running behind one of its tools.
 
-When Lenora calls `uw_predict_loan_approval`, the MCP server does not apply a rules-based formula — it passes the application metrics through a scikit-learn classification model trained on historical loan application data. That model was trained using AutoML (which you can explore in the Advanced section at the end of this module). This is how Fed Aura connects classical machine learning to generative AI: the LLM orchestrates and decides what to ask, and the ML model predicts.
+When Lenora calls `uw_predict_loan_approval`, the MCP server does not apply a rules-based formula — it passes the application metrics through a scikit-learn classification model trained on historical loan application data. That model was trained using AutoML (which you can explore in the Advanced section at the end of this section). This is how Fed Aura connects classical machine learning to generative AI: the LLM orchestrates and decides what to ask, and the ML model predicts.
 
 The Risk Server exposes four tools:
 

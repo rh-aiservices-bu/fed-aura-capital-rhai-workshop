@@ -1,12 +1,12 @@
-== Module 1: Model Catalog and Deployment
+= Model Catalog and Deployment
 :navtitle: Model Catalog and Deployment
 :imagesdir: ../assets/images
 :toc: macro
 :toclevels: 1
 
-Lenora depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other module in this workshop.
+Lenora depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other section in this workshop.
 
-.Module 1 focus: self-hosted model inference
+.Section 2 focus: self-hosted model inference
 image::fed-aura-platform-architecture-models-focus.svg[The Fed Aura Capital platform architecture with the self-hosted models layer highlighted,align=center]
 
 You will browse the Red Hat OpenShift AI Model Catalog, deploy models, scale inference with llm-d, and learn about Models as a Service concept.
@@ -15,7 +15,7 @@ Estimated time: *25 minutes*
 
 == Learning Objectives
 
-By the end of this module you will be able to:
+By the end of this section you will be able to:
 
 * Navigate the RHOAI Model Catalog and identify validated models
 * Deploy an LLM on CPU and use Gen AI Playground to interact with the model

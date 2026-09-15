@@ -5,7 +5,7 @@
 :toc-placement: preamble
 :icons: font
 
-WARNING: This is an advanced optional section. It requires additional time and is intended for participants who want to understand how the Risk MCP's predictive model was trained. The main module exercises are complete — this section is self-contained and can be done independently.
+WARNING: This is an advanced optional section. It requires additional time and is intended for participants who want to understand how the Risk MCP's predictive model was trained. The main section exercises are complete — this section is self-contained and can be done independently.
 
 == Where Does the Prediction Come From?
 

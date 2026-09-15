@@ -1,4 +1,4 @@
-= Module 4: Predictive AI with AutoML
+= Predictive AI with AutoML
 :navtitle: AutoML
 :imagesdir: ../assets/images
 :toc: macro
@@ -80,7 +80,7 @@ TBD
 | Structured model outputs + traces
 |===
 
-== Module Summary
+== Section Summary
 
 === What You Accomplished
 
@@ -98,6 +98,6 @@ TBD
 
 === What's Next
 
-The model now behaves like a domain expert and can predict loan outcomes, but it still relies entirely on its training data for knowledge. In Module 5, you will ground the model in Fed Aura Capital's private policy documents using RAG and AutoRAG, so Lenora can answer questions about specific rates, FHA guidelines, and TRID disclosures.
+The model now behaves like a domain expert and can predict loan outcomes, but it still relies entirely on its training data for knowledge. In section 3.1, you will ground the model in Fed Aura Capital's private policy documents using RAG and AutoRAG, so Lenora can answer questions about specific rates, FHA guidelines, and TRID disclosures.
 
 Estimated time: *25 minutes*

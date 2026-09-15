@@ -177,7 +177,7 @@ Each RAG pattern is a unique combination of settings that AutoRAG evaluates. The
 After the run completes, you can click any pattern to see its configuration details, per-question scores, and sample Q&A responses. You can also select **Try this pattern** to test it interactively in a chat panel.
 ====
 
-== Module Summary
+== Section Summary
 
 === What You Accomplished
 
@@ -197,4 +197,4 @@ After the run completes, you can click any pattern to see its configuration deta
 
 === What's Next
 
-In Module 6, you will explore OGX - the unified agentic API surface that provides the governed API layer beneath {company_name}'s agents, including the RAG capabilities you just used in the Playground.
+In section 2.4, you will explore OGX - the unified agentic API surface that provides the governed API layer beneath {company_name}'s agents, including the RAG capabilities you just used in the Playground.

@@ -1,4 +1,4 @@
-= Module 8: Evaluations and Tracing with MLflow
+= Evaluations and Tracing with MLflow
 :navtitle: Evaluations and Tracing
 :imagesdir: ../assets/images
 :toc: macro
@@ -14,7 +14,7 @@ By the end of this module, you will be able to:
 
 * Navigate MLflow Experiments and explore agent traces
 * Deep-dive into a multi-step agent trace to understand the full decision path
-* Verify that predictive model integration (AutoML from Module 4) appears in agent traces
+* Verify that predictive model integration (AutoML from section 4.1) appears in agent traces
 * Run an automated evaluation pipeline and review results
 * Use EvalHub for centralized evaluation management and cross-version comparison
 
@@ -46,7 +46,7 @@ TBD
 
 == Exercise 3: Verify Predictive Model Integration
 
-Confirm that the AutoML predictive model from Module 4 is being called within the agent trace and producing actionable outputs.
+Confirm that the AutoML predictive model from section 4.1 is being called within the agent trace and producing actionable outputs.
 
 TBD
 
@@ -107,26 +107,26 @@ TBD
 | Structured, timestamped, reproducible traces
 |===
 
-== Module Summary
+== Section Summary
 
 === What You Accomplished
 
 * Navigated MLflow Experiments and explored the list of traced risk assessment requests
 * Deep-dived into a multi-step agent trace (16.81s latency, five tool calls) and understood the full decision path from input_shield to final recommendation
-* Verified that the AutoML predictive model from Module 4 appears in agent traces as `uw_predict_loan_approval`, producing actionable loan approval decisions
+* Verified that the AutoML predictive model from section 4.1 appears in agent traces as `uw_predict_loan_approval`, producing actionable loan approval decisions
 * Ran an automated evaluation pipeline with four stages and reviewed the results
 * Used EvalHub to compare metrics across system prompt versions and identify regressions
 
 === Key Takeaways
 
 * MLflow tracing provides full observability into every agent decision - what tools were called, what inputs they received, what outputs they produced, and how long each step took
-* Predictive model integration is verifiable through traces - you can confirm that the AutoML model from Module 4 is actively used in agent decision-making
+* Predictive model integration is verifiable through traces - you can confirm that the AutoML model from section 4.1 is actively used in agent decision-making
 * Automated evaluation pipelines replace manual spot-checking with repeatable, quantifiable quality measurement
 * EvalHub enables cross-version comparison so prompt changes can be validated before deployment, catching regressions early
 * Structured, timestamped traces satisfy regulatory requirements for traceability and auditability
 
 === What's Next
 
-You can now trace and measure every decision Lenora makes. But before she goes to production, the security team needs to ensure she cannot be manipulated, leak data, or bypass compliance. In Module 9, you will implement defense-in-depth AI safety with guardrails, adversarial testing, and secure agent onboarding.
+You can now trace and measure every decision Lenora makes. But before she goes to production, the security team needs to ensure she cannot be manipulated, leak data, or bypass compliance. In section 5.1, you will implement defense-in-depth AI safety with guardrails, adversarial testing, and secure agent onboarding.
 
 Estimated time: *30 minutes*

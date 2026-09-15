@@ -1,4 +1,4 @@
-= Module 9: AI Safety and Secure Agent Onboarding
+= AI Safety and Secure Agent Onboarding
 :navtitle: AI Safety
 :imagesdir: ../assets/images
 :toc: macro
@@ -179,7 +179,7 @@ TBD
 | Validated security posture with documented evidence
 |===
 
-== Module Summary
+== Section Summary
 
 === What You Accomplished
 

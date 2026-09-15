@@ -1,4 +1,4 @@
-= Module 6: OGX - Unified Agentic API Surface
+= OGX - Unified Agentic API Surface
 :navtitle: OGX
 :imagesdir: ../assets/images
 :toc: macro
@@ -41,7 +41,7 @@ Deploy an ogx server instance and configure it with inference providers pointing
 TBD
 
 // Deploy ogx via the RHOAI operator
-// Configure a self-hosted provider (vLLM endpoint already running from Module 1)
+// Configure a self-hosted provider (vLLM endpoint already running from section 2.1)
 // Configure a remote provider (OpenAI-compatible)
 // Verify the ogx endpoint is serving the Responses API
 
@@ -80,7 +80,7 @@ TBD
 // Supports 14+ vector store providers (PGVector, Qdrant, Weaviate, Milvus, Elasticsearch)
 // Hybrid search: vector + keyword + fused via RRF
 // Upload policy documents, query through the same API surface
-// Compare with the Playground RAG from Module 5 - same result, programmatic API
+// Compare with the Playground RAG from section 3.2 - same result, programmatic API
 
 == Before and After: Many Providers vs One API
 
@@ -113,7 +113,7 @@ TBD
 | Unified vector store APIs across 14+ providers
 |===
 
-== Module Summary
+== Section Summary
 
 === What You Accomplished
 
@@ -133,6 +133,6 @@ TBD
 
 === What's Next
 
-With the Data wave complete, you have shaped model behavior with prompts, built predictive models with AutoML, grounded responses in private documents with RAG, and unified your API surface with ogx. In Module 7, you will begin the Agentic wave by connecting agents to real tools via the MCP Ecosystem.
+With the Data wave complete, you have shaped model behavior with prompts, built predictive models with AutoML, grounded responses in private documents with RAG, and unified your API surface with ogx. In section 4.2, you will begin the Agentic wave by connecting agents to real tools via the MCP Ecosystem.
 
 Estimated time: *20 minutes*

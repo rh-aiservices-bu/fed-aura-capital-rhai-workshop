@@ -1,4 +1,4 @@
-== Module 1: Model Catalog and Deployment
+= Model Catalog and Deployment
 :navtitle: Model Catalog and Deployment
 :imagesdir: ../assets/images
 :toc: macro
@@ -10,7 +10,7 @@ Lenora depends on language models for every conversation, reasoning step, and to
 In the complete platform architecture, those models sit behind the MaaS gateway and provide inference to all five persona-specific agents.
 This module zooms in on that model-serving layer.
 
-.Module 1 focus: self-hosted model inference
+.Section 2.1 focus: self-hosted model inference
 image::fed-aura-platform-architecture-models-focus.svg[The Fed Aura Capital platform architecture with the self-hosted models layer highlighted,align=center]
 
 Fed Aura Capital wants to replace per-token dependence on external model vendors with private, self-hosted inference.
@@ -44,7 +44,7 @@ TBD
 
 Before moving on, open the GenAI Playground from the RHOAI dashboard and point it at the CPU model you just deployed.
 Send a simple prompt - something like _"What is a fixed-rate mortgage?"_ - and confirm that the model responds.
-This is the fastest way to verify that the inference endpoint is live, and in Module 3 you will return to the Playground to compare multiple models and shape Lenora's behavior with system prompts.
+This is the fastest way to verify that the inference endpoint is live, and in section 2.3 you will return to the Playground to compare multiple models and shape Lenora's behavior with system prompts.
 
 == Exercise 3: Deploy with GPU and llm-d
 
@@ -88,7 +88,7 @@ TBD
 | llm-d with controlled replicas
 |===
 
-== Module Summary
+== Section Summary
 
 === What You Accomplished
 

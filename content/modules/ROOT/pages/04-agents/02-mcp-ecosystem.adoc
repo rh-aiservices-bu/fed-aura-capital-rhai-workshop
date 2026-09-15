@@ -1,4 +1,4 @@
-= Module 7: MCP Ecosystem
+= MCP Ecosystem
 :navtitle: MCP Ecosystem
 :imagesdir: ../assets/images
 :toc: macro
@@ -95,7 +95,7 @@ TBD
 | MCPServerRegistration CRD + mcp-gateway
 |===
 
-== Module Summary
+== Section Summary
 
 === What You Accomplished
 
@@ -114,6 +114,6 @@ TBD
 
 === What's Next
 
-Lenora can now call tools and deliver precise answers. But how do you know those answers are correct? In Module 8, you will use MLflow and EvalHub to trace every agent decision and measure quality with automated evaluation pipelines.
+Lenora can now call tools and deliver precise answers. But how do you know those answers are correct? In section 4.3, you will use MLflow and EvalHub to trace every agent decision and measure quality with automated evaluation pipelines.
 
 Estimated time: *25 minutes*

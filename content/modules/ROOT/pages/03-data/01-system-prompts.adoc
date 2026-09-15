@@ -9,7 +9,7 @@ Private data for best results.
 {assistant_name} in the {company_name} application already gives accurate, product-specific answers grounded in internal documents.
 In this section, you will start from a bare model, add a system prompt, and discover where system prompts hit their limits - setting the stage for RAG.
 
-.Module 5 focus: trusted knowledge through RAG
+.Section 3.1 focus: trusted knowledge through RAG
 image::fed-aura-platform-architecture-rag-focus.svg[The {company_name} platform architecture with the RAG and PostgreSQL pgvector knowledge layer highlighted,align=center]
 
 Estimated time: *15 minutes*
@@ -39,11 +39,11 @@ You will ask this exact question several times throughout this module, each time
 
 == Your Playground is ready
 
-In Module 3, you created a GenAI Playground connected to three model endpoints - two CPU-hosted models and one external model. You will use that same Playground for the rest of this module.
+In section 2.3, you created a GenAI Playground connected to three model endpoints - two CPU-hosted models and one external model. You will use that same Playground for the rest of this module.
 
-TIP: If you skipped Module 3, create a new Playground now and add all three available model endpoints before continuing.
+TIP: If you skipped section 2.3, create a new Playground now and add all three available model endpoints before continuing.
 
-. Open the GenAI Playground you created in Module 3:
+. Open the GenAI Playground you created in section 2.3:
 +
 image::module5-genaiplaygroundclean.png[GenAI Playground with three model endpoints ready,link=self,window=blank,width=700]
 +

@@ -47,6 +47,10 @@ What mortgage products do you offer? I'd like to compare my options.
 The model responds with product details grounded in the uploaded document. It should reference the five products, their rates, credit score requirements, and down payment minimums - all pulled from the catalog, not from training data or a hardcoded prompt.
 +
 image::module5-rag-response.png[RAG-grounded response showing mortgage product comparison with Knowledge On,link=self,window=blank,width=700]
++
+Expand the **cited, retrieved** section below the response. You can see the embedding query, the retrieved chunks with relevance scores, and the actual text passages the model used to compose its answer:
++
+image::module5-rag-citations.png[RAG citations showing 4 retrieved chunks with high relevance scores from the mortgage products document,link=self,window=blank,width=600]
 
 . For a more specific test, ask a follow-up that requires precise retrieval:
 +

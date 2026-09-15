@@ -73,7 +73,7 @@ Expected output:
 
 === Network and security context
 
-NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and minio, but not pods in other namespaces. In Module 9 (AI Safety), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
+NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and minio, but not pods in other namespaces. In section 5.1 (AI Safety), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
 
 [%collapsible]
 .View the NetworkPolicies in your namespace (click to expand)
@@ -83,7 +83,7 @@ NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic be
 oc get networkpolicies -n {user_project}
 ----
 
-NetworkPolicies define which pods can communicate with each other at the network level. This is the first layer of the defense-in-depth security model you will explore in Module 9.
+NetworkPolicies define which pods can communicate with each other at the network level. This is the first layer of the defense-in-depth security model you will explore in section 5.1.
 ====
 
 == Exercise 2: Meet {assistant_name} and the agent personas
@@ -111,7 +111,7 @@ The Prospect Agent should respond with mortgage product options:
 +
 image::module5-prospect-products.png[{assistant_name} responding with mortgage product options,link=self,window=blank,width=700]
 +
-Remember this question - you will ask it again in Module 5 under different configurations to see how the answer changes when you add system prompts and RAG.
+Remember this question - you will ask it again in section 3.1 under different configurations to see how the answer changes when you add system prompts and RAG.
 
 NOTE: The LLM backend has rate limiting and may occasionally time out. If the agent does not respond or you see an error, reload the page and ask the question again.
 
@@ -173,7 +173,7 @@ image::agentic-app6.png[CEO Assistant responding with portfolio health overview,
 
 === Build a conversation for later analysis
 
-Before we move on, let's generate a richer session with multiple conversation exchanges (called "turns" in AI terminology - each turn is one question from you and one response from the agent). This will give us more data to explore when we get to tracing in Module 8.
+Before we move on, let's generate a richer session with multiple conversation exchanges (called "turns" in AI terminology - each turn is one question from you and one response from the agent). This will give us more data to explore when we get to tracing in section 4.3.
 
 [start=11]
 . In the same chat, ask a follow-up question:
@@ -190,7 +190,7 @@ What are the denial trends?
 How are my loan officers doing?
 ----
 
-Each question triggers a different tool call behind the scenes. By the time you finish, your CEO session will have 3 turns spanning pipeline health, denial analysis, and officer performance. In Module 8, you will trace every step of this conversation end-to-end.
+Each question triggers a different tool call behind the scenes. By the time you finish, your CEO session will have 3 turns spanning pipeline health, denial analysis, and officer performance. In section 4.3, you will trace every step of this conversation end-to-end.
 
 === What just happened?
 
@@ -202,7 +202,7 @@ The responses look great. But stop and think about what happened behind the scen
 * What if the response was **wrong**? How would you trace back to the root cause?
 * What if a tool call **failed silently**? Would you even know?
 
-The platform captured all of it automatically. You will trace every step in Module 8 (Evaluations & Tracing).
+The platform captured all of it automatically. You will trace every step in section 4.3 (Evaluations & Tracing).
 
 == Exercise 3: Understand the architecture in context
 
@@ -292,19 +292,19 @@ The platform is built around a set of cooperating components. At the center is {
 
 |Inference
 |vLLM, llm-d, MaaS
-|Module 1 (Model Catalog), Module 2 (MaaS)
+|2.1 (Model Catalog), 2.2 (MaaS)
 
 |Data
 |pgvector, RAG, Prompt Registry
-|Module 5 (System Prompts, RAG & AutoRAG)
+|3.1-3.3 (System Prompts, RAG & AutoRAG)
 
 |Agentic
 |LangGraph, MCP, MLflow
-|Module 4 (AutoML), Module 7 (MCP), Module 8 (Evaluations)
+|4.1 (AutoML), 4.2 (MCP), 4.3 (Evaluations)
 
 |Security
 |NeMo Guardrails, Garak, OpenShell
-|Module 9 (AI Safety)
+|5.1 (AI Safety)
 |===
 
 [%collapsible]
@@ -318,19 +318,19 @@ Each module zooms in on one layer of this architecture. You can refer back to th
 
 |Self-hosted models
 |image:fed-aura-platform-architecture-models-focus.svg[Models focus,width=200,link=self,window=blank]
-|Module 1 (Model Catalog), Module 2 (MaaS)
+|2.1 (Model Catalog), 2.2 (MaaS)
 
 |MaaS Gateway
 |image:fed-aura-platform-architecture-maas-focus.svg[MaaS focus,width=200,link=self,window=blank]
-|Module 2 (Models as a Service)
+|2.2 (Models as a Service)
 
 |Prompt Registry
 |image:fed-aura-platform-architecture-prompt-registry-focus.svg[Prompt Registry focus,width=200,link=self,window=blank]
-|Module 5 (System Prompts)
+|3.1 (System Prompts)
 
 |RAG Pipeline
 |image:fed-aura-platform-architecture-rag-focus.svg[RAG focus,width=200,link=self,window=blank]
-|Module 5 (RAG & AutoRAG)
+|3.2-3.3 (RAG & AutoRAG)
 |===
 ====
 
@@ -353,4 +353,4 @@ IMPORTANT: You do not need to understand every component now. Each module focuse
 
 **Next steps:**
 
-You have explored the running platform and seen what it does. Starting with Module 1, you will rebuild understanding of each layer, beginning with self-hosted model inference.
+You have explored the running platform and seen what it does. Starting with section 2.1, you will rebuild understanding of each layer, beginning with self-hosted model inference.

@@ -64,7 +64,7 @@ image::automl-model-registry.png[MLflow Model Registry showing the loan-approval
 
 TIP: In production, this training pipeline would run on a schedule — weekly or monthly — as new loan outcome data arrives. AutoML ensures the model stays calibrated without requiring a data scientist to manually tune it each time.
 
-Reference: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/tree/dev/templates/automl[AutoML collateral on GitHub,window=blank]
+Reference: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/tree/dev/templates/user/automl[AutoML collateral on GitHub,window=blank]
 
 == Section Summary
 

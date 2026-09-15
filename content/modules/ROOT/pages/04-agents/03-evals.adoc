@@ -76,7 +76,7 @@ TIP: Low faithfulness with high context precision usually means the model is ign
 References:
 
 * EvalHub RAGAS adapter: https://eval-hub.github.io/adapters/ragas/[eval-hub.github.io/adapters/ragas,window=blank]
-* Notebook source: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/blob/dev/templates/evalhub/evaluate_ragas.ipynb[evaluate_ragas.ipynb on GitHub,window=blank]
+* Notebook source: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/blob/dev/templates/admin/evalhub/evaluate_ragas.ipynb[evaluate_ragas.ipynb on GitHub,window=blank]
 
 == Exercise 8: MLflow llm-as-judge
 

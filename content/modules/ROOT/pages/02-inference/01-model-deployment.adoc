@@ -45,7 +45,7 @@ image::model-card-detail.png[Model card showing description, license, and perfor
 +
 TIP: The performance benchmarks on the model card tell you how the model performs on specific hardware profiles. Use these numbers to size your deployment before you provision GPU capacity.
 
-. Go back to the Catalog and select the *Other Models* tab. This tab shows models that are not Large Language Models, but rather guardian models, embedding models, or the models thar you make available within your organization:
+. Go back to the Catalog and select the *Other Models* tab. This tab shows models that are not Large Language Models, but rather guardian models, embedding models, or the models that you make available within your organization:
 +
 image::model-catalog-other-tab.png[Other Models tab showing organization-uploaded models including Qwen3 0.6B,link=self,window=blank,width=700]
 

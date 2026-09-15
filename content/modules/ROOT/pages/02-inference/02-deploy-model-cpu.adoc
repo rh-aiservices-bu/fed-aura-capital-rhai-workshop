@@ -12,9 +12,9 @@ Now that you've found your model in the Catalog, let's deploy it. We are going t
 +
 image::cpu-deploy-button.png[Model card for Qwen3 0.6B with the Deploy button highlighted,link=self,window=blank,width=700]
 
-. Select your project `wksp-userX` and click *Next*.
+. Select your project `wksp-user1` and click *Next*.
 
-. You will be prompted for where the model lives. The model is already stored in the platform — don't change anything, just click *Next*.
+. You will be prompted for where the model lives. This information is already populated cause the catalog has the information — don't change anything, just click *Next*.
 
 . On the deployment configuration screen, keep the name as-is. Under deployment options, select *LLM inference service*. Then expand `> Customize resource requests and limits` and set the resource values as shown below:
 +

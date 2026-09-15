@@ -55,7 +55,7 @@ RAGAS is a framework that evaluates three things:
 
 . Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-userX > Workbench*.
 
-. Open the notebook `evaluate_ragas.ipynb`. It is already available in your workbench and pre-configured to connect to the RAG pipeline you set up in the Data module:
+. Open the notebook `evaluate_ragas.ipynb`. It is already available in your workbench and pre-configured to connect to the RAG pipeline you set up in section 3.2:
 +
 // TODO: screenshot of evaluate_ragas.ipynb open in Workbench (evals-ragas-notebook.png)
 image::evals-ragas-notebook.png[Jupyter notebook evaluate_ragas.ipynb open in the Workbench,link=self,window=blank,width=700]
@@ -161,6 +161,6 @@ Reference: https://rhpds.github.io/agentops-in-prod-showroom/modules/08-module-0
 
 === What's Next?
 
-You have evaluated Lenora's quality. The next module covers the final layer: security. Before Lenora goes to production, the security team needs to ensure she cannot be manipulated, leak private data, or be used to bypass compliance controls. In Module 5, you will implement defense-in-depth AI safety with guardrails, adversarial testing, and secure agent onboarding.
+You have evaluated Lenora's quality. The next section covers the final layer: security. Before Lenora goes to production, the security team needs to ensure she cannot be manipulated, leak private data, or be used to bypass compliance controls. In section 5.1, you will implement defense-in-depth AI safety with guardrails, adversarial testing, and secure agent onboarding.
 
 If you have time remaining and want to go deeper on how the Risk MCP's predictive model was built, continue to the Advanced section: Predictive AI with AutoML.

@@ -1,4 +1,4 @@
-= Module 9: AI Safety and Secure Agent Onboarding
+= AI Safety and Secure Agent Onboarding
 :navtitle: AI Safety
 :imagesdir: ../assets/images
 :toc: macro
@@ -12,7 +12,7 @@ The defense-in-depth model treats agents as "zero trust employees." No single me
 
 == Learning Objectives
 
-By the end of this module, you will be able to:
+By the end of this section, you will be able to:
 
 * Understand the defense-in-depth security model for AI agents
 * Test input and output guardrails (NeMo Guardrails + Guardrails Orchestrator) against prompt injection and discriminatory outputs
@@ -24,7 +24,7 @@ By the end of this module, you will be able to:
 
 == The Secure Agent Onboarding Story
 
-This module represents the culmination of Wave 4: Secure Agent Onboarding. The core insight is that Red Hat is not building another agent framework. Customers pick their own harness - whether that's LangGraph, Claude Code, OpenClaw, ADK, Strands, or something custom. The gap they keep hitting is: how do I take this agent to production safely? Red Hat provides the secure onboarding layer: identity, policy, tracing, and composability, regardless of how the agent was built.
+This section represents the culmination of Wave 4: Secure Agent Onboarding. The core insight is that Red Hat is not building another agent framework. Customers pick their own harness - whether that's LangGraph, Claude Code, OpenClaw, ADK, Strands, or something custom. The gap they keep hitting is: how do I take this agent to production safely? Red Hat provides the secure onboarding layer: identity, policy, tracing, and composability, regardless of how the agent was built.
 
 OpenShell is the kernel of that story. It packages the security primitives (syscall filtering, binary-level network policy, transparent credential proxying, and OCSF audit logs) into a single abstraction layer. It delivers this through three components:
 
@@ -179,7 +179,7 @@ TBD
 | Validated security posture with documented evidence
 |===
 
-== Module Summary
+== Section Summary
 
 === What You Accomplished
 

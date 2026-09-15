@@ -57,7 +57,7 @@ NOTE: All environment details and credentials are available in the lab interface
 
 This workshop will take approximately *3 to 4 hours* to complete.
 
-You can work at your own pace. Each module is self-contained with its own learning objectives and verification steps.
+You can work at your own pace. Each section is self-contained with its own learning objectives and verification steps.
 
 == Let's get started!
 

@@ -11,13 +11,13 @@ By the end of this section, you will be able to:
 * Describe what {company_name} is and why it rebuilt its AI platform
 * Explain the CTO's four-phase platform rebuild and the problems each phase solved
 * Identify the persona-based agent architecture that powers {assistant_name}
-* Navigate the workshop's modular structure and understand how modules connect
+* Navigate the workshop's structure and understand how sections connect
 
 == What is this workshop about?
 
 Traditional AI demos show a model answering questions. Production AI requires a complete platform: model serving, governed access, domain grounding, tool integration, observability, evaluation, and security. Each capability solves a real business problem, and they must work together.
 
-This workshop takes you through the full Red Hat AI product portfolio by putting you inside a real production deployment. You've just joined *{company_name}* as an engineer - the AI platform is already running, and your job is to understand every layer of it. Each module introduces a capability, shows you what {company_name}'s setup looks like in practice, and gives you hands-on time with the same tools. By the end, you'll know why the platform looks the way it does and what each component contributes.
+This workshop takes you through the full Red Hat AI product portfolio by putting you inside a real production deployment. You've just joined *{company_name}* as an engineer - the AI platform is already running, and your job is to understand every layer of it. Each section introduces a capability, shows you what {company_name}'s setup looks like in practice, and gives you hands-on time with the same tools. By the end, you'll know why the platform looks the way it does and what each component contributes.
 
 == Meet {company_name}
 

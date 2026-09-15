@@ -121,7 +121,7 @@ image::maas-usage-dashboard.png[Usage dashboard showing token consumption, reque
 
 === A question for Lenora
 
-Before we close this module, try asking Lenora something specific about Fed Aura Capital.
+Before we close this section, try asking Lenora something specific about Fed Aura Capital.
 
 . Go to the *Fed Aura Capital App* tab and sign in as the Borrower persona (Sarah Mitchell).
 
@@ -134,7 +134,7 @@ What is Fed Aura Capital's minimum credit score requirement for a conventional l
 
 . Observe the response. `gpt-oss-20b` is a powerful general-purpose model, but it has no knowledge of Fed Aura's specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
 
-This is the gap the next module addresses. Connecting the model to private knowledge through RAG is what turns a capable LLM into an assistant that can accurately answer domain-specific questions.
+This is the gap the next section addresses. Connecting the model to private knowledge through RAG is what turns a capable LLM into an assistant that can accurately answer domain-specific questions.
 
 == Section Summary
 
@@ -153,4 +153,4 @@ This is the gap the next module addresses. Connecting the model to private knowl
 
 *Next steps:*
 
-The model can generate fluent text, but it doesn't know anything about Fed Aura's specific policies or customer data. In the next module, you will connect it to that knowledge using RAG — and watch Lenora go from guessing to answering accurately.
+The model can generate fluent text, but it doesn't know anything about Fed Aura's specific policies or customer data. In the next section, you will connect it to that knowledge using RAG — and watch Lenora go from guessing to answering accurately.

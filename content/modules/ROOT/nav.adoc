@@ -23,7 +23,9 @@
 ** xref:04-agents/04-automl.adoc[4.4 Predictive AI with AutoML (Advanced)]
 
 * 5. Securing AI from Sandbox to Production
-** xref:05-security/01-ai-safety.adoc[5.1 AI Safety & Secure Agent Onboarding]
+** xref:05-security/01-ai-safety.adoc[5.1 AI Safety]
+** xref:05-security/02-guardrails.adoc[5.2 Guardrails & Adversarial Testing]
+** xref:05-security/03-openshell.adoc[5.3 OpenShell Agent Sandboxing]
 
 * 6. Conclusion
 ** xref:06-conclusion.adoc[6.1 Conclusion]

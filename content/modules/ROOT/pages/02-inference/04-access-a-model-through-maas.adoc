@@ -93,9 +93,23 @@ image::maas-playground-model-select.png[Playground model selector showing the gp
 
 == Exercise 8: (Optional) Test with Continue in a Workbench
 
-If you want to experience MaaS the way a developer building an application would, this optional exercise walks you through connecting to the endpoint from a Jupyter notebook using the `openai` Python SDK.
+If you want to experience MaaS the way a developer building an application would, this optional exercise walks you through connecting to the endpoint from a VSCode workbench using the `openai` Python SDK.
 
-. Navigate to *OpenShift AI Dashboard > Data Science Projects > wksp-userX* and open the Workbench running in your project.
+. Navigate to *OpenShift AI Dashboard > Data Science Projects > wksp-userX*. Click *Create workbench* and fill in the form:
++
+--
+* *Name*: `fedaura-vscode`
+* *Image selection*: `FedAura Capital - Custom Code Server` (includes OpenCode, OpenShell CLI, Python 3.12, and Code Server)
+* *Hardware profile*: `CPU Profile`
+--
++
+image::workbench-create-vscode.png[Create workbench form showing the FedAura Capital Custom Code Server image selected with CPU Profile,link=self,window=blank,width=700]
+
+. Wait for the workbench to start. You will see it in the Workbenches list with status *Starting* and then *Running*:
++
+image::workbench-vscode-starting.png[Workbenches list showing fedaura-vscode starting with PVC attached,link=self,window=blank,width=700]
+
+. Once it is running, click the workbench name to open the VSCode environment.
 
 . Open the notebook `maas-test.ipynb`. Replace the placeholder `api_key` and `base_url` values with your key and endpoint URL, then run all cells:
 +

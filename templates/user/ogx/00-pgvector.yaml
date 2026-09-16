@@ -1,12 +1,16 @@
 # PGVector - PostgreSQL with vector extension for OGX vector_io provider
 # Deploy order: this file FIRST, then 01-llama-stack-config.yaml, then ogxserver.yaml
 #
-# After the pod is running, enable the vector extension:
-#   oc exec deploy/genai-pgvector -- psql -U vectoruser -d vectordb -c "CREATE EXTENSION IF NOT EXISTS vector"
-#
-# If CREATE EXTENSION fails with "permission denied", the image may need POSTGRESQL_ADMIN_PASSWORD
-# set so it creates the superuser. Then run:
-#   oc exec deploy/genai-pgvector -- psql -U postgres -d vectordb -c "CREATE EXTENSION IF NOT EXISTS vector"
+# The vector extension is auto-created at startup via the init-extensions ConfigMap.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgvector-init-extensions
+data:
+  create-vector-extension.sh: |
+    #!/bin/bash
+    psql -U postgres -d "${POSTGRESQL_DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS vector;"
 ---
 apiVersion: v1
 kind: Secret
@@ -63,9 +67,14 @@ spec:
         volumeMounts:
         - name: pgdata
           mountPath: /var/lib/pgsql/data
+        - name: init-extensions
+          mountPath: /opt/app-root/src/postgresql-start/
       volumes:
       - name: pgdata
         emptyDir: {}
+      - name: init-extensions
+        configMap:
+          name: pgvector-init-extensions
 ---
 apiVersion: v1
 kind: Service

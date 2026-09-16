@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-NAMESPACE="${NAMESPACE:-wskp-user1}"
+NAMESPACE="${NAMESPACE:-wksp-user1}"
 OPENSHELL_VERSION="${OPENSHELL_VERSION:-}"
 
 VERSION_FLAG=""
@@ -56,7 +56,7 @@ oc -n "$NAMESPACE" apply -f "$SCRIPT_DIR/manifests/openshell/route.yaml"
 sleep 2
 GW_ROUTE=$(oc -n "$NAMESPACE" get route openshell-gw -o jsonpath='{.spec.host}' 2>/dev/null || echo "pending")
 
-if [ "${ENABLE_TLS:-false}" = "true" ]; then
+if [ "${ENABLE_TLS:-true}" = "true" ]; then
     step "Enable passthrough TLS (cert-manager)"
     APPS_DOMAIN=$(detect_apps_domain)
     setup_gateway_tls "$NAMESPACE" "$APPS_DOMAIN"

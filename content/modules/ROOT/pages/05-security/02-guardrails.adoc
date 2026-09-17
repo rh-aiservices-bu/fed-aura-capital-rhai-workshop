@@ -7,13 +7,49 @@
 
 Even authenticated users need boundaries.
 
-Persona-based access controls who can ask. Guardrails control what can be asked and what can be answered. NeMo Guardrails sits at the inference boundary, inspecting every input and output for prompt injection, harmful content, sensitive data, and policy violations. It is deployed via the TrustyAI Operator as a `NemoGuardrails` custom resource (`trustyai.opendatahub.io/v1alpha1`) and is included in Red Hat OpenShift AI - no external NVIDIA subscription required.
+In the previous section the public visitor never got near the pipeline numbers, because {assistant_name} was never handed the tools to fetch them. Access control answers *who is allowed to ask*. It says nothing about what a legitimate, signed-in user might talk her into.
 
-NeMo Guardrails exposes three API endpoints:
+That is the harder problem. A borrower with a perfectly valid session can still ask {assistant_name} to ignore her instructions, to approve a loan she should decline, to badmouth a competitor, or to repeat back the personal details of the last customer she spoke to. A login stops none of that.
 
-* `/v1/chat/completions` - processes user messages through input rails, generates an LLM response, then validates the response through output rails before returning it
-* `/v1/guardrail/checks` - validates messages against configured guardrails _without_ generating an LLM response. Returns a binary pass/fail - useful for testing guardrail configurations
-* `/v1/checks` - runs standalone content checks such as masking or redacting sensitive data before sending text to an LLM
+So {company_name} puts a second checkpoint at the inference boundary. Every prompt on its way in, and every response on its way out, passes through *NeMo Guardrails*. The individual rules are called *rails*, and they work in two directions:
+
+* *Input rails* read what the user typed before the model ever sees it. A blocked prompt never reaches {assistant_name} at all.
+* *Output rails* read what the model produced before the user ever sees it. A model can be argued into saying something the company legally cannot; this is the last chance to catch it.
+
+Some rails are cheap and deterministic. Presidio recognises names, email addresses and phone numbers; regular expressions catch anything shaped like a password, an API key or a Social Security number. These run inside the guardrails pod and never call a model, so they cost almost nothing.
+
+Other rails - the *self-check* rails - hand the text to a judge model and ask it a yes-or-no question. That is how {company_name} enforces the rules no pattern could ever express:
+
+[quote]
+____
+Only provide general financial education. Do not give personalized investment advice. Do not guarantee returns. Redirect the customer to a licensed advisor.
+____
+
+Because the rails live in a `NemoGuardrails` resource managed by the TrustyAI Operator, all of this is configuration in Git rather than logic buried in the application - the compliance team can read it, and it is reviewed like any other change.
+
+In this section you take the security team's side of the table and try to break her: a prompt injection, harmful content, a business-policy violation. Then you read the traces to prove what the rails actually did, and review the Garak report - an automated attack suite that runs hundreds of these attempts so nobody has to do it by hand.
+
+IMPORTANT: Self-check rails reason with a language model, which makes them flexible but not infallible - Red Hat's own guidance is explicit that they cannot guarantee 100% compliance. That is precisely why they are one layer among several, and never the only one.
+
+.The guardrails API, for reference
+[%collapsible]
+====
+The service exposes three endpoints. You will see the effect of the first two in this section.
+
+[cols="1,2",options="header"]
+|===
+|Endpoint |What it does
+
+|`/v1/chat/completions`
+|The normal path. Runs the input rails, calls the model, runs the output rails, returns the answer.
+
+|`/v1/guardrail/checks`
+|Checks a message against the rails *without* calling the model, returning a simple pass or fail. Useful for testing a configuration, and for validating retrieval or tool payloads.
+
+|`/v1/checks`
+|Single-turn checks that can *transform* content rather than block it - masking personal data, for example, instead of refusing the request outright.
+|===
+====
 
 Estimated time: *10 minutes*
 

@@ -1,0 +1,33 @@
+{{- if .Values.components.workbenchImage.enabled }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: admin-workbench-image
+  namespace: {{ .Values.bootstrap.argoNamespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.bootstrap.project }}
+  destination:
+    name: in-cluster
+    namespace: redhat-ods-applications
+  source:
+    repoURL: {{ .Values.bootstrap.repoURL }}
+    targetRevision: {{ .Values.bootstrap.targetRevision }}
+    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/workbench-image") }}
+  ignoreDifferences:
+    # The image controller rewrites tag metadata after import.
+    - group: image.openshift.io
+      kind: ImageStream
+      jsonPointers:
+        - /spec/tags
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - RespectIgnoreDifferences=true
+{{- end }}

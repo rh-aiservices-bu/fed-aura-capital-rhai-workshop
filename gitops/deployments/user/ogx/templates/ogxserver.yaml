@@ -1,0 +1,60 @@
+{{- $ns := include "workshop.namespace" . }}
+---
+apiVersion: ogx.io/v1beta1
+kind: OGXServer
+metadata:
+  name: {{ .Values.serverName }}
+  namespace: {{ $ns }}
+  annotations:
+    openshift.io/display-name: {{ .Values.serverName }}
+  labels:
+    opendatahub.io/dashboard: "true"
+spec:
+  distribution:
+    name: rh
+  network:
+    port: {{ .Values.server.port }}
+  overrideConfig:
+    key: config.yaml
+    name: llama-stack-config
+  workload:
+    overrides:
+      command:
+      - /bin/sh
+      - -c
+      - ogx run /etc/ogx/config.yaml --insecure
+      env:
+      - name: VLLM_TLS_VERIFY
+        value: "false"
+      - name: FAISS_STORE_DIR
+        value: ~/.llama/faiss
+      - name: SENTENCE_TRANSFORMERS_HOME
+        value: /opt/app-root/.cache/huggingface/hub
+      - name: HF_HUB_OFFLINE
+        value: "1"
+      - name: TRANSFORMERS_OFFLINE
+        value: "1"
+      - name: HF_DATASETS_OFFLINE
+        value: "1"
+      - name: PGVECTOR_HOST
+        value: genai-pgvector.{{ $ns }}.svc.cluster.local
+      - name: PGVECTOR_PORT
+        value: "5432"
+      - name: PGVECTOR_DB
+        value: {{ .Values.pgvector.database }}
+      - name: PGVECTOR_USER
+        value: {{ .Values.pgvector.user }}
+      - name: PGVECTOR_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            key: password
+            name: genai-pgvector-credentials
+      - name: OGX_CONFIG_DIR
+        value: /opt/app-root/src/.ogx/distributions/rh/
+      - name: LITEMAAS_API_TOKEN
+        value: {{ .Values.remotellm.apiToken | quote }}
+      - name: VLLM_API_TOKEN_1
+        value: {{ .Values.remotellm.apiToken | quote }}
+    replicas: {{ .Values.server.replicas }}
+    resources:
+{{ toYaml .Values.server.resources | indent 6 }}

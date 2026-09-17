@@ -1,0 +1,6 @@
+apiVersion: v2
+name: minio
+description: Per-user MinIO object store with RHOAI data connections
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

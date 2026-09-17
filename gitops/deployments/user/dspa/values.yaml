@@ -1,0 +1,10 @@
+username: user1
+namespacePrefix: wksp
+
+# Object storage comes from the user/minio chart ('pipeline' data connection).
+objectStorage:
+  bucket: pipeline
+  secretName: pipeline
+  region: wonderland
+database:
+  pvcSize: 10Gi

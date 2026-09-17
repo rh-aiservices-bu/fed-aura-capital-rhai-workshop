@@ -1,0 +1,6 @@
+apiVersion: v2
+name: model-catalog
+description: Custom CPU model catalog, serving runtime template and llm-d configs (global)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

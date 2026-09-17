@@ -1,0 +1,9 @@
+# Overlay for when this tree is hosted in rhpds/rhai-features-workshop under
+# automation/gitops/. Apply with:
+#   helm upgrade --install bootstrap-infra automation/gitops/bootstrap-infra \
+#     -n openshift-gitops --create-namespace \
+#     -f automation/gitops/bootstrap-infra/values-rhai-features-workshop.yaml
+bootstrap:
+  repoURL: https://github.com/rhpds/rhai-features-workshop
+  targetRevision: main
+  pathPrefix: automation/gitops

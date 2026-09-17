@@ -1,0 +1,12 @@
+image:
+  repository: quay.io/rh-aiservices-bu/fedaura-codeserver
+  tag: "1.3"
+imagePuller:
+  enabled: true
+  # The puller warms a different tag than the ImageStream on purpose in the
+  # source templates; keep it configurable.
+  tag: "1.0"
+  namespace: openshift-operators
+  cachingIntervalHours: "1"
+  cachingMemoryRequest: "10Mi"
+  cachingMemoryLimit: "20Mi"

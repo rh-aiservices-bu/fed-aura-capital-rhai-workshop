@@ -1,0 +1,65 @@
+# Global / admin infrastructure -- installed ONCE per cluster, before any user
+# namespace exists. Creates one ArgoCD Application per component; ordering is
+# handled by sync waves.
+#
+# Per-user resources live in the sibling bootstrap-tenant chart.
+#
+# Values marked "injected" are overridden per environment from
+# agd_v2/rhai-features-workshop/common.yaml -- see gitops/README.md.
+
+bootstrap:
+  # Git repository holding this chart and the deployments/ charts.
+  repoURL: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop
+  # Branch, tag or commit to track.
+  targetRevision: main
+  # Path inside the repo containing bootstrap-infra/ and deployments/.
+  # Use "automation/gitops" when this tree is hosted in rhai-features-workshop.
+  pathPrefix: gitops
+  argoNamespace: openshift-gitops
+  project: default
+
+# Cluster coordinates (injected).
+deployer:
+  apiUrl: https://api.cluster-guid.sandbox.opentlc.com:6443
+  domain: apps.cluster-guid.sandbox.opentlc.com
+
+# Remote LLM / MaaS credentials (injected). Used here by the maas component to
+# publish the upstream endpoint as a governed model.
+remotellm:
+  enabled: true
+  # OpenAI-compatible base URL, including /v1.
+  url: "https://maas-rhdp.apps.maas.redhatworkshops.io/v1"
+  # Hostname only, no scheme and no path -- ExternalProvider rejects those.
+  endpoint: "maas-rhdp.apps.maas.redhatworkshops.io"
+  # Model id as served by the endpoint.
+  id: "gpt-oss-120b"
+  apiToken: "paste-your-token-here"
+
+components:
+  # RHOAI dashboard feature flags (wave -1).
+  dashboardConfig:
+    enabled: true
+  # MLflow tracking server, cluster-scoped CR (wave 0).
+  mlflow:
+    enabled: true
+  # Shared risk + weather MCP servers (wave 0).
+  mcp:
+    enabled: true
+  # Custom code-server ImageStream + image puller (wave 0).
+  workbenchImage:
+    enabled: true
+  # Custom CPU model catalog, serving runtime template, llm-d configs (wave 1).
+  modelCatalog:
+    enabled: true
+  # Models-as-a-Service wiring for the upstream endpoint (wave 1).
+  maas:
+    enabled: true
+  # Inference gateway + in-cluster TinyLlama (wave 2).
+  # Requires cert-manager and the 'cert-manager-ingress-cert' secret in
+  # openshift-ingress, so it is opt-in. When enabled, also set
+  # tinyllama.enabled=true in the bootstrap-tenant chart.
+  llmd:
+    enabled: false
+  # EvalHub (TrustyAI) evaluation stack (wave 3).
+  evalhub:
+    enabled: true

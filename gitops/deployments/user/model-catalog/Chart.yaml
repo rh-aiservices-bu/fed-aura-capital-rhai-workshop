@@ -1,0 +1,6 @@
+apiVersion: v2
+name: model-catalog
+description: Per-user vLLM CPU model deployments (TinyLlama, Qwen3-0.6B)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

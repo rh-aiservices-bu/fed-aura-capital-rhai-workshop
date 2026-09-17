@@ -1,0 +1,35 @@
+{{- $ns := include "workshop.namespace" . }}
+{{- range .Values.models }}
+{{- if .enabled }}
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: {{ .name }}
+  namespace: {{ $ns }}
+  annotations:
+    openshift.io/display-name: {{ .displayName | quote }}
+    opendatahub.io/model-type: generative
+    security.opendatahub.io/enable-auth: "false"
+    serving.kserve.io/deploymentMode: Standard
+  labels:
+    opendatahub.io/dashboard: "true"
+    opendatahub.io/genai-asset: "true"
+    networking.kserve.io/visibility: exposed
+spec:
+  predictor:
+    automountServiceAccountToken: false
+    deploymentStrategy:
+      type: Recreate
+    maxReplicas: 1
+    minReplicas: 1
+    model:
+      modelFormat:
+        name: vLLM
+      name: ""
+      resources:
+{{ toYaml .resources | indent 8 }}
+      runtime: {{ .name }}
+      storageUri: {{ .storageUri }}
+{{- end }}
+{{- end }}

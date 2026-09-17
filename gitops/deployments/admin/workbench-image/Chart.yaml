@@ -1,0 +1,6 @@
+apiVersion: v2
+name: workbench-image
+description: Custom code-server workbench ImageStream + image puller (global)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

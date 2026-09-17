@@ -1,6 +1,0 @@
-= {company_name} AI Workshop with Red Hat AI
-:icons: font
-
-Welcome to the {company_name} AI Workshop!
-
-include::partial$workshop-intro.adoc[]

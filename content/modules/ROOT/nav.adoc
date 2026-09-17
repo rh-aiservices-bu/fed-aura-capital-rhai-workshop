@@ -1,5 +1,5 @@
 * 1. Welcome and Introduction
-** xref:01-overview/index.adoc[1.1 Welcome]
+** xref:index.adoc[1.1 Welcome]
 ** xref:01-overview/01-workshop-overview.adoc[1.2 Workshop Overview]
 ** xref:01-overview/02-fed-aura.adoc[1.3 Fed Aura Capital]
 ** xref:01-overview/03-explore-platform.adoc[1.4 Explore the Platform]

@@ -55,23 +55,39 @@ Estimated time: *10 minutes*
 
 == Exercise 1: Guardrails in the Playground
 
-Before attacking the guardrails, see how they are wired into the inference pipeline.
+Before attacking the guardrails, see how they are wired into the inference pipeline - and confirm they are invisible when nothing is wrong.
 
-. Navigate to the *OpenShift AI Dashboard > Develop & Train > GenAI Playground*:
+. Open the *GenAI Playground* in the OpenShift AI dashboard, with your workshop project selected.
+
+. Open *Settings* and select the *Guardrails* tab. Both rails are switched on for this model:
 +
-// TODO: screenshot of Playground with guardrails enabled (security-playground-guardrails.png)
-image::security-playground-guardrails.png[GenAI Playground showing the guardrails configuration,link=self,window=blank,width=700]
+image::security-guardrails-settings.png[Guardrails settings showing the guardrail model, subscription, and both rail toggles enabled,link=self,window=blank,width=450]
++
+Two things are worth noticing here. The *Guardrail model* is a model in its own right - the judge that evaluates the self-check rails - and it draws on its own *Subscription*, so guardrail traffic is metered separately from the assistant's. Then the two directions from the introduction, each with what it covers:
++
+--
+* *User input guardrails* - jailbreak and prompt attack protection, PII filtering, and content moderation for toxicity, hate speech, sexual content, violence and harassment.
+* *Model output guardrails* - PII leak prevention, plus the same content moderation applied to whatever the model just generated.
+--
 
-. Notice that the guardrails are enabled for this model. Every request goes through an `input_shield` before reaching the model and an `output_shield` before the response reaches the user.
+. Switch to the *Knowledge* tab and make sure it is *On* with *Use uploaded documents* selected. This is the RAG configuration from section 3.2 - leave it enabled so {assistant_name} answers from {company_name}'s documents rather than from memory:
++
+image::security-knowledge-on.png[Knowledge tab toggled On with Use uploaded documents selected,link=self,window=blank,width=450]
 
-. Ask a normal mortgage question to confirm the guardrails are transparent for legitimate queries:
+. Now ask a perfectly ordinary mortgage question:
 +
 [source,text]
 ----
 What are the current FHA loan limits?
 ----
+
+. {assistant_name} answers normally, with a *source retrieved* from the knowledge base:
 +
-{assistant_name} responds normally. The guardrails inspected the input and output but found nothing to block - each configured rail returned `"status": "success"`. This is the key property: guardrails should be invisible for legitimate use.
+image::security-guardrails-fha-answer.png[Playground answering the FHA loan limits question with guardrails enabled and one source retrieved,link=self,window=blank,width=700]
++
+Nothing was blocked. The input rail read the question, the output rail read the answer, and both let it through - each configured rail returned `"status": "success"`. That is the property to hold onto for the rest of this section: *guardrails should be unnoticeable for legitimate use*. If they fire on questions like this one, they are misconfigured.
+
+NOTE: Expect this to take *20-30 seconds*, noticeably longer than an unguarded chat. A single turn now does considerably more work: the input rail is evaluated, the knowledge base is searched, the answer is generated, and the output rail is evaluated before you see anything. Safety and grounding both cost latency - which is why the rails are scoped to what actually needs them. The badges above the response show the elapsed time and time to first token.
 
 == Exercise 2: Prompt Injection
 

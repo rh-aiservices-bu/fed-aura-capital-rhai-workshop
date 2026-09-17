@@ -1,12 +1,12 @@
-{{- if .Values.components.ogx.enabled }}
+{{- if and .Values.users.enabled .Values.users.modelCatalog.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: user-ogx
+  name: user-model-catalog
   namespace: {{ .Values.bootstrap.argoNamespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: "8"
+    argocd.argoproj.io/sync-wave: "7"
 spec:
   generators:
     - list:
@@ -14,7 +14,7 @@ spec:
 {{- include "bootstrap.userElements" . }}
   template:
     metadata:
-      name: ogx-{{ `{{ user }}` }}
+      name: model-catalog-{{ `{{ user }}` }}
       namespace: {{ .Values.bootstrap.argoNamespace }}
       finalizers:
         - resources-finalizer.argocd.argoproj.io
@@ -23,18 +23,11 @@ spec:
       source:
         repoURL: {{ .Values.bootstrap.repoURL }}
         targetRevision: {{ .Values.bootstrap.targetRevision }}
-        path: {{ include "bootstrap.path" (dict "ctx" . "chart" "user/ogx") }}
+        path: {{ include "bootstrap.path" (dict "ctx" . "chart" "user/model-catalog") }}
         helm:
           values: |
             username: {{ `{{ user }}` }}
             namespacePrefix: {{ .Values.user.namespacePrefix }}
-            remotellm:
-              enabled: {{ .Values.remotellm.enabled }}
-              url: "{{ .Values.remotellm.url }}"
-              id: "{{ .Values.remotellm.id }}"
-              apiToken: "{{ .Values.remotellm.apiToken }}"
-            tinyllama:
-              enabled: {{ .Values.tinyllama.enabled }}
       destination:
         name: in-cluster
         namespace: {{ .Values.user.namespacePrefix }}-{{ `{{ user }}` }}

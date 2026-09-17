@@ -1,4 +1,4 @@
-{{- if .Values.components.automl.enabled }}
+{{- if and .Values.users.enabled .Values.users.automl.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet

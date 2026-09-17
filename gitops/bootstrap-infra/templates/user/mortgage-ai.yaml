@@ -1,4 +1,4 @@
-{{- if .Values.components.mortgageAi.enabled }}
+{{- if and .Values.users.enabled .Values.users.mortgageAi.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
@@ -24,7 +24,7 @@ spec:
         repoURL: {{ .Values.bootstrap.repoURL }}
         targetRevision: {{ .Values.bootstrap.targetRevision }}
         # Reuses the chart shipped at the repo root, same as the standalone install.
-        path: {{ .Values.components.mortgageAi.chartPath }}
+        path: {{ .Values.users.mortgageAi.chartPath }}
         helm:
           values: |
             secrets:
@@ -59,10 +59,10 @@ spec:
             routes:
               sharedHost: "mortgage-ai-{{ .Values.user.namespacePrefix }}-{{ `{{ user }}` }}.{{ .Values.deployer.domain }}"
             seed:
-              enabled: {{ .Values.components.mortgageAi.seed }}
+              enabled: {{ .Values.users.mortgageAi.seed }}
             ui:
               image:
-                tag: "{{ .Values.components.mortgageAi.uiImageTag }}"
+                tag: "{{ .Values.users.mortgageAi.uiImageTag }}"
             mlflow:
               rbac:
                 enabled: true

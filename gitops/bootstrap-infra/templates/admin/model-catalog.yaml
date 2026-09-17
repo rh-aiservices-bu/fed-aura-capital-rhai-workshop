@@ -1,23 +1,23 @@
-{{- if .Values.components.evalhub.enabled }}
+{{- if and .Values.admin.enabled .Values.admin.modelCatalog.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: admin-evalhub
+  name: admin-model-catalog
   namespace: {{ .Values.bootstrap.argoNamespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "1"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: {{ .Values.bootstrap.project }}
   destination:
     name: in-cluster
-    namespace: evaluations
+    namespace: rhoai-model-registries
   source:
     repoURL: {{ .Values.bootstrap.repoURL }}
     targetRevision: {{ .Values.bootstrap.targetRevision }}
-    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/evalhub") }}
+    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/model-catalog") }}
   syncPolicy:
     automated:
       prune: true

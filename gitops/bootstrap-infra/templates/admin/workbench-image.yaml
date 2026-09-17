@@ -1,12 +1,12 @@
-{{- if .Values.components.dashboardConfig.enabled }}
+{{- if and .Values.admin.enabled .Values.admin.workbenchImage.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: admin-dashboard-config
+  name: admin-workbench-image
   namespace: {{ .Values.bootstrap.argoNamespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: "-1"
+    argocd.argoproj.io/sync-wave: "0"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -17,12 +17,17 @@ spec:
   source:
     repoURL: {{ .Values.bootstrap.repoURL }}
     targetRevision: {{ .Values.bootstrap.targetRevision }}
-    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/dashboard-config") }}
+    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/workbench-image") }}
+  ignoreDifferences:
+    # The image controller rewrites tag metadata after import.
+    - group: image.openshift.io
+      kind: ImageStream
+      jsonPointers:
+        - /spec/tags
   syncPolicy:
     automated:
-      prune: false
+      prune: true
       selfHeal: true
     syncOptions:
-      # OdhDashboardConfig is created by the RHOAI operator -- adopt, do not fight it.
-      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
 {{- end }}

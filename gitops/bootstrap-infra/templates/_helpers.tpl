@@ -7,3 +7,12 @@ Usage: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/mcp") }}
 {{- $prefix := trimSuffix "/" .ctx.Values.bootstrap.pathPrefix -}}
 {{- if $prefix -}}{{ $prefix }}/deployments/{{ .chart }}{{- else -}}deployments/{{ .chart }}{{- end -}}
 {{- end -}}
+
+{{/*
+List generator elements for user1..userN.
+*/}}
+{{- define "bootstrap.userElements" -}}
+{{- range $index := until (int .Values.user.count) }}
+          - user: {{ $.Values.user.prefix }}{{ add $index 1 }}
+{{- end }}
+{{- end -}}

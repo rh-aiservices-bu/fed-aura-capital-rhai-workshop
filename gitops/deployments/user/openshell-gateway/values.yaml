@@ -18,21 +18,26 @@ jwtKeys:
   # Generated once per namespace if the secret is absent. Never regenerated,
   # because rotating the signing key invalidates every live sandbox token.
   enabled: true
-  secretName: openshell-jwt-keys
+  # Must track openshell.fullnameOverride: the gateway mounts <fullname>-jwt-keys.
+  secretName: openshell-user1-jwt-keys
   image: quay.io/rh-aiservices-bu/fedaura-codeserver:1.3
 
 scc:
-  # `oc adm policy add-scc-to-user privileged -z openshell-sandbox` is just a
-  # RoleBinding to this ClusterRole, so it is declarative.
+  # `oc adm policy add-scc-to-user privileged -z <sa>` is just a RoleBinding to
+  # this ClusterRole, so it is declarative. The SA name follows the fullname
+  # (<fullname>-sandbox); if it does not match, sandbox pods are refused by SCC
+  # admission and the Sandbox object sits in Provisioning with no pod at all.
   enabled: true
-  serviceAccount: openshell-sandbox
+  serviceAccount: openshell-user1-sandbox
 
 # Values passed through to the upstream chart.
 openshell:
-  # Keep the release-independent name "openshell": the gateway derives its JWT
-  # secret name from it (<fullname>-jwt-keys), the sandbox chart reaches it at
-  # http://openshell:8080, and it matches what install.sh produced.
-  fullnameOverride: openshell
+  # MUST be unique per user. The upstream chart creates a cluster-scoped
+  # ClusterRole and ClusterRoleBinding named <fullname>-node-reader with no way to
+  # disable them, so a shared fullname makes the first namespace claim those
+  # objects and every later namespace fail to install. The ApplicationSet sets
+  # this to openshell-<user>, and gateway.endpoint below must match.
+  fullnameOverride: openshell-user1
   pkiInitJob:
     enabled: false
   podSecurityContext:

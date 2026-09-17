@@ -60,22 +60,49 @@ data:
     sed "s/__OCP_APPS_DOMAIN__/${OCP_APPS_DOMAIN}/g" /scripts/policy.yaml.template > /tmp/policy.yaml
     grep -q '^version:' /tmp/policy.yaml || fail "rendered policy is missing the version field"
 
+    # "already exists" is success, not failure: create can report an error after the
+    # sandbox has in fact been created, and a retry must not turn that into a hard
+    # failure. Existence is the condition we actually care about.
+    CREATE_ARGS=(sandbox create --name "$SANDBOX" --policy /tmp/policy.yaml)
+    [ -n "${SANDBOX_IMAGE:-}" ] && CREATE_ARGS+=(--from "$SANDBOX_IMAGE")
+    create_sandbox() {
+      osh "${CREATE_ARGS[@]}" && return 0
+      if [ -n "$(sandbox_phase)" ]; then
+        log "  sandbox exists after the attempt - treating as created"
+        return 0
+      fi
+      return 1
+    }
+
     PHASE="$(sandbox_phase)"
     if [ -z "$PHASE" ]; then
       log "=== create sandbox ${SANDBOX} ==="
-      CREATE_ARGS=(sandbox create --name "$SANDBOX" --policy /tmp/policy.yaml)
-      [ -n "${SANDBOX_IMAGE:-}" ] && CREATE_ARGS+=(--from "$SANDBOX_IMAGE")
-      retry 5 10 osh "${CREATE_ARGS[@]}" || fail "sandbox create failed"
+      retry 5 10 create_sandbox || fail "sandbox create failed"
     else
       log "=== sandbox ${SANDBOX} already exists (phase=${PHASE}) - not recreating ==="
     fi
 
     log "=== wait for Ready ==="
+    READY=no
     for i in $(seq 1 60); do
-      [ "$(sandbox_phase)" = "Ready" ] && { log "  Ready"; break; }
-      [ "$i" -eq 60 ] && fail "sandbox did not reach Ready within 300s"
+      [ "$(sandbox_phase)" = "Ready" ] && { READY=yes; log "  Ready"; break; }
       sleep 5
     done
+
+    # A sandbox wedged in Provisioning never recovers on its own - SCC admission
+    # refusals leave the object with no pod at all. Recreating once is the only
+    # unattended way out, and is the single case where deletion is allowed.
+    if [ "$READY" != "yes" ] && [ "${RECREATE_STUCK:-true}" = "true" ]; then
+      log "  stuck in phase '$(sandbox_phase)' after 300s - recreating once"
+      osh sandbox delete "$SANDBOX" >/dev/null 2>&1 || true
+      sleep 10
+      retry 3 10 create_sandbox || fail "recreate failed"
+      for i in $(seq 1 60); do
+        [ "$(sandbox_phase)" = "Ready" ] && { READY=yes; log "  Ready after recreate"; break; }
+        sleep 5
+      done
+    fi
+    [ "$READY" = "yes" ] || fail "sandbox did not reach Ready (phase=$(sandbox_phase))"
 
     # A live policy update cannot remove a read-only filesystem path, which is why
     # the policy carries /app forward from the sandbox default.

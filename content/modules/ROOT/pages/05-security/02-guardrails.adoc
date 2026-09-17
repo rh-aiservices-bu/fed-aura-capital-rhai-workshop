@@ -35,7 +35,7 @@ image::security-knowledge-on.png[Knowledge tab toggled On with Use uploaded docu
 +
 image::security-guardrails-settings.png[Guardrails settings showing the guardrail model, subscription, and both rail toggles enabled,link=self,window=blank,width=450]
 +
-Two things are worth noticing here. The *Guardrail model* is a model in its own right - the judge that evaluates the self-check rails - and it draws on its own *Subscription*, so guardrail traffic is metered separately from the assistant's. Then the two directions from the introduction, each with what it covers:
+The *Guardrail model* at the top is what does the checking - a separate model from the one answering. Below it are the two directions from the introduction, and what each one covers:
 +
 --
 * *User input guardrails* - jailbreak and prompt attack protection, PII filtering, and content moderation for toxicity, hate speech, sexual content, violence and harassment.

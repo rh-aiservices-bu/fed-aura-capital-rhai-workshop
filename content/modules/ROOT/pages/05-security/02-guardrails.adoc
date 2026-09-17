@@ -149,14 +149,7 @@ IMPORTANT: That flexibility comes at a price. Rails that reason with a language 
 
 == Exercise 4: Competitor Mentions and Guardrail Configuration
 
-The guardrails also enforce business policy - the rules that have nothing to do with safety and everything to do with being a regulated lender. Mortgage policy is full of them:
-
-[quote]
-____
-Only provide general financial education. Do not give personalized investment advice. Do not guarantee returns. Redirect the customer to a licensed advisor.
-____
-
-{company_name} starts smaller than that: {assistant_name} does not discuss competitors.
+Rails also carry business policy - rules that are nothing to do with safety and everything to do with being a regulated lender. {company_name} keeps a simple one: {assistant_name} does not discuss competitors.
 
 . In the *{company_name} App* tab, ask about a competitor:
 +
@@ -165,13 +158,11 @@ ____
 Is GreenAura cheaper than you?
 ----
 
-. This time the refusal is different - short, flat, and offering nothing:
+. The request is refused:
 +
 image::security-competitor-blocked.png[The assistant refusing to discuss a competitor with a blunt safety refusal,link=self,window=blank,width=420]
-+
-Compare it with exercises 2 and 3. Those refusals were conversational - "I can help with mortgage product details instead" - because the model wrote them. This one is the shield's own message, returned without the model ever being asked. That difference in tone is the cheapest tell you have that a rail fired rather than the model declining.
 
-IMPORTANT: Ask this one in the *application*, not the Playground. The Playground has its own guardrails instance with its own configuration, and the competitor patterns are not in it - so the same question there will be answered rather than blocked. Both are NeMo Guardrails; they just load different ConfigMaps. Exercise 5 shows how to prove which one ran.
+IMPORTANT: Ask this in the *application*, not the Playground. The Playground runs its own guardrails instance from a different ConfigMap, and the competitor patterns are not in it - the same question there gets answered.
 
 . Now look at how this is configured. The NeMo Guardrails configuration is stored in a ConfigMap deployed in your namespace. The relevant section:
 +
@@ -247,7 +238,7 @@ The service exposes three endpoints. The exercises above went through the first;
 
 == Exercise 5: Check the Traces
 
-Exercise 2 left a question open: a refusal alone does not tell you whether a rail stopped the request or the model simply declined. The trace answers it, and the answer is visible in the *shape* of the trace before you read a single attribute.
+A refusal in the chat window tells you the request was stopped. The trace tells you where.
 
 . Navigate to *OpenShift AI Dashboard > Develop & train > Experiments*, open the `mortgage-ai` experiment, and select *Traces* under *Observability*.
 
@@ -255,7 +246,7 @@ Exercise 2 left a question open: a refusal alone does not tell you whether a rai
 +
 image::security-guardrail-traces.png[Trace of the blocked competitor question, stopping at input_shield with safety_blocked true,link=self,window=blank,width=700]
 
-. Look at the *Trace breakdown* on the left. It is three nodes and then it stops:
+. Read the *Trace breakdown* on the left. It is three nodes, and then it stops:
 +
 ----
 LangGraph
@@ -263,20 +254,16 @@ LangGraph
     └── after_input_shield
 ----
 +
-No `agent`. No `ChatOpenAI`. No `output_shield`. Compare that with the CEO trace in section 5.1, which ran `input_shield -> agent -> ChatOpenAI -> tool_auth -> tools -> agent -> output_shield`. Here the graph was cut short at the first node: the rail matched, the request was abandoned, and the model was never called.
+No `agent`, no `ChatOpenAI`, no `output_shield`. The rail matched on the way in, so the graph was abandoned at the first node and the model was never called - which is also why the whole thing took 2.5 seconds instead of twenty.
 
-. Open *Inputs / Outputs*. Alongside the user message and the refusal you will find the attribute that makes this auditable:
+. Open *Inputs / Outputs*. Alongside the message and the refusal is the attribute that makes it auditable:
 +
 [source,text]
 ----
 safety_blocked: true
 ----
-+
-That is the difference between the two kinds of refusal. In exercises 2 and 3 the model produced the refusal, so the trace shows the full path and no `safety_blocked` flag. Here the flag is set and the path is two nodes long.
 
-This is the audit trail. When compliance asks "prove the assistant cannot discuss competitors", the honest answer is not "we tested it once" - it is a timestamped trace showing the request stopped at the shield, with the model never invoked.
-
-TIP: Latency is a useful tell too. This trace took about 2.5 seconds against the twenty-plus of a grounded answer, because a blocked request skips both retrieval and generation. A rail firing is the *cheapest* possible outcome.
+This is the audit trail. When compliance asks you to prove the assistant cannot discuss competitors, the answer is not "we tested it once" - it is a timestamped trace showing the request stopped at the shield, with a flag saying so.
 
 == Exercise 6: Garak Adversarial Test Results
 

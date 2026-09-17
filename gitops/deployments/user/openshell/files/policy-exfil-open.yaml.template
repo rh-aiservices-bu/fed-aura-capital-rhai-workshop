@@ -1,4 +1,6 @@
-# Standard sandbox policy - development baseline.
+# Exercise 3 "open" policy - GitHub is WRITABLE on purpose.
+# Used only to show that an authorised egress path is an exfiltration path.
+# Revert to policy-standard to close it again.
 # Allows inference, package registries (npm/PyPI), GitHub (read-only),
 # and RHOAI MLflow tracing. Blocks direct AI APIs, web browsing, and
 # GitHub write operations.
@@ -113,7 +115,7 @@ network_policies:
       - { path: /usr/local/bin/opencode }
 
   github_readonly:
-    name: "GitHub (read-only)"
+    name: "GitHub (read-write - exercise 3 only)"
     endpoints:
       - host: github.com
         port: 443
@@ -124,7 +126,7 @@ network_policies:
         port: 443
         protocol: rest
         enforcement: enforce
-        access: read-only
+        access: read-write
       - host: "*.githubusercontent.com"
         port: 443
         enforcement: enforce

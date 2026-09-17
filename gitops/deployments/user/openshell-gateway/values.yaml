@@ -1,0 +1,47 @@
+# Per-user OpenShell gateway.
+#
+# Replaces templates/user/openshell/install.sh. Everything that script did with
+# imperative oc commands is expressed declaratively here, except the JWT signing
+# keypair, which needs generating once per namespace and is handled by an
+# idempotent hook Job.
+username: user1
+namespacePrefix: wksp
+
+# Cluster-scoped prerequisite: the Agent Sandbox operator must already be
+# installed. That is global, so it belongs to the admin phase, not here.
+
+route:
+  enabled: true
+  name: openshell-gw
+
+jwtKeys:
+  # Generated once per namespace if the secret is absent. Never regenerated,
+  # because rotating the signing key invalidates every live sandbox token.
+  enabled: true
+  secretName: openshell-jwt-keys
+  image: quay.io/rh-aiservices-bu/fedaura-codeserver:1.3
+
+scc:
+  # `oc adm policy add-scc-to-user privileged -z openshell-sandbox` is just a
+  # RoleBinding to this ClusterRole, so it is declarative.
+  enabled: true
+  serviceAccount: openshell-sandbox
+
+# Values passed through to the upstream chart.
+openshell:
+  # Keep the release-independent name "openshell": the gateway derives its JWT
+  # secret name from it (<fullname>-jwt-keys), the sandbox chart reaches it at
+  # http://openshell:8080, and it matches what install.sh produced.
+  fullnameOverride: openshell
+  pkiInitJob:
+    enabled: false
+  podSecurityContext:
+    fsGroup: null
+  securityContext:
+    runAsUser: null
+  server:
+    disableTls: true
+    auth:
+      # The workshop gateway is reached only from inside the user's own
+      # namespace, so CLI requests are unauthenticated by design.
+      allowUnauthenticatedUsers: true

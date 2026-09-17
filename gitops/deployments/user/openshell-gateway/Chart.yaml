@@ -1,0 +1,11 @@
+apiVersion: v2
+name: openshell-gateway
+description: Per-user OpenShell gateway (upstream chart + the OpenShift prerequisites)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+dependencies:
+  - name: helm-chart
+    alias: openshell
+    version: "*"
+    repository: oci://ghcr.io/nvidia/openshell

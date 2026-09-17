@@ -56,10 +56,14 @@ data:
         | awk -v s="$SANDBOX" '$1==s {print $NF}'
     }
 
+    log "--- render the network policy ---"
+    sed "s/__OCP_APPS_DOMAIN__/${OCP_APPS_DOMAIN}/g" /scripts/policy.yaml.template > /tmp/policy.yaml
+    grep -q '^version:' /tmp/policy.yaml || fail "rendered policy is missing the version field"
+
     PHASE="$(sandbox_phase)"
     if [ -z "$PHASE" ]; then
       log "=== create sandbox ${SANDBOX} ==="
-      CREATE_ARGS=(sandbox create --name "$SANDBOX")
+      CREATE_ARGS=(sandbox create --name "$SANDBOX" --policy /tmp/policy.yaml)
       [ -n "${SANDBOX_IMAGE:-}" ] && CREATE_ARGS+=(--from "$SANDBOX_IMAGE")
       retry 5 10 osh "${CREATE_ARGS[@]}" || fail "sandbox create failed"
     else
@@ -73,9 +77,10 @@ data:
       sleep 5
     done
 
-    log "--- apply the network policy (deny-by-default egress needs it) ---"
-    sed "s/__OCP_APPS_DOMAIN__/${OCP_APPS_DOMAIN}/g" /scripts/policy.yaml.template > /tmp/policy.yaml
-    retry 5 10 osh policy set --policy /tmp/policy.yaml --wait "$SANDBOX" \
+    # A live policy update cannot remove a read-only filesystem path, which is why
+    # the policy carries /app forward from the sandbox default.
+    log "--- apply the network policy ---"
+    retry 3 10 osh policy set --policy /tmp/policy.yaml --wait --timeout 120 "$SANDBOX" \
       || log "  WARNING: policy set failed - sandbox stays deny-by-default"
 
     # Ready only means the pod is up. The marker is what tells us the sandbox is

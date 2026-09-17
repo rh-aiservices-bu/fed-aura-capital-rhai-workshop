@@ -11,7 +11,7 @@ sandbox:
   # Bumping this re-runs provisioning on every user. The marker file inside the
   # sandbox records the version that last completed, so an unchanged version is a
   # no-op and a changed one converges.
-  provisionVersion: "2"
+  provisionVersion: "3"
   # The base image already ships opencode and node, so nothing is installed from
   # a package registry at provisioning time. Set to "" to use the gateway default.
   image: ""

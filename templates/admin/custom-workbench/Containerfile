@@ -1,0 +1,72 @@
+# FedAura Capital - Custom Code Server Workbench
+#
+# Extends the RHOAI Code Server (Python 3.12) base with workshop tools:
+# OpenShell CLI, OpenCode, MLflow tracing plugin, evaluation packages.
+#
+# Build:
+#   podman build --platform linux/amd64 -t quay.io/rh-aiservices-bu/fedaura-codeserver:1.1 -f Containerfile .
+#
+# Push:
+#   podman push quay.io/rh-aiservices-bu/fedaura-codeserver:1.1
+
+FROM registry.redhat.io/rhoai/odh-workbench-codeserver-datascience-cpu-py312-rhel9@sha256:aa94e6f7ab9bbb2f00e8ef0235d60c0234c3615007a9f5f8456d3efe7ed4dfa0
+
+LABEL name="fedaura-codeserver" \
+      summary="FedAura Capital custom workbench with OpenCode, OpenShell, and evaluation tools"
+
+##########################
+# Deploy Python packages #
+##########################
+
+USER 1001
+
+WORKDIR /opt/app-root/bin
+
+COPY --chown=1001:0 requirements.txt ./
+
+RUN pip install --no-cache-dir --extra-index-url https://pypi.org/simple/ -r requirements.txt
+
+#############################
+# System-level tool installs #
+#############################
+
+USER 0
+
+# OpenShell CLI (manage sandboxes from the workbench)
+ARG OPENSHELL_VERSION=0.0.116
+RUN curl -sL "https://github.com/NVIDIA/OpenShell/releases/download/v${OPENSHELL_VERSION}/openshell-x86_64-unknown-linux-musl.tar.gz" \
+    -o /tmp/openshell.tar.gz \
+    && tar xzf /tmp/openshell.tar.gz -C /tmp/ \
+    && find /tmp -name 'openshell' -type f -perm /111 -exec mv {} /usr/local/bin/openshell \; \
+    && chmod +x /usr/local/bin/openshell \
+    && rm -rf /tmp/openshell*
+
+# OpenCode CLI (AI coding assistant)
+ARG OPENCODE_VERSION=1.17.1
+RUN npm install -g opencode-ai@${OPENCODE_VERSION}
+
+# Build @mlflow/opencode plugin from source.
+# The npm release doesn't include the workspace header fix (mlflow#23927).
+RUN git clone --depth 1 --branch v3.14.0 https://github.com/mlflow/mlflow.git /tmp/mlflow \
+    && cd /tmp/mlflow/libs/typescript && npm install && npm run build \
+    && mkdir -p /opt/mlflow-plugin/core /opt/mlflow-plugin/opencode \
+    && cp -r /tmp/mlflow/libs/typescript/core/dist /opt/mlflow-plugin/core/ \
+    && cp /tmp/mlflow/libs/typescript/core/package.json /opt/mlflow-plugin/core/ \
+    && cp -r /tmp/mlflow/libs/typescript/integrations/opencode/dist /opt/mlflow-plugin/opencode/ \
+    && cp /tmp/mlflow/libs/typescript/integrations/opencode/package.json /opt/mlflow-plugin/opencode/ \
+    && rm -rf /tmp/mlflow
+
+####################################
+# OpenShell auto-init via profile.d #
+####################################
+
+COPY openshell-init.sh /etc/profile.d/openshell-init.sh
+RUN chmod 0644 /etc/profile.d/openshell-init.sh
+
+##############################
+# Pre-configure VS Code & bash #
+##############################
+
+USER 1001
+
+WORKDIR /opt/app-root/src

@@ -8,7 +8,7 @@ on:
       - 'default-site.yml'
       - '.github/workflows/gh-pages.yml'
   pull_request:
-    branches: [main]
+    branches: [main, dev]
     paths:
       - 'content/**'
       - 'default-site.yml'

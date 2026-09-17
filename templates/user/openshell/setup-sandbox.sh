@@ -34,7 +34,11 @@ if [ -z "$OCP_TOKEN" ]; then
     warn "Not logged into OpenShift - MLflow tracing will not work"
 fi
 
-OCP_APPS_DOMAIN="${OCP_APPS_DOMAIN:-apps.ocp.nss6n.sandbox1466.opentlc.com}"
+OCP_APPS_DOMAIN="${OCP_APPS_DOMAIN:-$(detect_apps_domain || true)}"
+if [ -z "$OCP_APPS_DOMAIN" ]; then
+    error "Could not determine the cluster apps domain. Set OCP_APPS_DOMAIN in .env, or log in to OpenShift so it can be detected."
+    exit 1
+fi
 MLFLOW_SANDBOX_URI="https://mlflow-redhat-ods-applications.${OCP_APPS_DOMAIN}"
 
 step "Render network policy (tier: ${POLICY_TIER:-standard})"

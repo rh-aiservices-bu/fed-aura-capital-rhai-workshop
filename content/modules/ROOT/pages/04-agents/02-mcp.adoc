@@ -57,7 +57,7 @@ The Risk Server exposes four tools:
 
 Now let's use it directly through the Playground.
 
-. Go to *Gen AI Studio > Playground* and create a new Playground with the `gpt-oss-20b` model.
+. Go to *Gen AI Studio > Playground* and create a new Playground with the `gpt-oss-120b` model.
 
 . Click *Configure > MCP* and connect to the *Risk Server MCP*:
 +
@@ -84,7 +84,7 @@ The difference between a chatbot and an agent is not the model — it is tool ac
 
 === Without MCP
 
-. Create a fresh Playground with `gpt-oss-20b`. Do *not* connect any MCP tools.
+. Create a fresh Playground with `gpt-oss-120b`. Do *not* connect any MCP tools.
 
 . Send:
 +

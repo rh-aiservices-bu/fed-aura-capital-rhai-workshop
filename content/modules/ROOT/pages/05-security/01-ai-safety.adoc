@@ -11,7 +11,7 @@ Protecting customers and the business starts with who can ask what.
 
 The defense-in-depth model treats agents as "zero trust employees." No single mechanism is sufficient - it requires layered defense: persona-based access control at the application layer, NeMo Guardrails and the Guardrails Orchestrator at the inference boundary, Garak for pre-deployment adversarial testing (powered by Chatterbox Labs technology), and OpenShell for secure agent onboarding with Agent Sandbox isolation.
 
-Estimated time: *30 minutes* (across all three sub-sections)
+Estimated time: *10 minutes* (section 5 totals about 30 minutes across 5.1, 5.2, and 5.3)
 
 == Learning Objectives
 

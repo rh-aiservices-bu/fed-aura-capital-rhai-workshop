@@ -131,7 +131,7 @@ image::agentic-app4.png[Sign in dialog with Persona Demo Login,link=self,window=
 
 . In the chat panel, ask {assistant_name} a policy question:
 +
-[source,console,role=execute,subs=attributes+]
+[source,text]
 ----
 What is the minimum down payment for an FHA loan?
 ----
@@ -141,7 +141,7 @@ Observe the response. {assistant_name} answers with policy-grounded information 
 
 . Now ask a question that triggers a tool call:
 +
-[source,console,role=execute,subs=attributes+]
+[source,text]
 ----
 Can you estimate how much house I can afford on a $120,000 salary?
 ----
@@ -162,7 +162,7 @@ image::agentic-app5.png[CEO Executive Dashboard showing Pipeline Overview and De
 
 . In the **Your Assistant** chat panel on the right, type the following question (if needed, adjust the center divider to reveal the chat panel or select the chat icon in the bottom right corner):
 +
-[source,console,role=execute,subs=attributes+]
+[source,text]
 ----
 Show me the current pipeline status
 ----
@@ -178,14 +178,14 @@ Before we move on, let's generate a richer session with multiple conversation ex
 [start=11]
 . In the same chat, ask a follow-up question:
 +
-[source,console,role=execute,subs=attributes+]
+[source,text]
 ----
 What are the denial trends?
 ----
 
 . Then ask one more:
 +
-[source,console,role=execute,subs=attributes+]
+[source,text]
 ----
 How are my loan officers doing?
 ----

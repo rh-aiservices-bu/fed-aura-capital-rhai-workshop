@@ -54,7 +54,7 @@ mcpWeatherServer:
 
 # Route hostname for path-based routing
 routes:
-  sharedHost: "mortgage-ai-wksp-user1.apps.ocp.w29qr.sandbox3611.opentlc.com"
+  sharedHost: "mortgage-ai-wksp-user1.apps.ocp.nss6n.sandbox1466.opentlc.com"
 
 # Enable demo data
 seed:

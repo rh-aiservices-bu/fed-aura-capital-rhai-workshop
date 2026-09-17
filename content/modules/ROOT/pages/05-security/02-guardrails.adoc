@@ -11,45 +11,13 @@ In the previous section the public visitor never got near the pipeline numbers, 
 
 That is the harder problem. A borrower with a perfectly valid session can still ask {assistant_name} to ignore her instructions, to approve a loan she should decline, to badmouth a competitor, or to repeat back the personal details of the last customer she spoke to. A login stops none of that.
 
-So {company_name} puts a second checkpoint at the inference boundary. Every prompt on its way in, and every response on its way out, passes through *NeMo Guardrails*. The individual rules are called *rails*, and they work in two directions:
+So {company_name} puts a second checkpoint in front of every model - *NeMo Guardrails*. Every prompt on its way in, and every response on its way out, passes through it:
 
-* *Input rails* read what the user typed before the model ever sees it. A blocked prompt never reaches {assistant_name} at all.
-* *Output rails* read what the model produced before the user ever sees it. A model can be argued into saying something the company legally cannot; this is the last chance to catch it.
+image::fed-aura-platform-architecture-guardrails-focus.svg[NeMo Guardrails highlighted in the Fed Aura Capital security boundary, applying input and output shields in front of the models,link=self,window=blank,width=800]
 
-Some rails are cheap and deterministic. Presidio recognises names, email addresses and phone numbers; regular expressions catch anything shaped like a password, an API key or a Social Security number. These run inside the guardrails pod and never call a model, so they cost almost nothing.
+The individual rules are called *rails*, and they work in two directions. *Input rails* read what the user typed before the model ever sees it - a blocked prompt never reaches {assistant_name} at all. *Output rails* read what the model produced before the user ever sees it, because a model can be argued into saying something the company legally cannot.
 
-Other rails - the *self-check* rails - hand the text to a judge model and ask it a yes-or-no question. That is how {company_name} enforces the rules no pattern could ever express:
-
-[quote]
-____
-Only provide general financial education. Do not give personalized investment advice. Do not guarantee returns. Redirect the customer to a licensed advisor.
-____
-
-Because the rails live in a `NemoGuardrails` resource managed by the TrustyAI Operator, all of this is configuration in Git rather than logic buried in the application - the compliance team can read it, and it is reviewed like any other change.
-
-In this section you take the security team's side of the table and try to break her: a prompt injection, harmful content, a business-policy violation. Then you read the traces to prove what the rails actually did, and review the Garak report - an automated attack suite that runs hundreds of these attempts so nobody has to do it by hand.
-
-IMPORTANT: Self-check rails reason with a language model, which makes them flexible but not infallible - Red Hat's own guidance is explicit that they cannot guarantee 100% compliance. That is precisely why they are one layer among several, and never the only one.
-
-.The guardrails API, for reference
-[%collapsible]
-====
-The service exposes three endpoints. You will see the effect of the first two in this section.
-
-[cols="1,2",options="header"]
-|===
-|Endpoint |What it does
-
-|`/v1/chat/completions`
-|The normal path. Runs the input rails, calls the model, runs the output rails, returns the answer.
-
-|`/v1/guardrail/checks`
-|Checks a message against the rails *without* calling the model, returning a simple pass or fail. Useful for testing a configuration, and for validating retrieval or tool payloads.
-
-|`/v1/checks`
-|Single-turn checks that can *transform* content rather than block it - masking personal data, for example, instead of refusing the request outright.
-|===
-====
+In this section you take the security team's side of the table and try to break her: a prompt injection, harmful content, a business-policy violation. Then you read the traces to prove what the rails actually did, and review a Garak report - an automated attack suite that runs hundreds of these attempts so nobody has to do it by hand.
 
 Estimated time: *10 minutes*
 
@@ -89,40 +57,15 @@ Nothing was blocked. The input rail read the question, the output rail read the 
 +
 NOTE: Expect this to take *20-30 seconds*, noticeably longer than an unguarded chat. A single turn now does considerably more work: the input rail is evaluated, the knowledge base is searched, the answer is generated, and the output rail is evaluated before you see anything. Safety and grounding both cost latency - which is why the rails are scoped to what actually needs them. The badges above the response show the elapsed time and time to first token.
 
-. Now ask {assistant_name} the *exact same question* in the *{company_name} App* tab, and put the two answers side by side:
+. Now ask {assistant_name} the *exact same question* in the *{company_name} App* tab:
 +
 image::security-app-fha-answer.png[The Fed Aura Capital assistant answering the FHA loan limits question,link=self,window=blank,width=400]
++
+Same question, same answer, same rails - different front door. That is the whole point of putting the guardrails in front of the model rather than inside a UI: every caller inherits them. Guardrails that only held in an admin tool would be worthless, because no attacker uses the admin tool.
++
+What differs between the two is what you can *see*. The Playground gives you the timings, the retrieved sources and a link straight to the trace; the application shows the answer and nothing else, because a customer should never see the safety machinery. So for the rest of this section: attack from whichever surface you like, then come back to the Playground or the traces to find out what actually happened.
 
-=== Playground versus the application
-
-This back-to-back comparison is worth pausing on, because the two views look nothing alike and yet the security story is identical.
-
-[cols="1,1,1",options="header"]
-|===
-| | GenAI Playground | {company_name} App
-
-| Who uses it
-| You - platform engineer, prompt author, security reviewer
-| The customer
-
-| Configuration
-| Knowledge and Guardrails are toggles you can change per chat
-| Fixed by how the application was deployed; no toggles
-
-| What you see
-| Elapsed time, token counts, time to first token, retrieved sources, *View trace*
-| The answer, and nothing else
-
-| The rails
-| Enforced
-| Enforced identically
-|===
-
-The important cell is the last one. The rails are not a feature of the Playground - they live at the inference boundary, in front of the model, so every caller inherits them. If the guardrails only held inside an admin tool they would be worthless, because no attacker uses the admin tool. Everything you are about to try in the next two exercises can be run from either side and should behave the same way.
-
-The differences that remain are about *visibility*, not protection. The Playground is your instrument panel: it shows what the rails cost in latency, which sources were retrieved, and it links straight to the trace. The application deliberately shows none of that - a customer should never see the safety machinery. So the workflow for the rest of this section is: attack from either surface, then go to the Playground or the traces to find out what actually happened.
-
-TIP: The two answers will not be worded identically, and the figures may differ slightly between runs - generation is non-deterministic even against the same documents. What should be identical is the guardrail behaviour: what passes, what is refused.
+TIP: Wording and figures vary from run to run even against the same documents - generation is non-deterministic. What should not vary is which questions get answered and which get refused.
 
 == Exercise 2: Prompt Injection
 
@@ -200,11 +143,20 @@ image::security-app-harmful-refused.png[The Fed Aura Capital assistant refusing 
 
 The content moderation rails cover both directions, as the *Guardrails* settings spelled out in exercise 1 - toxicity, hate speech, sexual content, violence and harassment on the way in, and the same categories plus PII leak prevention on the way out.
 
-NOTE: Rails that use the guardrail model reason about *intent* rather than matching keywords. "How does mortgage fraud detection work?" is a reasonable question from a curious borrower and should pass; "how do I forge documents" should not - even though both contain the same vocabulary. That flexibility is exactly why these rails are probabilistic rather than deterministic, and why Red Hat's guidance pairs them with the cheaper deterministic detectors (Presidio for personal data, regex for secrets and account numbers) instead of relying on them alone.
+NOTE: Rails that use the guardrail model reason about *intent* rather than matching keywords. "How does mortgage fraud detection work?" is a reasonable question from a curious borrower and should pass; "how do I forge documents" should not - even though both contain the same vocabulary. No keyword list draws that line.
+
+IMPORTANT: That flexibility comes at a price. Rails that reason with a language model are flexible but not infallible, and Red Hat's guidance is explicit that they cannot guarantee 100% compliance. It is exactly why they are one layer among several - paired with the cheap deterministic detectors you will see in exercise 4, and with the access controls from 5.1 - and never the only thing standing between a customer and a bad answer.
 
 == Exercise 4: Competitor Mentions and Guardrail Configuration
 
-The guardrails also enforce business policy. {company_name} does not want {assistant_name} discussing competitors.
+The guardrails also enforce business policy - the rules that have nothing to do with safety and everything to do with being a regulated lender. Mortgage policy is full of them:
+
+[quote]
+____
+Only provide general financial education. Do not give personalized investment advice. Do not guarantee returns. Redirect the customer to a licensed advisor.
+____
+
+{company_name} starts smaller than that: {assistant_name} does not discuss competitors.
 
 . Ask about a competitor:
 +
@@ -259,8 +211,32 @@ The configuration defines three layers of input/output protection:
 * *Content safety check* - hands the text to the configured guardrail model (`$model=content_safety`) to classify intent, rather than matching patterns
 +
 Each layer runs as a flow in both the input and output pipeline. The `rails.co` file defines custom Colang flows - an empty file means only built-in rails are used.
++
+Notice the split between the first two layers and the third. Presidio and regex are *deterministic*: they run inside the guardrails pod, never call a model, and cost almost nothing - which is why they are the right tool for account numbers, secrets and a list of competitor names. The content safety check is *probabilistic*: it reasons about intent, which is the only way to enforce a rule like "no personalized investment advice", and it costs a model call to do it.
++
+This is also configuration rather than code. The rails live in a ConfigMap referenced by a `NemoGuardrails` resource, which the TrustyAI Operator reconciles - so the policy is reviewable in Git by the compliance team, and changing it does not mean changing the application.
 
-TIP: You can view the full configuration with `oc get configmap nemo-guardrails-config -o yaml`. You can also test guardrail configurations without generating LLM responses using the `/v1/guardrail/checks` endpoint.
+TIP: You can view the full configuration with `oc get configmap nemo-guardrails-config -o yaml`.
+
+.The guardrails API, for reference
+[%collapsible]
+====
+The service exposes three endpoints. The exercises above went through the first; the second is the one to reach for when testing a configuration.
+
+[cols="1,2",options="header"]
+|===
+|Endpoint |What it does
+
+|`/v1/chat/completions`
+|The normal path. Runs the input rails, calls the model, runs the output rails, returns the answer.
+
+|`/v1/guardrail/checks`
+|Checks a message against the rails *without* calling the model, returning a simple pass or fail. Useful for testing a configuration, and for validating retrieval or tool payloads.
+
+|`/v1/checks`
+|Single-turn checks that can *transform* content rather than block it - masking personal data, for example, instead of refusing the request outright.
+|===
+====
 
 == Exercise 5: Check the Traces
 

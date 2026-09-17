@@ -14,7 +14,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-SANDBOX_NAME="${1:-opencode-demo}"
+SANDBOX_NAME="${1:-fedaura-opencode}"
 
 if [ ! -f "$SCRIPT_DIR/.env" ]; then
     error "Missing .env file. Create .env with LITELLM_API_KEY, LITELLM_BASE_URL, OCP_APPS_DOMAIN."

@@ -9,7 +9,7 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-SANDBOX_NAME="${1:-opencode-demo}"
+SANDBOX_NAME="${1:-fedaura-opencode}"
 
 export PATH="$HOME/bin:$PATH"
 

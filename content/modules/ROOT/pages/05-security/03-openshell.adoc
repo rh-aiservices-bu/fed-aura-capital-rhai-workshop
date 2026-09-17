@@ -23,9 +23,9 @@ image::security-openshell-agents-nav.png[AI hub expanded in the RHOAI navigation
 +
 Agents sit next to *Models* and *MCP servers* for a reason: from the platform's point of view an agent is another deployable asset with its own lifecycle, permissions and audit trail.
 
-. Select the *Deployments* tab and confirm your project is selected. You should see one agent, `+default--opencode-demo+`:
+. Select the *Deployments* tab and confirm your project is selected. You should see one agent, `+default--fedaura-opencode+`:
 +
-image::security-openshell-deployment.png[Agents Deployments tab listing the opencode-demo agent as Sandboxed and Ready,link=self,window=blank,width=700]
+image::security-openshell-deployment.png[Agents Deployments tab listing the fedaura-opencode agent as Sandboxed and Ready,link=self,window=blank,width=700]
 +
 Two columns matter here:
 +
@@ -56,7 +56,7 @@ oc login
 openshell sandbox list
 ----
 +
-You should see `+default--opencode-demo+` in the list with its status and policy.
+You should see `+default--fedaura-opencode+` in the list with its status and policy.
 
 . Connect to the sandbox:
 +

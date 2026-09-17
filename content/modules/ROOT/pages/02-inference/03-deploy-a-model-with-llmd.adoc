@@ -1,0 +1,80 @@
+
+:imagesdir: ../assets/images
+:navtitle: Deploy a Model with llm-d
+:toc:
+:toc-placement: preamble
+:icons: font
+
+== Exercise 3: Deploy with llm-d
+
+In the previous exercise you deployed Qwen3 0.6B on a single node using vLLM. That works for experimentation, but as soon as multiple users send requests at the same time, a single replica becomes a bottleneck. The obvious fix is to add more replicas — but here's the catch: OpenShift's default load balancing routes requests round-robin across replicas without knowing anything about what each one is doing. One replica might be halfway through generating a long response while another is completely idle, and new requests still get spread evenly. The result is unpredictable latency and wasted capacity.
+
+llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. You get the same vLLM inference engine underneath — llm-d just makes the traffic distribution smarter.
+
+.llm-d in the Fed Aura platform
+image::fed-aura-platform-architecture-models-focus.svg[Platform architecture with the llm-d inference layer highlighted,align=center]
+
+NOTE: In this exercise you are deploying to CPU again. The llm-d architecture and deployment steps are identical on GPU — the only difference is the hardware profile you select.
+
+=== Deploy the Model
+
+. In the *OpenShift AI Dashboard*, go to *AI Hub > Models* and select the *Other Models* tab. Find *Qwen3 0.6B* and click *Deploy*.
+
+. Select your project `wksp-userX` and click *Next*.
+
+. You will be prompted for the model location. Leave the defaults as-is and click *Next*.
+
+. On the deployment configuration screen, keep the name as-is. Under deployment options, select *LLM inference service with llm-d*.
+
+. For *Topology type* keeps `Single node`, and for *Topology configuration* select `Single node on CPU`.
+
+. Then expand `> Customize resource requests and limits` and set the resource values as below:
++
+image::llmd-resource-limits.png[Resource requests and limits configuration for llm-d deployment,link=self,window=blank,width=700]
+
+. For *Replica count* set the number of replicas to *2*. Click *Next*:
++
+image::llmd-replica-config.png[Replica count set to 2 in the deployment configuration,link=self,window=blank,width=700]
++
+NOTE: Two replicas means llm-d will distribute incoming requests across two vLLM instances in a smart way.
+
+. On the final screen, select *Add as AI asset endpoint*. Leave the MaaS option out. Click *Deploy*.
+
+. Wait for the deployment to show a green status indicator. This takes a minute or two while the model weights are pulled and loaded:
++
+image::llmd-deployment-ready.png[llm-d deployment showing green ready status with 2 replicas,link=self,window=blank,width=700]
+
+=== Quick Test: GenAI Playground
+
+Let's confirm the model is responding before we move on.
+
+. Go to *Gen AI Studio > Playground*. Click *Create playground* and select the llm-d model you just deployed (ignore `gpt-oss-120b` for now). Set *Max tokens* to `1024` and click *Create*.
+
+. Send a prompt of your choice — for example:
++
+[source,text]
+----
+Summarize the risks of using a single-node LLM deployment in production.
+----
++
+You should get a coherent response from the model. The experience looks identical to what you saw in Exercise 2 — and that is the point. llm-d does not change the API or the user experience; it changes what happens underneath, where requests are scheduled and served.
+
+NOTE: Because we are running on CPU with a small model and low concurrent load, you won't observe a latency difference compared to the single-replica deployment. In a real workload with many simultaneous users, the two-replica setup would show meaningfully lower tail latency and higher throughput. If you want to go deeper on llm-d performance, we have another workshop that explores GPU inference and llm-d in depth: <insert link>
+
+ADD: check this arcade or video or build a simplictic version of this: https://rh-aiservices-bu.github.io/vllm-vertical-demo-/#page-1 
+
+=== Clean up
+
+Delete the llm-d deployment to free up resources before moving to the MaaS exercise.
+
+. In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
+. Select the model deployment you just created and click *Delete*.
+. Confirm the deletion.
+
+The shared model that powers the MaaS gateway in the next exercise is already running — you don't need to deploy it yourself.
+
+=== What's Next?
+
+You've now deployed the same model two ways: single-node vLLM on CPU and distributed llm-d with two replicas. In both cases you talked to the model directly through the Playground.
+
+In the Fed Aura Capital organization, application teams don't deploy their own models and talk to model endpoints directly. They go through the MaaS gateway, which adds authentication, rate limiting, and usage metering on top. That's what Exercise 4 covers.

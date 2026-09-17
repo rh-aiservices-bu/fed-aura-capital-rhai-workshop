@@ -1,0 +1,92 @@
+= AI Safety
+:navtitle: AI Safety
+:imagesdir: ../assets/images
+:toc:
+:toc-placement: preamble
+:icons: font
+
+Protecting customers and the business starts with who can ask what.
+
+Fed Aura Capital operates in a heavily regulated industry. ECOA prohibits discriminatory lending. ATR/QM requires verified ability-to-repay calculations. TRID mandates accurate disclosures. Before Lenora goes to production, the security team must ensure she cannot be manipulated through prompt injection, leak sensitive customer data, or bypass compliance checks.
+
+The defense-in-depth model treats agents as "zero trust employees." No single mechanism is sufficient - it requires layered defense: persona-based access control at the application layer, NeMo Guardrails and the Guardrails Orchestrator at the inference boundary, Garak for pre-deployment adversarial testing (powered by Chatterbox Labs technology), and OpenShell for secure agent onboarding with Agent Sandbox isolation.
+
+Estimated time: *30 minutes* (across all three sub-sections)
+
+== Learning Objectives
+
+By the end of this section, you will be able to:
+
+* Observe how persona-based access controls what information the AI assistant reveals
+* Test input and output guardrails (NeMo Guardrails + Guardrails Orchestrator) against prompt injection, harmful content, and competitor mentions
+* Review Garak adversarial test results and interpret pass/fail evidence
+* Deploy an agent into an OpenShell Agent Sandbox with deny-by-default policies
+* Use policy enforcement to block data exfiltration from a sandboxed agent
+* Examine security traces in MLflow across all three defense layers
+
+== Exercise 1: Ask a Question as a Borrower
+
+The Fed Aura Capital app assigns different capabilities depending on who logs in. A Borrower has access to mortgage guidance, application status, and product information. Start by seeing what Lenora can do for an authenticated user.
+
+. Navigate to the *Fed Aura Capital App* tab. Click *Sign In* and select the *Borrower* persona:
++
+// TODO: screenshot of Borrower persona login (security-borrower-login.png)
+image::security-borrower-login.png[Sign in dialog with Borrower persona selected,link=self,window=blank,width=700]
+
+. In the chat panel, ask:
++
+[source,text]
+----
+What is the CEO's vision for Fed Aura Capital's lending strategy?
+----
+
+. Observe the response. Lenora provides a detailed answer grounded in the company's strategic direction - the CEO's priorities, the risk appetite, and how these translate into lending practices:
++
+// TODO: screenshot of Borrower getting a detailed answer (security-borrower-answer.png)
+image::security-borrower-answer.png[Lenora's response to the Borrower with detailed lending strategy information,link=self,window=blank,width=700]
++
+The Borrower persona is authenticated and has access to this information. Lenora treats them as a trusted user within the scope of their role.
+
+== Exercise 2: Ask the Same Question as Public
+
+Now switch to the Public persona. This represents an unauthenticated user - someone who has not signed in. The same question should produce a very different result.
+
+. Click *Sign Out*, then click *Sign In* and select the *Public* persona (or access the chat without signing in):
++
+// TODO: screenshot of Public persona login (security-public-login.png)
+image::security-public-login.png[Sign in dialog with Public persona selected,link=self,window=blank,width=700]
+
+. Ask the exact same question:
++
+[source,text]
+----
+What is the CEO's vision for Fed Aura Capital's lending strategy?
+----
+
+. Observe the response. This time, Lenora rejects the question or provides only generic, publicly available information. The internal details about the CEO's strategy, risk appetite, and lending priorities are not disclosed:
++
+// TODO: screenshot of Public getting rejected (security-public-rejected.png)
+image::security-public-rejected.png[Lenora's restricted response to the Public persona,link=self,window=blank,width=700]
+
+This is persona-based access control in action. The same AI assistant, the same model, the same question - but the response changes based on who is asking. The Public persona cannot access internal information that the Borrower can.
+
+== Exercise 3: Check the Traces
+
+Both requests went through the same inference pipeline. The difference is visible in the traces.
+
+. Navigate to *OpenShift AI Dashboard > Develop & Train > Experiments*.
+
+. Find the experiment tagged *GenAI* for the mortgage-ai project and click on *Traces*.
+
+. Locate the traces for the two requests you just made. Compare them side by side:
++
+// TODO: screenshot of trace comparison (security-trace-comparison.png)
+image::security-trace-comparison.png[MLflow traces showing the difference between Borrower and Public request paths,link=self,window=blank,width=700]
+
+. Look at the trace for the Public request. You should see the auth check step rejecting the request or limiting the context before the agent processes it. The Borrower trace shows the full pipeline executing with access to internal context.
+
+TIP: Traces are the evidence layer. When a regulator or auditor asks "how do you ensure public users cannot access internal information?", the traces provide documented proof of every decision the system made.
+
+=== What's Next?
+
+Persona-based access is the first layer. But what happens when an authenticated user tries to manipulate the model itself? In the next section, you will test NeMo Guardrails against prompt injection, harmful content, and competitor mentions.

@@ -1,0 +1,166 @@
+= Exercise 6: Continuous Evaluation
+:navtitle: Evaluations and Quality
+:imagesdir: ../assets/images
+:toc:
+:toc-placement: preamble
+:icons: font
+
+Shipping a model is not the finish line.
+
+Lenora is running. She has documents (RAG), tools (MCP), and full traceability (MLflow). But how do you know she is getting better over time and not worse? How do you catch a regression when someone edits the system prompt? How do you measure whether the Risk MCP is producing reliable predictions across the range of applications it sees?
+
+The answer is continuous evaluation — automated pipelines that measure quality on every change, before it reaches production.
+
+== Learning Objectives
+
+By the end of this section, you will be able to:
+
+* Run a model capability evaluation in EvalHub
+* Evaluate RAG pipeline quality with RAGAS through a notebook
+* Run an llm-as-judge evaluation in MLflow through a notebook
+* (Optional) Import and run an automated evaluation pipeline and review results in MLflow
+
+== Exercise 6: Evaluate the Model with EvalHub
+
+EvalHub is the centralized evaluation interface for the platform. It lets you run standardized benchmarks against any model endpoint and compare results across versions.
+
+. Navigate to *OpenShift AI Dashboard > Evaluations*. You will land on the EvalHub interface showing existing evaluation runs for the mortgage-ai project:
++
+// TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
+image::evals-evalhub-main.png[EvalHub interface showing existing evaluation runs for the mortgage-ai project,link=self,window=blank,width=700]
+
+. Click *New Evaluation Run*. Select the `gpt-oss-20b` model endpoint as the target:
++
+// TODO: screenshot of new evaluation run dialog (evals-evalhub-new-run.png)
+image::evals-evalhub-new-run.png[EvalHub new evaluation run dialog with gpt-oss-20b endpoint selected,link=self,window=blank,width=700]
+
+. For the dataset, select *ArcEasy* or *Science QnA* — whichever is available and runs faster on the cluster. Click *Start Evaluation*.
+
+. Wait for the run to complete, then review the results — overall accuracy score and the per-question breakdown:
++
+// TODO: screenshot of evaluation results (evals-evalhub-results.png)
+image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy score and per-question breakdown,link=self,window=blank,width=700]
+
+NOTE: ArcEasy and Science QnA measure general model capability, not mortgage-specific quality. They are useful baselines — a sudden drop in ArcEasy accuracy after a model update is a signal that something changed in the model's core capabilities. Domain-specific evaluations like RAGAS are what tell you whether Lenora is answering Fed Aura's questions correctly.
+
+== Exercise 7: Evaluate RAG Quality with RAGAS
+
+General capability benchmarks tell you whether the model is working. RAGAS tells you whether your RAG pipeline is working.
+
+RAGAS is a framework that evaluates three things:
+
+* **Faithfulness** — does the answer accurately reflect what was in the retrieved context, or did the model add or change information?
+* **Answer relevancy** — does the answer actually address the question asked?
+* **Context precision** — did the retrieval step surface the right document chunks, or did it retrieve irrelevant content?
+
+. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-userX > Workbench*.
+
+. Open the notebook `evaluate_ragas.ipynb`. It is already available in your workbench and pre-configured to connect to the RAG pipeline you set up in section 3.2:
++
+// TODO: screenshot of evaluate_ragas.ipynb open in Workbench (evals-ragas-notebook.png)
+image::evals-ragas-notebook.png[Jupyter notebook evaluate_ragas.ipynb open in the Workbench,link=self,window=blank,width=700]
+
+. Run all cells. The notebook:
+.. Sends a test set of mortgage questions through the RAG pipeline
+.. Collects the retrieved context and the model's answers
+.. Passes everything to RAGAS for scoring
+
+. Review the output metrics. Pay attention to:
++
+* *Faithfulness* — if this is low, the model is adding information that was not in the retrieved documents
+* *Answer relevancy* — if this is low, the model is answering a question it made up rather than the one asked
+* *Context precision* — if this is low, the retrieval step is pulling in the wrong document chunks
+
+TIP: Low faithfulness with high context precision usually means the model is ignoring the retrieved context and answering from training data. Low context precision means the chunking or embedding configuration needs tuning.
+
+References:
+
+* EvalHub RAGAS adapter: https://eval-hub.github.io/adapters/ragas/[eval-hub.github.io/adapters/ragas,window=blank]
+* Notebook source: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/blob/dev/templates/admin/evalhub/evaluate_ragas.ipynb[evaluate_ragas.ipynb on GitHub,window=blank]
+
+== Exercise 8: MLflow llm-as-judge
+
+RAGAS requires a test set with known source documents. But what about open-ended agent evaluations — where you don't have a single correct answer to compare against?
+
+That is where llm-as-judge comes in. Instead of scoring against a ground truth, you use a second LLM to evaluate the quality of the first LLM's responses. The judge model reads the question, the context the agent had available, and the agent's answer, then scores dimensions like correctness, helpfulness, and groundedness.
+
+. In your Workbench, open `evaluate_agent.ipynb`:
++
+// TODO: screenshot of evaluate_agent.ipynb open in Workbench (evals-agent-notebook.png)
+image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in the Workbench,link=self,window=blank,width=700]
+
+. The notebook runs a set of loan assessment queries through Lenora's agent and collects the responses. Run the first section of cells to generate the responses.
+
+. The second section configures the judge model and scoring criteria — correctness, groundedness, refusal appropriateness. Run these cells to start the evaluation.
+
+. Results are logged to MLflow automatically. Once the notebook finishes, navigate to *OpenShift AI Dashboard > Develop & Train > Experiments* and find the new evaluation run. Review the per-question scores:
++
+// TODO: screenshot of llm-as-judge results in MLflow (evals-llm-judge-results.png)
+image::evals-llm-judge-results.png[MLflow experiment showing llm-as-judge evaluation scores per question,link=self,window=blank,width=700]
+
+NOTE: llm-as-judge is not infallible — the judge model has its own biases and limitations. It is most useful for catching obvious regressions (a response that stopped following the persona, a tool call that produced a wrong calculation) rather than for fine-grained quality comparison.
+
+Reference: https://github.com/rh-ai-quickstart/multi-agent-loan-origination/blob/main/evaluations/evaluate_agent.ipynb[evaluate_agent.ipynb on GitHub,window=blank]
+
+== Exercise 9 (Optional): Run an Evaluation Pipeline
+
+The notebook-based evaluations above are great for exploration. For production, you want evaluation running automatically as a scheduled pipeline — not something a person has to trigger manually.
+
+WARNING: This exercise requires a few extra minutes. Skip it if you are short on time and continue to the Section Summary.
+
+. Navigate to *OpenShift AI Dashboard > Pipelines* and click *Import Pipeline*.
+
+. Upload the evaluation pipeline YAML from your workshop materials. The pipeline is pre-built and ready to import.
+
+. Click *Create Run* and set the following parameters:
++
+[cols="1,2",options="header"]
+|===
+| Parameter | Value
+
+| `agent_name`
+| `public-assistant`
+
+| `dataset_name`
+| `public_assistant_eval_simple`
+|===
+
+. Start the run and watch the pipeline stages execute in order:
++
+----
+setup-mlflow-op
+  └── create-dataset-op
+        └── run-eval-op
+              └── report-results-op
+----
++
+// TODO: screenshot of pipeline run stages (evals-pipeline-stages.png)
+image::evals-pipeline-stages.png[OpenShift AI Pipelines view showing the four evaluation pipeline stages executing,link=self,window=blank,width=700]
+
+. When the pipeline completes, go to *MLflow > Experiments* and find the evaluation run it logged. Review the results.
+
+TIP: In production, this pipeline would be scheduled to run on every commit to the prompt registry. A drop in evaluation score blocks the deployment — the same way a failing unit test blocks a code merge.
+
+Reference: https://rhpds.github.io/agentops-in-prod-showroom/modules/08-module-06-dev-to-production.html#_exercise_1_import_an_evaluation_pipeline[Evaluation Pipeline exercise,window=blank]
+
+== Section Summary
+
+=== What You Accomplished
+
+* Ran a model capability evaluation in EvalHub against `gpt-oss-20b` using ArcEasy or Science QnA
+* Evaluated RAG pipeline quality with RAGAS — measuring faithfulness, answer relevancy, and context precision across a test set of mortgage questions
+* Used an LLM as judge to evaluate Lenora's open-ended agent responses, with results logged to MLflow
+* (Optional) Imported and ran a four-stage automated evaluation pipeline and reviewed results in MLflow
+
+=== Key Takeaways
+
+* Benchmarks like ArcEasy measure baseline model capability — they catch model-level regressions but do not measure domain-specific quality
+* RAGAS decomposes RAG quality into components (faithfulness, relevancy, precision) so you can diagnose exactly what is going wrong and where
+* llm-as-judge enables evaluation of open-ended responses where there is no single correct answer — useful for catching persona regressions and reasoning failures
+* Automated evaluation pipelines remove the human from the quality gate — quality is measured continuously, not just when someone remembers to check
+
+=== What's Next?
+
+You have evaluated Lenora's quality. The next section covers the final layer: security. Before Lenora goes to production, the security team needs to ensure she cannot be manipulated, leak private data, or be used to bypass compliance controls. In section 5.1, you will implement defense-in-depth AI safety with guardrails, adversarial testing, and secure agent onboarding.
+
+If you have time remaining and want to go deeper on how the Risk MCP's predictive model was built, continue to the Advanced section: Predictive AI with AutoML.

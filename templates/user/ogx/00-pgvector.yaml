@@ -1,0 +1,91 @@
+# PGVector - PostgreSQL with vector extension for OGX vector_io provider
+# Deploy order: this file FIRST, then 01-llama-stack-config.yaml, then ogxserver.yaml
+#
+# The vector extension is auto-created at startup via the init-extensions ConfigMap.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgvector-init-extensions
+data:
+  create-vector-extension.sh: |
+    #!/bin/bash
+    psql -U postgres -d "${POSTGRESQL_DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS vector;"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: genai-pgvector-credentials
+type: Opaque
+stringData:
+  password: pgvector123
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genai-pgvector
+  labels:
+    app: genai-pgvector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: genai-pgvector
+  template:
+    metadata:
+      labels:
+        app: genai-pgvector
+    spec:
+      containers:
+      - name: postgresql
+        image: registry.redhat.io/rhel9/postgresql-16
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        env:
+        - name: POSTGRESQL_DATABASE
+          value: vectordb
+        - name: POSTGRESQL_USER
+          value: vectoruser
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: genai-pgvector-credentials
+              key: password
+        - name: POSTGRESQL_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: genai-pgvector-credentials
+              key: password
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
+        volumeMounts:
+        - name: pgdata
+          mountPath: /var/lib/pgsql/data
+        - name: init-extensions
+          mountPath: /opt/app-root/src/postgresql-start/
+      volumes:
+      - name: pgdata
+        emptyDir: {}
+      - name: init-extensions
+        configMap:
+          name: pgvector-init-extensions
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: genai-pgvector
+  labels:
+    app: genai-pgvector
+spec:
+  selector:
+    app: genai-pgvector
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP

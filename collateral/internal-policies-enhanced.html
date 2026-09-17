@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internal Underwriting Policies - Fed Aura Capital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700&family=Red+Hat+Text:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rh-red: #ee0000;
+    --rh-red-dark: #c9190b;
+    --pf-blue: #0066cc;
+    --pf-blue-light: #e7f1fa;
+    --pf-green: #3e8635;
+    --pf-green-light: #f3faf2;
+    --pf-gold: #f0ab00;
+    --pf-gold-light: #fff8e5;
+    --pf-purple: #6753ac;
+    --pf-purple-light: #f2f0f8;
+    --pf-teal: #009596;
+    --pf-teal-light: #e0f5f5;
+    --text-dark: #151515;
+    --text-muted: #6a6e73;
+    --bg-light: #f5f5f5;
+    --border-light: #d2d2d2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Red Hat Text', Arial, sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 11pt;
+    background: #fff;
+  }
+
+  /* ── Cover header ── */
+  .cover {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #fff;
+    padding: 48px 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--rh-red) 0%, var(--pf-gold) 50%, var(--pf-blue) 100%);
+  }
+  .cover-logo {
+    font-family: 'Red Hat Display', sans-serif;
+    font-weight: 700;
+    font-size: 14pt;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .cover-logo span { color: var(--rh-red); }
+  .cover h1 {
+    font-family: 'Red Hat Display', sans-serif;
+    font-size: 28pt;
+    font-weight: 700;
+    margin: 16px 0 8px;
+    line-height: 1.2;
+  }
+  .cover-meta {
+    font-size: 10pt;
+    color: #b0b0b0;
+    margin-top: 12px;
+  }
+  .cover-meta span { margin-right: 24px; }
+  .cover-badge {
+    display: inline-block;
+    background: var(--rh-red);
+    color: #fff;
+    font-size: 8pt;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 12px;
+  }
+
+  /* ── Disclaimer ── */
+  .disclaimer {
+    background: var(--pf-gold-light);
+    border-left: 4px solid var(--pf-gold);
+    padding: 12px 20px;
+    margin: 24px 60px;
+    font-size: 9pt;
+    color: #6a5300;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* ── Main content ── */
+  .content { padding: 0 60px 40px; }
+
+  .section {
+    margin-top: 36px;
+    page-break-inside: avoid;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--bg-light);
+  }
+  .section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Red Hat Display', sans-serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .section p {
+    margin-bottom: 12px;
+    text-align: justify;
+  }
+
+  /* ── Chart containers ── */
+  .chart-container {
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0 8px;
+    page-break-inside: avoid;
+  }
+  .chart-title {
+    font-family: 'Red Hat Display', sans-serif;
+    font-size: 11pt;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  /* ── Metrics cards ── */
+  .metrics-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0 8px;
+  }
+  .metric-card {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 16px 20px;
+    text-align: center;
+    flex: 1;
+    min-width: 130px;
+    max-width: 180px;
+    page-break-inside: avoid;
+  }
+  .metric-card .value {
+    font-family: 'Red Hat Display', sans-serif;
+    font-size: 22pt;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .metric-card .label {
+    font-size: 8.5pt;
+    color: var(--text-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .metric-card.highlight {
+    border-top: 3px solid var(--rh-red);
+  }
+
+  /* ── Approval pyramid ── */
+  .pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0 8px;
+  }
+  .pyramid-tier {
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    padding: 14px 20px;
+    color: #fff;
+    page-break-inside: avoid;
+  }
+  .pyramid-tier .tier-role {
+    font-family: 'Red Hat Display', sans-serif;
+    font-weight: 700;
+    font-size: 11pt;
+    min-width: 180px;
+  }
+  .pyramid-tier .tier-scope {
+    font-size: 9.5pt;
+    opacity: 0.9;
+    margin-left: 12px;
+  }
+  .pyramid-tier .tier-badge {
+    font-size: 8pt;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.25);
+    margin-right: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Footer ── */
+  .doc-footer {
+    margin-top: 40px;
+    padding: 16px 60px;
+    border-top: 2px solid var(--bg-light);
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    color: var(--text-muted);
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { font-size: 10pt; }
+    .cover { padding: 36px 48px 30px; }
+    .content { padding: 0 48px 30px; }
+    .disclaimer { margin: 18px 48px; }
+    .doc-footer { padding: 12px 48px; }
+    .section { page-break-inside: avoid; }
+    .chart-container { page-break-inside: avoid; }
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════ COVER ══ -->
+<div class="cover">
+  <div class="cover-logo"><span>Fed Aura</span> Capital</div>
+  <h1>Internal Underwriting Policies</h1>
+  <div class="cover-meta">
+    <span>Source: Company Underwriting Manual, Rev. 2024-Q4</span>
+    <span>Effective: October 1, 2024</span>
+  </div>
+  <div class="cover-badge">Confidential</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ DISCLAIMER ══ -->
+<div class="disclaimer">
+  <strong>DISCLAIMER:</strong> This content is simulated for demonstration purposes and does not constitute legal or regulatory advice.
+</div>
+
+<div class="content">
+
+<!-- ════════════════════════════════════════════════ DTI LIMITS ══ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background: var(--pf-blue-light);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 20h18M5 20V10l4-6h6l4 6v10" stroke="#0066cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="9" y="14" width="6" height="6" rx="0.5" stroke="#0066cc" stroke-width="2"/></svg>
+    </div>
+    <h2>DTI Limits</h2>
+  </div>
+
+  <p>The Company sets a maximum back-end DTI ratio of 40% for conventional loans, which is more conservative than the federal QM safe harbor of 43%. This overlay exists to reduce default risk in the Company's portfolio. Exceptions may be granted by the Chief Credit Officer for borrowers with a credit score above 760 and verified liquid reserves exceeding 12 months of housing payments.</p>
+
+  <p>For FHA loans, the Company follows FHA guidelines (31/43) without additional DTI overlays. For VA loans, the Company uses residual income analysis without a hard DTI cap.</p>
+
+  <!-- DTI Comparison Chart -->
+  <div class="chart-container">
+    <div class="chart-title">Debt-to-Income Ratio Limits by Loan Type</div>
+    <svg width="100%" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Grid lines -->
+      <line x1="160" y1="20" x2="160" y2="200" stroke="#e0e0e0" stroke-width="1"/>
+      <line x1="260" y1="20" x2="260" y2="200" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="360" y1="20" x2="360" y2="200" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="460" y1="20" x2="460" y2="200" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="560" y1="20" x2="560" y2="200" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+
+      <!-- Axis labels (%) -->
+      <text x="160" y="215" text-anchor="middle" font-size="9" fill="#6a6e73">0%</text>
+      <text x="260" y="215" text-anchor="middle" font-size="9" fill="#6a6e73">15%</text>
+      <text x="360" y="215" text-anchor="middle" font-size="9" fill="#6a6e73">30%</text>
+      <text x="460" y="215" text-anchor="middle" font-size="9" fill="#6a6e73">45%</text>
+      <text x="560" y="215" text-anchor="middle" font-size="9" fill="#6a6e73">60%</text>
+
+      <!-- QM Safe Harbor reference line -->
+      <line x1="388" y1="15" x2="388" y2="200" stroke="#c9190b" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="388" y="12" text-anchor="middle" font-size="8" fill="#c9190b" font-weight="700">QM Safe Harbor 43%</text>
+
+      <!-- Conventional (40%) -->
+      <text x="150" y="52" text-anchor="end" font-size="10" fill="#151515" font-weight="600">Conventional</text>
+      <rect x="160" y="38" width="267" height="24" rx="4" fill="#0066cc"/>
+      <text x="435" y="55" font-size="10" fill="#151515" font-weight="700">40%</text>
+
+      <!-- FHA Front-end (31%) -->
+      <text x="150" y="92" text-anchor="end" font-size="10" fill="#151515" font-weight="600">FHA Front-end</text>
+      <rect x="160" y="78" width="207" height="24" rx="4" fill="#3e8635"/>
+      <text x="375" y="95" font-size="10" fill="#151515" font-weight="700">31%</text>
+
+      <!-- FHA Back-end (43%) -->
+      <text x="150" y="132" text-anchor="end" font-size="10" fill="#151515" font-weight="600">FHA Back-end</text>
+      <rect x="160" y="118" width="287" height="24" rx="4" fill="#3e8635"/>
+      <text x="455" y="135" font-size="10" fill="#151515" font-weight="700">43%</text>
+
+      <!-- Exception Max (50%) -->
+      <text x="150" y="172" text-anchor="end" font-size="10" fill="#151515" font-weight="600">FHA Exception</text>
+      <rect x="160" y="158" width="334" height="24" rx="4" fill="#f0ab00"/>
+      <text x="502" y="175" font-size="10" fill="#151515" font-weight="700">50%</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ JUMBO LOAN THRESHOLDS ══ -->
+<div class="section" style="page-break-before: always;">
+  <div class="section-header">
+    <div class="section-icon" style="background: var(--pf-green-light);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#3e8635" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#3e8635" stroke-width="2" stroke-linecap="round"/><path d="M9 12h6" stroke="#3e8635" stroke-width="2" stroke-linecap="round"/><text x="12" y="15" text-anchor="middle" font-size="8" fill="#3e8635" font-weight="700">$</text></svg>
+    </div>
+    <h2>Jumbo Loan Thresholds</h2>
+  </div>
+
+  <p>Loan amounts exceeding the conforming loan limit ($766,550 for 2024 in most areas, higher in designated high-cost areas) are classified as jumbo loans and subject to enhanced underwriting: minimum credit score of 700, maximum DTI of 38%, minimum 20% down payment, and at least 12 months of reserves.</p>
+
+  <p>Jumbo loans must be underwritten by a senior underwriter and require a second review. The property appraisal must include a second comparable analysis for jumbo amounts exceeding $1.5 million.</p>
+
+  <!-- Jumbo Metrics Cards -->
+  <div class="metrics-row">
+    <div class="metric-card highlight">
+      <div class="value" style="color: var(--rh-red);">$766,550</div>
+      <div class="label">Conforming Limit (2024)</div>
+    </div>
+    <div class="metric-card">
+      <div class="value" style="color: var(--pf-blue);">700</div>
+      <div class="label">Min Credit Score</div>
+    </div>
+    <div class="metric-card">
+      <div class="value" style="color: var(--pf-green);">38%</div>
+      <div class="label">Max DTI Ratio</div>
+    </div>
+    <div class="metric-card">
+      <div class="value" style="color: var(--pf-purple);">20%</div>
+      <div class="label">Min Down Payment</div>
+    </div>
+    <div class="metric-card">
+      <div class="value" style="color: var(--pf-teal);">12 mo</div>
+      <div class="label">Min Reserves</div>
+    </div>
+  </div>
+
+  <!-- Additional requirements -->
+  <div class="chart-container" style="background: #fff; text-align: center;">
+    <svg width="100%" viewBox="0 0 580 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Threshold line -->
+      <rect x="20" y="40" width="540" height="4" rx="2" fill="#e0e0e0"/>
+
+      <!-- $766,550 marker -->
+      <circle cx="200" cy="42" r="8" fill="#0066cc"/>
+      <text x="200" y="30" text-anchor="middle" font-size="10" fill="#0066cc" font-weight="700">$766,550</text>
+      <text x="200" y="65" text-anchor="middle" font-size="8" fill="#6a6e73">Standard Jumbo</text>
+      <text x="200" y="77" text-anchor="middle" font-size="8" fill="#6a6e73">Senior UW + 2nd Review</text>
+
+      <!-- $1.5M marker -->
+      <circle cx="420" cy="42" r="8" fill="#c9190b"/>
+      <text x="420" y="30" text-anchor="middle" font-size="10" fill="#c9190b" font-weight="700">$1,500,000</text>
+      <text x="420" y="65" text-anchor="middle" font-size="8" fill="#6a6e73">Enhanced Appraisal</text>
+      <text x="420" y="77" text-anchor="middle" font-size="8" fill="#6a6e73">2nd Comparable Analysis</text>
+
+      <!-- Range labels -->
+      <text x="80" y="95" text-anchor="middle" font-size="8" fill="#3e8635" font-weight="600">CONFORMING</text>
+      <text x="310" y="95" text-anchor="middle" font-size="8" fill="#0066cc" font-weight="600">JUMBO</text>
+      <text x="500" y="95" text-anchor="middle" font-size="8" fill="#c9190b" font-weight="600">SUPER JUMBO</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ RATE LOCK POLICY ══ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background: var(--pf-teal-light);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#009596" stroke-width="2"/><path d="M8 11V7a4 4 0 018 0v4" stroke="#009596" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="#009596"/></svg>
+    </div>
+    <h2>Rate Lock Policy</h2>
+  </div>
+
+  <p>Rate locks are available for 30, 45, or 60 day periods. Extended locks (90 days) require manager approval. Lock extensions beyond the original period incur a fee of 0.125% per 15-day extension. Renegotiation of locked rates is permitted only for market improvements exceeding 0.25% from the original lock date, subject to a renegotiation fee of 0.125%.</p>
+
+  <p>Float-down options are available at an additional cost of 0.125% upfront. Float-down may be exercised once, no later than 5 business days before the scheduled closing date.</p>
+
+  <!-- Rate Lock Timeline -->
+  <div class="chart-container">
+    <div class="chart-title">Rate Lock Periods and Fee Structure</div>
+    <svg width="100%" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Timeline axis -->
+      <line x1="60" y1="160" x2="560" y2="160" stroke="#151515" stroke-width="1.5"/>
+      <!-- Tick marks -->
+      <line x1="60" y1="155" x2="60" y2="165" stroke="#151515" stroke-width="1.5"/>
+      <line x1="210" y1="155" x2="210" y2="165" stroke="#151515" stroke-width="1.5"/>
+      <line x1="285" y1="155" x2="285" y2="165" stroke="#151515" stroke-width="1.5"/>
+      <line x1="360" y1="155" x2="360" y2="165" stroke="#151515" stroke-width="1.5"/>
+      <line x1="510" y1="155" x2="510" y2="165" stroke="#151515" stroke-width="1.5"/>
+
+      <!-- Day labels -->
+      <text x="60" y="178" text-anchor="middle" font-size="9" fill="#151515">Day 0</text>
+      <text x="210" y="178" text-anchor="middle" font-size="9" fill="#151515">Day 30</text>
+      <text x="285" y="178" text-anchor="middle" font-size="9" fill="#151515">Day 45</text>
+      <text x="360" y="178" text-anchor="middle" font-size="9" fill="#151515">Day 60</text>
+      <text x="510" y="178" text-anchor="middle" font-size="9" fill="#151515">Day 90</text>
+
+      <!-- 30-day lock bar -->
+      <rect x="60" y="28" width="150" height="22" rx="4" fill="#009596"/>
+      <text x="135" y="43" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">30-Day Lock</text>
+      <text x="135" y="18" text-anchor="middle" font-size="8" fill="#009596">Standard</text>
+
+      <!-- 45-day lock bar -->
+      <rect x="60" y="62" width="225" height="22" rx="4" fill="#0066cc"/>
+      <text x="172" y="77" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">45-Day Lock</text>
+      <text x="172" y="52" text-anchor="middle" font-size="8" fill="#0066cc">Standard</text>
+
+      <!-- 60-day lock bar -->
+      <rect x="60" y="96" width="300" height="22" rx="4" fill="#3e8635"/>
+      <text x="210" y="111" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">60-Day Lock</text>
+      <text x="210" y="86" text-anchor="middle" font-size="8" fill="#3e8635">Standard</text>
+
+      <!-- 90-day lock bar (requires approval) -->
+      <rect x="60" y="130" width="450" height="22" rx="4" fill="#f0ab00"/>
+      <text x="285" y="145" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">90-Day Extended Lock (Manager Approval Required)</text>
+      <text x="285" y="120" text-anchor="middle" font-size="8" fill="#b07800">Requires Approval</text>
+
+      <!-- Extension fee annotation -->
+      <text x="560" y="100" text-anchor="end" font-size="8.5" fill="#c9190b" font-weight="600">Extension Fee:</text>
+      <text x="560" y="113" text-anchor="end" font-size="8.5" fill="#c9190b">0.125% / 15 days</text>
+
+      <!-- Float-down annotation -->
+      <text x="560" y="38" text-anchor="end" font-size="8.5" fill="#6753ac" font-weight="600">Float-Down Option:</text>
+      <text x="560" y="51" text-anchor="end" font-size="8.5" fill="#6753ac">0.125% upfront</text>
+      <text x="560" y="64" text-anchor="end" font-size="8.5" fill="#6753ac">Exercise once, 5 days pre-close</text>
+
+      <!-- Renegotiation annotation -->
+      <text x="560" y="145" text-anchor="end" font-size="8.5" fill="#6a6e73">Renegotiation: market move >0.25%</text>
+      <text x="560" y="158" text-anchor="end" font-size="8.5" fill="#6a6e73">+ 0.125% fee</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ EXCEPTION PROCESS ══ -->
+<div class="section" style="page-break-before: always;">
+  <div class="section-header">
+    <div class="section-icon" style="background: var(--pf-purple-light);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#6753ac" stroke-width="2" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="#6753ac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="#6753ac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h2>Exception Process</h2>
+  </div>
+
+  <p>Underwriting exceptions must be documented on the Exception Request Form and approved by the appropriate authority level: Senior Underwriter for minor exceptions (single factor, low risk), Underwriting Manager for moderate exceptions (DTI override up to 45%, LTV override up to 2%), and Chief Credit Officer for major exceptions (multiple factors or significant deviation from policy).</p>
+
+  <p>All exceptions must include a written justification explaining the compensating factors that mitigate the additional risk. Exception approvals are audited quarterly and reported to the Risk Committee.</p>
+
+  <!-- Exception Approval Pyramid -->
+  <div class="chart-container" style="background: #fff;">
+    <div class="chart-title">Exception Approval Authority</div>
+    <div class="pyramid">
+      <div class="pyramid-tier" style="background: linear-gradient(135deg, #a83232, #c9190b); width: 65%;">
+        <div class="tier-badge">Major</div>
+        <div class="tier-role">Chief Credit Officer</div>
+        <div class="tier-scope">Multiple factors or significant policy deviation</div>
+      </div>
+      <div class="pyramid-tier" style="background: linear-gradient(135deg, #b08600, #d4a017); width: 78%;">
+        <div class="tier-badge">Moderate</div>
+        <div class="tier-role">Underwriting Manager</div>
+        <div class="tier-scope">DTI override up to 45% or LTV override up to 2%</div>
+      </div>
+      <div class="pyramid-tier" style="background: linear-gradient(135deg, #2d7a2d, #3e8635); width: 92%;">
+        <div class="tier-badge">Minor</div>
+        <div class="tier-role">Senior Underwriter</div>
+        <div class="tier-scope">Single factor, low risk exceptions</div>
+      </div>
+    </div>
+
+    <svg width="100%" viewBox="0 0 580 50" xmlns="http://www.w3.org/2000/svg" style="margin-top: 16px;">
+      <rect x="20" y="8" width="540" height="34" rx="6" fill="#f2f0f8" stroke="#d2d2d2"/>
+      <text x="290" y="20" text-anchor="middle" font-size="8.5" fill="#6753ac" font-weight="700">AUDIT & GOVERNANCE</text>
+      <text x="290" y="34" text-anchor="middle" font-size="8.5" fill="#6a6e73">All exceptions audited quarterly and reported to Risk Committee</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ DOCUMENT RETENTION ══ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background: var(--pf-gold-light);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#f0ab00" stroke-width="2" stroke-linejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="#f0ab00" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <h2>Document Retention</h2>
+  </div>
+
+  <p>Loan files must be retained for a minimum of 7 years from the date of final disposition (closing, denial, or withdrawal). HMDA-related data must be retained for 3 years following the March 1 submission deadline. Audit trail records must be retained for 10 years.</p>
+
+  <p>Electronic document storage must comply with the E-SIGN Act and maintain document integrity through checksums or digital signatures.</p>
+
+  <!-- Retention Period Chart -->
+  <div class="chart-container">
+    <div class="chart-title">Minimum Retention Periods (Years)</div>
+    <svg width="100%" viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg">
+      <!-- Grid -->
+      <line x1="180" y1="15" x2="180" y2="130" stroke="#e0e0e0" stroke-width="1"/>
+      <line x1="218" y1="15" x2="218" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="256" y1="15" x2="256" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="294" y1="15" x2="294" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="332" y1="15" x2="332" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="370" y1="15" x2="370" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="408" y1="15" x2="408" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="446" y1="15" x2="446" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="484" y1="15" x2="484" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="522" y1="15" x2="522" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="560" y1="15" x2="560" y2="130" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4"/>
+
+      <!-- Year labels -->
+      <text x="180" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">0</text>
+      <text x="218" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">1</text>
+      <text x="256" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">2</text>
+      <text x="294" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">3</text>
+      <text x="332" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">4</text>
+      <text x="370" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">5</text>
+      <text x="408" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">6</text>
+      <text x="446" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">7</text>
+      <text x="484" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">8</text>
+      <text x="522" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">9</text>
+      <text x="560" y="145" text-anchor="middle" font-size="9" fill="#6a6e73">10</text>
+
+      <!-- HMDA Data (3 years) -->
+      <text x="170" y="38" text-anchor="end" font-size="10" fill="#151515" font-weight="600">HMDA Data</text>
+      <rect x="180" y="24" width="114" height="24" rx="4" fill="#f0ab00"/>
+      <text x="237" y="41" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">3 years</text>
+
+      <!-- Loan Files (7 years) -->
+      <text x="170" y="78" text-anchor="end" font-size="10" fill="#151515" font-weight="600">Loan Files</text>
+      <rect x="180" y="64" width="266" height="24" rx="4" fill="#0066cc"/>
+      <text x="313" y="81" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">7 years</text>
+
+      <!-- Audit Trail (10 years) -->
+      <text x="170" y="118" text-anchor="end" font-size="10" fill="#151515" font-weight="600">Audit Trail</text>
+      <rect x="180" y="104" width="380" height="24" rx="4" fill="#c9190b"/>
+      <text x="370" y="121" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">10 years</text>
+    </svg>
+  </div>
+
+  <!-- E-SIGN compliance note -->
+  <div style="background: var(--pf-blue-light); border-radius: 6px; padding: 12px 16px; margin-top: 12px; display: flex; align-items: flex-start; gap: 10px;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10" stroke="#0066cc" stroke-width="2"/><path d="M12 16v-4M12 8h.01" stroke="#0066cc" stroke-width="2" stroke-linecap="round"/></svg>
+    <div style="font-size: 9.5pt; color: #003d7a;">
+      <strong>Compliance Note:</strong> Electronic document storage must comply with the E-SIGN Act and maintain document integrity through checksums or digital signatures.
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════ FOOTER ══ -->
+<div class="doc-footer">
+  <div>Fed Aura Capital - Internal Underwriting Policies</div>
+  <div>Effective: October 1, 2024 | Rev. 2024-Q4</div>
+</div>
+
+</body>
+</html>

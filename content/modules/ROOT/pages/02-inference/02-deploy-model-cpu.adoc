@@ -1,0 +1,73 @@
+:imagesdir: ../assets/images
+:navtitle: Deploy a Model on CPU
+:toc:
+:toc-placement: preamble
+:icons: font
+
+== Exercise 2: Deploy a Model on CPU
+
+Now that you've found your model in the Catalog, let's deploy it. We are going to deploy Qwen3 0.6B using vLLM as the runtime. vLLM is a high-performance inference engine for LLMs that is optimized for low latency and high throughput. It supports both CPU and GPU inference, and it can be used to deploy models in a distributed manner. In our case we'll use vLLM for CPU inference now.
+
+. In the Model Catalog, select *Other Models* and click on *Qwen3 0.6B*. Click the *Deploy* button in the top right corner:
++
+image::cpu-deploy-button.png[Model card for Qwen3 0.6B with the Deploy button highlighted,link=self,window=blank,width=700]
+
+. Select your project `wksp-user1` and click *Next*.
+
+. You will be prompted for where the model lives. This information is already populated cause the catalog has the information — don't change anything, just click *Next*.
+
+. On the deployment configuration screen, keep the name as-is. Under deployment options, select *LLM inference service*. Then expand `> Customize resource requests and limits` and set the resource values as shown below:
++
+image::cpu-resource-limits.png[Resource requests and limits configuration for the CPU deployment,link=self,window=blank,width=700]
+
+. For the accelerator configuration, select *vLLM CPU (x86)*. Set the number of replicas to `1` and click *Next*:
++
+image::cpu-accelerator-config.png[Accelerator configuration showing vLLM CPU x86 selected with 1 replica,link=self,window=blank,width=700]
+
+. On the final screen, select *Add as AI asset endpoint*. Don't worry about the MaaS option yet — we'll get to that in Exercise 4. Click *Deploy*.
+
+. Wait for the deployment to show a green status indicator. It takes a couple of minutes while the model weights are loaded:
++
+image::cpu-deployment-ready.png[Model deployment list showing Qwen3 0.6B with a green ready status,link=self,window=blank,width=700]
+
+=== Quick Test: GenAI Playground
+
+GenAI Playground is here to test the model you just deployed, alongside other capabilities such as shaping a model's behavior with system prompts, and connecting the model to private knowledge and tools. In this exercise, we will use it to confirm that the model is responding to prompts.
+
+. Go to *Gen AI Studio > Playground*. Click *Create Playground* and select the model you just deployed. (Please don't worry about `gpt-oss-20b` yet.) Set *Max tokens* to `1024` and click *Create*:
++
+image::playground-create.png[Create Playground dialog with Qwen3 0.6B selected and Max tokens set to 1024,link=self,window=blank,width=700]
+
+. When the Playground is ready, send a prompt of your choice — for example:
++
+[source,text]
+----
+What is the capital of France?
+----
++
+You should see a response from the model, hopefully with the correct answer "Paris" 🤭
+
+. Now try shaping the model's behavior with a system prompt. In the *Instructions* field, enter:
++
+[source,text]
+----
+You are a helpful assistant and you talk like Gen Z.
+----
++
+Send the same question again. You should get a noticeably different response — same facts, very different vibe 😎
++
+image::playground-system-prompt.png[GenAI Playground showing the system prompt field and a Gen Z style response,link=self,window=blank,width=700]
++
+NOTE: The Instructions field is how you pass a system prompt to the model — instructions that shape its persona, tone, and behavior before the user says anything. This is the simplest form of prompt engineering, and it works on any model regardless of how it was deployed.
+
+=== Clean up
+
+Let's delete the model deployment to free up resources before the next exercise.
+
+. In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
+. Select the Qwen3 0.6B deployment you just created and click *Delete*.
+. Confirm the deletion.
+
+=== What's Next?
+
+You have deployed a model on a single CPU node with one replica. That works for testing, but it doesn't scale. In the next exercise, you will deploy the same model using llm-d — a distributed inference scheduler that routes requests across multiple replicas for higher throughput and lower latency under load.

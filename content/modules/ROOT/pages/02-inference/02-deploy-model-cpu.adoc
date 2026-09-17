@@ -1,3 +1,4 @@
+= Deploy a Model on CPU
 :imagesdir: ../assets/images
 :navtitle: Deploy a Model on CPU
 :toc:

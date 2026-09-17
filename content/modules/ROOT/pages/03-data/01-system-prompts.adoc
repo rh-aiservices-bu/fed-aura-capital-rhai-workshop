@@ -39,13 +39,15 @@ You will ask this exact question several times throughout this section, each tim
 
 == Your Playground is ready
 
-In section 2.2, you created a GenAI Playground connected to three model endpoints - two CPU-hosted models and one external model. You will use that same Playground for the rest of this section.
+In section 2.4, you created a GenAI Playground connected to the `gpt-oss-20b` MaaS endpoint. You will use that same Playground for the rest of this section.
 
-TIP: If you skipped section 2.2, create a new Playground now and add all three available model endpoints before continuing.
+NOTE: The CPU deployments you created in sections 2.2 and 2.3 were deleted at the end of those exercises to free up cluster resources. The `gpt-oss-20b` MaaS endpoint is a shared, always-running model - it is the one you will use from here on, and it is also the model that powers {assistant_name} in the live application.
 
-. Open the GenAI Playground you created in section 2.2:
+TIP: If you skipped section 2.4, create a Playground now with the `gpt-oss-20b` endpoint before continuing.
+
+. Open the GenAI Playground you created in section 2.4:
 +
-image::module5-genaiplaygroundclean.png[GenAI Playground with three model endpoints ready,link=self,window=blank,width=700]
+image::module5-genaiplaygroundclean.png[GenAI Playground connected to the gpt-oss-20b endpoint,link=self,window=blank,width=700]
 +
 Clear any previous conversation history so you start with a clean slate. Click **New Chat** in the upper right corner of the GenAI Playground.
 

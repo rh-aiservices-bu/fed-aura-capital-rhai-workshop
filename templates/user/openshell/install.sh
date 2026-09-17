@@ -56,10 +56,6 @@ oc -n "$NAMESPACE" apply -f "$SCRIPT_DIR/manifests/openshell/route.yaml"
 sleep 2
 GW_ROUTE=$(oc -n "$NAMESPACE" get route openshell-gw -o jsonpath='{.spec.host}' 2>/dev/null || echo "pending")
 
-step "Grant port-forward access to workbench service accounts"
-sed "s/NAMESPACE_PLACEHOLDER/$NAMESPACE/" \
-    "$SCRIPT_DIR/manifests/openshell/rbac-portforward.yaml" | oc -n "$NAMESPACE" apply -f -
-
 if [ "${ENABLE_TLS:-false}" = "true" ]; then
     step "Enable passthrough TLS (cert-manager)"
     APPS_DOMAIN=$(detect_apps_domain)
@@ -79,17 +75,13 @@ echo "============================================"
 echo ""
 echo " Gateway URL: ${GW_PROTO}://$GW_ROUTE"
 echo ""
-echo " Workbench access (port-forward):"
-echo "   Workbenches auto-configure via /etc/profile.d/openshell-init.sh"
-echo "   Open a terminal in the workbench and run:"
+echo " Workbench access (in-cluster service, no port-forward):"
 echo ""
-echo "     openshell sandbox create --name test -- echo 'Hello!'"
+echo "   openshell gateway add http://openshell:8080 --name openshift --local"
+echo "   openshell sandbox list"
 echo ""
-echo " Admin access (direct):"
+echo " Admin access from outside the cluster:"
 echo ""
-echo "   1. Port-forward:"
-echo "      kubectl port-forward -n $NAMESPACE statefulset/openshell 8080:8080"
-echo ""
-echo "   2. Register gateway:"
-echo "      openshell gateway add http://localhost:8080 --name openshift --local"
+echo "   oc port-forward -n $NAMESPACE svc/openshell 18099:8080"
+echo "   openshell gateway add http://localhost:18099 --name ${NAMESPACE} --local"
 echo ""

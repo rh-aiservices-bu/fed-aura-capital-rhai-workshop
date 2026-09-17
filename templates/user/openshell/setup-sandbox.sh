@@ -14,7 +14,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-SANDBOX_NAME="${1:-opencode-demo}"
+SANDBOX_NAME="${1:-fedaura-opencode}"
 
 if [ ! -f "$SCRIPT_DIR/.env" ]; then
     error "Missing .env file. Create .env with LITELLM_API_KEY, LITELLM_BASE_URL, OCP_APPS_DOMAIN."
@@ -71,9 +71,22 @@ openshell inference set --provider litellm --model "${LITELLM_MODEL_SMALL:-llama
     || true
 
 step "Create sandbox: $SANDBOX_NAME"
-openshell sandbox delete "$SANDBOX_NAME" 2>/dev/null || true
-sleep 3
-if [ -n "${SANDBOX_IMAGE:-}" ]; then
+# Idempotent by default: an existing sandbox is reused, not destroyed. Re-running
+# this script used to delete and recreate, which threw away a working sandbox and
+# anything in it. Set FORCE_RECREATE=true to get the old behaviour.
+if openshell sandbox list 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | awk '{print $1}' | grep -qx "$SANDBOX_NAME"; then
+    if [ "${FORCE_RECREATE:-false}" = "true" ]; then
+        warn "FORCE_RECREATE=true - deleting the existing sandbox"
+        openshell sandbox delete "$SANDBOX_NAME" 2>/dev/null || true
+        sleep 3
+    else
+        info "Sandbox '$SANDBOX_NAME' already exists - reusing it"
+        SKIP_CREATE=true
+    fi
+fi
+if [ "${SKIP_CREATE:-false}" = "true" ]; then
+    info "Skipping create"
+elif [ -n "${SANDBOX_IMAGE:-}" ]; then
     info "Using pre-baked image: $SANDBOX_IMAGE"
     openshell sandbox create --name "$SANDBOX_NAME" --from "$SANDBOX_IMAGE" --policy "$RENDERED_POLICY"
 else

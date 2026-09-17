@@ -1,7 +1,9 @@
+{{- if .Values.route.enabled }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: openshell-gw
+  name: {{ .Values.route.name }}
+  namespace: {{ include "workshop.namespace" . }}
 spec:
   tls:
     termination: edge
@@ -10,3 +12,4 @@ spec:
     name: openshell
   port:
     targetPort: 8080
+{{- end }}

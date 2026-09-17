@@ -1,0 +1,6 @@
+{{- $ns := include "workshop.namespace" . }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: openshell-provision
+  namespace: {{ $ns }}

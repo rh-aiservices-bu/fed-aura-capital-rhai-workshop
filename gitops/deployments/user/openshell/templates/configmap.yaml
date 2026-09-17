@@ -1,0 +1,180 @@
+{{- $ns := include "workshop.namespace" . }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openshell-provision
+  namespace: {{ $ns }}
+data:
+  provision.sh: |
+    #!/usr/bin/env bash
+    # Idempotent OpenShell sandbox provisioning.
+    #
+    # Converges rather than recreates: an existing sandbox is never deleted. A
+    # marker file inside the sandbox records the provision version that last
+    # completed, so re-running is a no-op unless the version changed.
+    set -uo pipefail
+
+    SANDBOX="${SANDBOX_NAME:?}"
+    GW_NAME="${GATEWAY_NAME:-openshift}"
+    GW_ENDPOINT="${GATEWAY_ENDPOINT:?}"
+    VERSION="${PROVISION_VERSION:-1}"
+    MARKER="/sandbox/.provisioned"
+
+    log()  { printf '%s %s\n' "$(date -u +%H:%M:%S)" "$*"; }
+    fail() { log "FATAL: $*"; exit 1; }
+
+    # Retry wrapper. Everything that touches the gateway or the network goes
+    # through this, because at 40 users transient failures are certain.
+    retry() {
+      local tries="$1" delay="$2"; shift 2
+      local n=1
+      until "$@"; do
+        if [ "$n" -ge "$tries" ]; then
+          log "  giving up after ${n} attempts: $*"
+          return 1
+        fi
+        log "  attempt ${n}/${tries} failed, retrying in ${delay}s"
+        sleep "$delay"; n=$((n+1)); delay=$((delay*2))
+        [ "$delay" -gt 60 ] && delay=60
+      done
+      return 0
+    }
+
+    osh() { openshell -g "$GW_NAME" "$@"; }
+
+    log "=== register gateway ${GW_NAME} -> ${GW_ENDPOINT} ==="
+    openshell gateway remove "$GW_NAME" >/dev/null 2>&1 || true
+    retry 10 5 openshell gateway add "$GW_ENDPOINT" --name "$GW_NAME" --local \
+      || fail "cannot register gateway at ${GW_ENDPOINT}"
+
+    log "=== wait for the gateway to answer ==="
+    retry 30 5 osh sandbox list >/dev/null 2>&1 \
+      || fail "gateway registered but not answering"
+
+    sandbox_phase() {
+      osh sandbox list 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' \
+        | awk -v s="$SANDBOX" '$1==s {print $NF}'
+    }
+
+    log "--- render the network policy ---"
+    sed "s/__OCP_APPS_DOMAIN__/${OCP_APPS_DOMAIN}/g" /scripts/policy.yaml.template > /tmp/policy.yaml
+    grep -q '^version:' /tmp/policy.yaml || fail "rendered policy is missing the version field"
+
+    # "already exists" is success, not failure: create can report an error after the
+    # sandbox has in fact been created, and a retry must not turn that into a hard
+    # failure. Existence is the condition we actually care about.
+    CREATE_ARGS=(sandbox create --name "$SANDBOX" --policy /tmp/policy.yaml)
+    [ -n "${SANDBOX_IMAGE:-}" ] && CREATE_ARGS+=(--from "$SANDBOX_IMAGE")
+    create_sandbox() {
+      osh "${CREATE_ARGS[@]}" && return 0
+      if [ -n "$(sandbox_phase)" ]; then
+        log "  sandbox exists after the attempt - treating as created"
+        return 0
+      fi
+      return 1
+    }
+
+    PHASE="$(sandbox_phase)"
+    if [ -z "$PHASE" ]; then
+      log "=== create sandbox ${SANDBOX} ==="
+      retry 5 10 create_sandbox || fail "sandbox create failed"
+    else
+      log "=== sandbox ${SANDBOX} already exists (phase=${PHASE}) - not recreating ==="
+    fi
+
+    log "=== wait for Ready ==="
+    READY=no
+    for i in $(seq 1 60); do
+      [ "$(sandbox_phase)" = "Ready" ] && { READY=yes; log "  Ready"; break; }
+      sleep 5
+    done
+
+    # A sandbox wedged in Provisioning never recovers on its own - SCC admission
+    # refusals leave the object with no pod at all. Recreating once is the only
+    # unattended way out, and is the single case where deletion is allowed.
+    if [ "$READY" != "yes" ] && [ "${RECREATE_STUCK:-true}" = "true" ]; then
+      log "  stuck in phase '$(sandbox_phase)' after 300s - recreating once"
+      osh sandbox delete "$SANDBOX" >/dev/null 2>&1 || true
+      sleep 10
+      retry 3 10 create_sandbox || fail "recreate failed"
+      for i in $(seq 1 60); do
+        [ "$(sandbox_phase)" = "Ready" ] && { READY=yes; log "  Ready after recreate"; break; }
+        sleep 5
+      done
+    fi
+    [ "$READY" = "yes" ] || fail "sandbox did not reach Ready (phase=$(sandbox_phase))"
+
+    # A live policy update cannot remove a read-only filesystem path, which is why
+    # the policy carries /app forward from the sandbox default.
+    log "--- apply the network policy ---"
+    retry 3 10 osh policy set --policy /tmp/policy.yaml --wait --timeout 120 "$SANDBOX" \
+      || log "  WARNING: policy set failed - sandbox stays deny-by-default"
+
+    # Ready only means the pod is up. The marker is what tells us the sandbox is
+    # actually configured, which is the failure mode this script exists to prevent.
+    CURRENT="$(osh sandbox exec --name "$SANDBOX" -- sh -c "cat ${MARKER} 2>/dev/null" 2>/dev/null \
+      | grep -v 'Using sandbox' | tr -d '[:space:]')"
+    if [ "$CURRENT" = "$VERSION" ]; then
+      log "=== already provisioned at version ${VERSION} - nothing to do ==="
+      exit 0
+    fi
+    log "=== provisioning (marker='${CURRENT:-none}', target='${VERSION}') ==="
+
+    log "--- verify opencode is present in the image ---"
+    if ! osh sandbox exec --name "$SANDBOX" -- sh -c 'command -v opencode' >/dev/null 2>&1; then
+      fail "opencode missing from the sandbox image - a package install would be needed"
+    fi
+
+    log "--- upload opencode config ---"
+    sed "s|__LLM_BASE_URL__|${LLM_BASE_URL}|g" /scripts/opencode-config.json > /tmp/opencode.jsonc
+    retry 5 5 osh sandbox exec --name "$SANDBOX" -- mkdir -p /sandbox/.config/opencode
+    retry 5 5 osh sandbox upload "$SANDBOX" /tmp/opencode.jsonc /sandbox/.config/opencode/opencode.jsonc \
+      || fail "config upload failed"
+
+    log "--- upload environment init ---"
+    cat > /tmp/sandbox-init.sh <<INIT
+    #!/bin/sh
+    export OPENAI_API_KEY="${LLM_API_KEY}"
+    export OPENAI_BASE_URL="${LLM_BASE_URL}"
+    export OPENAI_MODEL="${LLM_MODEL}"
+    [ -f /sandbox/.config/opencode/opencode.jsonc ] && \
+      export OPENCODE_CONFIG_CONTENT="\$(cat /sandbox/.config/opencode/opencode.jsonc)"
+    export MLFLOW_TRACKING_URI="${MLFLOW_TRACKING_URI:-}"
+    export MLFLOW_TRACKING_TOKEN="${MLFLOW_TRACKING_TOKEN:-}"
+    export MLFLOW_TRACKING_INSECURE_TLS=true
+    export MLFLOW_EXPERIMENT_NAME="${MLFLOW_EXPERIMENT:-opencode-sandbox}"
+    export NODE_TLS_REJECT_UNAUTHORIZED=0
+    INIT
+    retry 5 5 osh sandbox upload "$SANDBOX" /tmp/sandbox-init.sh /sandbox/.sandbox-init.sh \
+      || fail "init upload failed"
+
+    log "--- wire it into the login shells ---"
+    retry 3 5 osh sandbox exec --name "$SANDBOX" -- sh -c '
+      for f in /sandbox/.bashrc /sandbox/.profile; do
+        grep -q sandbox-init.sh "$f" 2>/dev/null && continue
+        printf "\n[ -f /sandbox/.sandbox-init.sh ] && . /sandbox/.sandbox-init.sh\n" >> "$f"
+      done'
+
+    log "--- smoke test the LLM endpoint from inside the sandbox ---"
+    CODE="$(osh sandbox exec --name "$SANDBOX" -- curl -s -o /dev/null -w '%{http_code}' \
+      -X POST "${LLM_BASE_URL}/chat/completions" \
+      -H "Authorization: Bearer ${LLM_API_KEY}" -H 'Content-Type: application/json' \
+      -d "{\"model\":\"${LLM_MODEL}\",\"messages\":[{\"role\":\"user\",\"content\":\"ok\"}],\"max_tokens\":3}" \
+      2>/dev/null | grep -v 'Using sandbox' | tr -d '[:space:]')"
+    if [ "$CODE" = "200" ]; then
+      log "  LLM reachable (HTTP 200)"
+    else
+      # Deliberately not fatal: a rate-limited shared endpoint must not leave 39
+      # other users unprovisioned. The marker is still written.
+      log "  WARNING: LLM smoke test returned HTTP ${CODE:-none}"
+    fi
+
+    log "--- write the marker ---"
+    retry 5 5 osh sandbox exec --name "$SANDBOX" -- sh -c "echo ${VERSION} > ${MARKER}" \
+      || fail "could not write the provision marker"
+
+    log "=== provisioned ${SANDBOX} at version ${VERSION} ==="
+  opencode-config.json: |
+{{ .Files.Get "files/opencode-config.json" | default "    {}" | indent 4 }}
+  policy.yaml.template: |
+{{ .Files.Get "files/policy-standard.yaml.template" | indent 4 }}

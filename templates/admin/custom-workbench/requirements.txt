@@ -1,0 +1,4 @@
+openai
+ragas
+langchain-community<0.4
+langchain-google-vertexai

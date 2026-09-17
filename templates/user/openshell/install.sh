@@ -56,7 +56,11 @@ oc -n "$NAMESPACE" apply -f "$SCRIPT_DIR/manifests/openshell/route.yaml"
 sleep 2
 GW_ROUTE=$(oc -n "$NAMESPACE" get route openshell-gw -o jsonpath='{.spec.host}' 2>/dev/null || echo "pending")
 
-if [ "${ENABLE_TLS:-true}" = "true" ]; then
+step "Grant port-forward access to workbench service accounts"
+sed "s/NAMESPACE_PLACEHOLDER/$NAMESPACE/" \
+    "$SCRIPT_DIR/manifests/openshell/rbac-portforward.yaml" | oc -n "$NAMESPACE" apply -f -
+
+if [ "${ENABLE_TLS:-false}" = "true" ]; then
     step "Enable passthrough TLS (cert-manager)"
     APPS_DOMAIN=$(detect_apps_domain)
     setup_gateway_tls "$NAMESPACE" "$APPS_DOMAIN"
@@ -75,12 +79,17 @@ echo "============================================"
 echo ""
 echo " Gateway URL: ${GW_PROTO}://$GW_ROUTE"
 echo ""
-echo " Next steps:"
+echo " Workbench access (port-forward):"
+echo "   Workbenches auto-configure via /etc/profile.d/openshell-init.sh"
+echo "   Open a terminal in the workbench and run:"
 echo ""
-echo "   1. Register gateway:"
-echo "      openshell gateway add ${GW_PROTO}://$GW_ROUTE $GW_INSECURE_FLAG \\"
-echo "          --name openshift"
+echo "     openshell sandbox create --name test -- echo 'Hello!'"
 echo ""
-echo "   2. Create a sandbox:"
-echo "      openshell sandbox create --name test -- echo 'Hello from OpenShell!'"
+echo " Admin access (direct):"
+echo ""
+echo "   1. Port-forward:"
+echo "      kubectl port-forward -n $NAMESPACE statefulset/openshell 8080:8080"
+echo ""
+echo "   2. Register gateway:"
+echo "      openshell gateway add http://localhost:8080 --name openshift --local"
 echo ""

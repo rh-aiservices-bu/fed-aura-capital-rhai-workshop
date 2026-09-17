@@ -59,7 +59,11 @@ Before attacking the guardrails, see how they are wired into the inference pipel
 
 . Open the *GenAI Playground* in the OpenShift AI dashboard, with your workshop project selected.
 
-. Open *Settings* and select the *Guardrails* tab. Both rails are switched on for this model:
+. Open *Settings* and select the *Knowledge* tab. Make sure it is *On* with *Use uploaded documents* selected - this is the RAG configuration from section 3.2. Leave it enabled so {assistant_name} answers from {company_name}'s documents rather than from memory:
++
+image::security-knowledge-on.png[Knowledge tab toggled On with Use uploaded documents selected,link=self,window=blank,width=450]
+
+. Now switch to the *Guardrails* tab. Both rails are switched on for this model:
 +
 image::security-guardrails-settings.png[Guardrails settings showing the guardrail model, subscription, and both rail toggles enabled,link=self,window=blank,width=450]
 +
@@ -69,10 +73,6 @@ Two things are worth noticing here. The *Guardrail model* is a model in its own 
 * *User input guardrails* - jailbreak and prompt attack protection, PII filtering, and content moderation for toxicity, hate speech, sexual content, violence and harassment.
 * *Model output guardrails* - PII leak prevention, plus the same content moderation applied to whatever the model just generated.
 --
-
-. Switch to the *Knowledge* tab and make sure it is *On* with *Use uploaded documents* selected. This is the RAG configuration from section 3.2 - leave it enabled so {assistant_name} answers from {company_name}'s documents rather than from memory:
-+
-image::security-knowledge-on.png[Knowledge tab toggled On with Use uploaded documents selected,link=self,window=blank,width=450]
 
 . Now ask a perfectly ordinary mortgage question:
 +

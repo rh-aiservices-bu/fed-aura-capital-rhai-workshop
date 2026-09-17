@@ -44,11 +44,11 @@ Now connect to the running sandbox and see what the agent can access.
 
 . Open a *Terminal* in your workbench (*File > New Terminal* in the VSCode workbench).
 
-. Register the gateway. It runs as a service in your own project, so you reach it by name - there is no port-forward to start and nothing to keep alive in the background:
+. Register the gateway. It runs as a service in your own project, named after your user, so you reach it by name - there is no port-forward to start and nothing to keep alive in the background:
 +
 [source,bash]
 ----
-openshell gateway add http://openshell:8080 --name openshift --local
+openshell gateway add http://openshell-{user}:8080 --name openshift --local
 ----
 
 . List the sandboxes:

@@ -112,6 +112,11 @@ users:
   # OGX / llama-stack playground + PGVector (wave 8).
   ogx:
     enabled: true
+  # OpenShell gateway (wave 9) + sandbox provisioning (wave 10). Requires the
+  # cluster-scoped Agent Sandbox operator, which is an admin-phase prerequisite.
+  openshell:
+    enabled: false
+    sandboxName: fedaura-opencode
   # Multi-agent mortgage application (wave 9).
   mortgageAi:
     enabled: true

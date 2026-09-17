@@ -246,7 +246,7 @@ This is the audit trail. When compliance asks "what did the guardrails block and
 
 Guardrails protect at runtime. But how do you know the model is robust _before_ deployment? Garak provides pre-deployment adversarial testing powered by Chatterbox Labs technology (acquired by Red Hat). The flow is: define a policy, generate synthetic attack prompts via SDG Hub, attack the model via Garak, and produce a report through EvalHub showing where the model breaks.
 
-Explore the Garak adversarial test results for {company_name}'s model in this interactive demo:
+The interactive demo below is a *pre-recorded walkthrough from a different model*, not {assistant_name} or anything you deployed in this workshop. Read it for the shape of the report and the workflow around it - the categories, the pass and fail evidence, how findings are presented - rather than for the specific numbers:
 
 ++++
 <div style="position: relative; padding-bottom: calc(50.161117% + 41px); height: 0; width: 100%;">
@@ -254,7 +254,13 @@ Explore the Garak adversarial test results for {company_name}'s model in this in
 </div>
 ++++
 
-The report shows pass/fail rates across attack categories: prompt injection, jailbreak attempts, data leakage, and bias detection. This is the difference between "we think it's safe" and "we have tested evidence."
+A Garak report scores pass and fail rates across attack categories - prompt injection, jailbreak attempts, data leakage, bias - so a release decision rests on tested evidence rather than confidence. Run against {assistant_name}, this is what {company_name}'s security team would take to a compliance review before she ever faces a customer.
+
+.Further reading
+[TIP]
+====
+https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/enabling_ai_safety_with_guardrails/index[Enabling AI safety with Guardrails^] is the full Red Hat OpenShift AI documentation behind this section. It covers the rail flows and detectors in detail, PII masking as an alternative to blocking, jailbreak and prompt injection detection, enforcing rails on agent tool calls through the MCP Gateway, and industry-specific self-check examples - including one for financial services.
+====
 
 === What's Next?
 

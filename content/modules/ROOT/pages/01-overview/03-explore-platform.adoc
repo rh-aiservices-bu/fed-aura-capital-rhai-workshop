@@ -73,7 +73,7 @@ Expected output:
 
 === Network and security context
 
-NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and minio, but not pods in other namespaces. In section 5.1 (AI Safety), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
+NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and minio, but not pods in other namespaces. In section 5.3 (OpenShell Agent Sandboxing), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
 
 [%collapsible]
 .View the NetworkPolicies in your namespace (click to expand)
@@ -83,7 +83,7 @@ NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic be
 oc get networkpolicies -n {user_project}
 ----
 
-NetworkPolicies define which pods can communicate with each other at the network level. This is the first layer of the defense-in-depth security model you will explore in section 5.1.
+NetworkPolicies define which pods can communicate with each other at the network level. This is the first layer of the defense-in-depth security model you will explore in section 5.
 ====
 
 == Exercise 2: Meet {assistant_name} and the agent personas
@@ -173,7 +173,7 @@ image::agentic-app6.png[CEO Assistant responding with portfolio health overview,
 
 === Build a conversation for later analysis
 
-Before we move on, let's generate a richer session with multiple conversation exchanges (called "turns" in AI terminology - each turn is one question from you and one response from the agent). This will give us more data to explore when we get to tracing in section 4.3.
+Before we move on, let's generate a richer session with multiple conversation exchanges (called "turns" in AI terminology - each turn is one question from you and one response from the agent). This will give us more data to explore when we get to tracing in section 4.1.
 
 [start=11]
 . In the same chat, ask a follow-up question:
@@ -190,7 +190,7 @@ What are the denial trends?
 How are my loan officers doing?
 ----
 
-Each question triggers a different tool call behind the scenes. By the time you finish, your CEO session will have 3 turns spanning pipeline health, denial analysis, and officer performance. In section 4.3, you will trace every step of this conversation end-to-end.
+Each question triggers a different tool call behind the scenes. By the time you finish, your CEO session will have 3 turns spanning pipeline health, denial analysis, and officer performance. In section 4.1, you will trace every step of this conversation end-to-end.
 
 === What just happened?
 
@@ -202,7 +202,7 @@ The responses look great. But stop and think about what happened behind the scen
 * What if the response was **wrong**? How would you trace back to the root cause?
 * What if a tool call **failed silently**? Would you even know?
 
-The platform captured all of it automatically. You will trace every step in section 4.3 (Continuous Evaluation).
+The platform captured all of it automatically. You will trace every step in section 4.1 (Agentic AI & Tracing).
 
 == Exercise 3: Understand the architecture in context
 
@@ -304,7 +304,7 @@ The platform is built around a set of cooperating components. At the center is {
 
 |Security
 |NeMo Guardrails, Garak, OpenShell
-|5.1 AI Safety
+|5.1 AI Safety, 5.2 Guardrails & Adversarial Testing, 5.3 OpenShell Agent Sandboxing
 |===
 
 [%collapsible]

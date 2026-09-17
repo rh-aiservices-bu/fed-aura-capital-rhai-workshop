@@ -7,7 +7,7 @@
 
 Shipping a model is not the finish line.
 
-Lenora is running. She has documents (RAG), tools (MCP), and full traceability (MLflow). But how do you know she is getting better over time and not worse? How do you catch a regression when someone edits the system prompt? How do you measure whether the Risk MCP is producing reliable predictions across the range of applications it sees?
+{assistant_name} is running. She has documents (RAG), tools (MCP), and full traceability (MLflow). But how do you know she is getting better over time and not worse? How do you catch a regression when someone edits the system prompt? How do you measure whether the Risk MCP is producing reliable predictions across the range of applications it sees?
 
 The answer is continuous evaluation — automated pipelines that measure quality on every change, before it reaches production.
 
@@ -41,7 +41,7 @@ image::evals-evalhub-new-run.png[EvalHub new evaluation run dialog with gpt-oss-
 // TODO: screenshot of evaluation results (evals-evalhub-results.png)
 image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy score and per-question breakdown,link=self,window=blank,width=700]
 
-NOTE: ArcEasy and Science QnA measure general model capability, not mortgage-specific quality. They are useful baselines — a sudden drop in ArcEasy accuracy after a model update is a signal that something changed in the model's core capabilities. Domain-specific evaluations like RAGAS are what tell you whether Lenora is answering Fed Aura's questions correctly.
+NOTE: ArcEasy and Science QnA measure general model capability, not mortgage-specific quality. They are useful baselines — a sudden drop in ArcEasy accuracy after a model update is a signal that something changed in the model's core capabilities. Domain-specific evaluations like RAGAS are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
 
 == Exercise 7: Evaluate RAG Quality with RAGAS
 
@@ -53,7 +53,7 @@ RAGAS is a framework that evaluates three things:
 * **Answer relevancy** — does the answer actually address the question asked?
 * **Context precision** — did the retrieval step surface the right document chunks, or did it retrieve irrelevant content?
 
-. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-userX > Workbench*.
+. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > {user_project} > Workbench*.
 
 . Open the notebook `evaluate_ragas.ipynb`. It is already available in your workbench and pre-configured to connect to the RAG pipeline you set up in section 3.2:
 +
@@ -89,7 +89,7 @@ That is where llm-as-judge comes in. Instead of scoring against a ground truth, 
 // TODO: screenshot of evaluate_agent.ipynb open in Workbench (evals-agent-notebook.png)
 image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in the Workbench,link=self,window=blank,width=700]
 
-. The notebook runs a set of loan assessment queries through Lenora's agent and collects the responses. Run the first section of cells to generate the responses.
+. The notebook runs a set of loan assessment queries through {assistant_name}'s agent and collects the responses. Run the first section of cells to generate the responses.
 
 . The second section configures the judge model and scoring criteria — correctness, groundedness, refusal appropriateness. Run these cells to start the evaluation.
 
@@ -149,7 +149,7 @@ Reference: https://rhpds.github.io/agentops-in-prod-showroom/modules/08-module-0
 
 * Ran a model capability evaluation in EvalHub against `gpt-oss-20b` using ArcEasy or Science QnA
 * Evaluated RAG pipeline quality with RAGAS — measuring faithfulness, answer relevancy, and context precision across a test set of mortgage questions
-* Used an LLM as judge to evaluate Lenora's open-ended agent responses, with results logged to MLflow
+* Used an LLM as judge to evaluate {assistant_name}'s open-ended agent responses, with results logged to MLflow
 * (Optional) Imported and ran a four-stage automated evaluation pipeline and reviewed results in MLflow
 
 === Key Takeaways
@@ -161,6 +161,6 @@ Reference: https://rhpds.github.io/agentops-in-prod-showroom/modules/08-module-0
 
 === What's Next?
 
-You have evaluated Lenora's quality. The next section covers the final layer: security. Before Lenora goes to production, the security team needs to ensure she cannot be manipulated, leak private data, or be used to bypass compliance controls. In section 5.1, you will implement defense-in-depth AI safety with guardrails, adversarial testing, and secure agent onboarding.
+You have evaluated {assistant_name}'s quality. The next section covers the final layer: security. Before {assistant_name} goes to production, the security team needs to ensure she cannot be manipulated, leak private data, or be used to bypass compliance controls. In section 5, you will implement defense-in-depth AI safety: persona-based access control (5.1), guardrails and adversarial testing (5.2), and secure agent onboarding with OpenShell (5.3).
 
 If you have time remaining and want to go deeper on how the Risk MCP's predictive model was built, continue to the Advanced section: Predictive AI with AutoML.

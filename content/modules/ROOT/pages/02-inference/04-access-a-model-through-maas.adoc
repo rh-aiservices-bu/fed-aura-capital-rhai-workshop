@@ -7,13 +7,13 @@
 
 == Exercise 4: Models as a Service
 
-You've been observing a model `gpt-oss-20b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, of course Lenora hasn't been using the model you deployed, because the small model you deployed on CPU is not good enough for Fed Aura's use case both in terms of capability and performance. So, the model you deployed is not the one that Lenora is using. The model that Lenora is using is `gpt-oss-20b`, which is a much larger model and requires GPU to run.
+You've been observing a model `gpt-oss-20b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, of course {assistant_name} hasn't been using the model you deployed, because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. So, the model you deployed is not the one that {assistant_name} is using. The model that {assistant_name} is using is `gpt-oss-20b`, which is a much larger model and requires GPU to run.
 
-But of course, Fed Aura has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. MaaS is a way to expose models as endpoints that can be consumed by different applications and users.
+But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. MaaS is a way to expose models as endpoints that can be consumed by different applications and users.
 
 And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `gpt-oss-20b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
 
-MaaS provides a consistent and governed way to access models, which means Fed Aura can manage the model deployments centrally while still providing access to the models for different teams and applications.
+MaaS provides a consistent and governed way to access models, which means {company_name} can manage the model deployments centrally while still providing access to the models for different teams and applications.
 
 === Explore AI Asset Endpoints
 
@@ -96,7 +96,7 @@ image::maas-playground-model-select.png[Playground model selector showing the gp
 
 If you want to experience MaaS the way a developer building an application would, this optional exercise walks you through connecting to the endpoint from a VSCode workbench using the `openai` Python SDK.
 
-. Navigate to *OpenShift AI Dashboard > Data Science Projects > wksp-userX*. Click *Create workbench* and fill in the form:
+. Navigate to *OpenShift AI Dashboard > Data Science Projects > {user_project}*. Click *Create workbench* and fill in the form:
 +
 --
 * *Name*: `fedaura-vscode`
@@ -116,7 +116,7 @@ image::workbench-vscode-starting.png[Workbenches list showing fedaura-vscode sta
 +
 image::maas-workbench-notebook.png[Jupyter notebook showing openai SDK calls to the MaaS endpoint,link=self,window=blank,width=700]
 +
-TIP: The `openai` Python SDK works here without modification because the MaaS gateway is OpenAI API-compatible. This is the same pattern Lenora's agent code uses to reach `gpt-oss-20b`.
+TIP: The `openai` Python SDK works here without modification because the MaaS gateway is OpenAI API-compatible. This is the same pattern {assistant_name}'s agent code uses to reach `gpt-oss-20b`.
 
 === On-premises vs cloud inference
 
@@ -132,13 +132,13 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
 +
 image::maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
 
-. You should see the requests from your curl call and Playground session — token counts, request latency, and any rate-limit events. This is the data Fed Aura's platform team uses to track adoption and manage capacity across teams.
+. You should see the requests from your curl call and Playground session — token counts, request latency, and any rate-limit events. This is the data {company_name}'s platform team uses to track adoption and manage capacity across teams.
 
-=== A question for Lenora
+=== A question for {assistant_name}
 
-Before we close this section, try asking Lenora something specific about Fed Aura Capital.
+Before we close this section, try asking {assistant_name} something specific about {company_name}.
 
-. Go to the *Fed Aura Capital App* tab and sign in as the Borrower persona (Sarah Mitchell).
+. Go to the *{company_name} App* tab and sign in as the Borrower persona (Sarah Mitchell).
 
 . Ask:
 +
@@ -147,7 +147,7 @@ Before we close this section, try asking Lenora something specific about Fed Aur
 What is Fed Aura Capital's minimum credit score requirement for a conventional loan?
 ----
 
-. Observe the response. `gpt-oss-20b` is a powerful general-purpose model, but it has no knowledge of Fed Aura's specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
+. Observe the response. `gpt-oss-20b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
 
 This is the gap the next section addresses. Connecting the model to private knowledge through RAG is what turns a capable LLM into an assistant that can accurately answer domain-specific questions.
 
@@ -168,4 +168,4 @@ This is the gap the next section addresses. Connecting the model to private know
 
 *Next steps:*
 
-The model can generate fluent text, but it doesn't know anything about Fed Aura's specific policies or customer data. In the next section, you will connect it to that knowledge using RAG — and watch Lenora go from guessing to answering accurately.
+The model can generate fluent text, but it doesn't know anything about {company_name}'s specific policies or customer data. In the next section, you will connect it to that knowledge using RAG — and watch {assistant_name} go from guessing to answering accurately.

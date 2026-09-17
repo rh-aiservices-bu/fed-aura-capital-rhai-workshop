@@ -7,7 +7,7 @@
 
 Guardrails protect the model. Sandboxes protect everything else.
 
-Fed Aura Capital has a confidential document - `internal-policies.pdf` - containing underwriting policies that should never leave the organization: DTI limits more conservative than the QM safe harbor, jumbo loan thresholds, rate lock windows, and the exception approval chain. An AI coding agent with file system access and network connectivity could read this document and send it anywhere. OpenShell prevents that.
+{company_name} has a confidential document - `internal-policies.pdf` - containing underwriting policies that should never leave the organization: DTI limits more conservative than the QM safe harbor, jumbo loan thresholds, rate lock windows, and the exception approval chain. An AI coding agent with file system access and network connectivity could read this document and send it anywhere. OpenShell prevents that.
 
 Estimated time: *10 minutes*
 
@@ -215,4 +215,4 @@ TIP: All sandbox activity is traced. Navigate to *OpenShift AI Dashboard > Devel
 
 === What's Next
 
-Congratulations. You have completed the Fed Aura Capital workshop. Lenora is deployed, served, prompted, trained, connected to tools, traced, evaluated, and secured. She is ready for production.
+Congratulations. You have completed the {company_name} workshop. {assistant_name} is deployed, served, prompted, trained, connected to tools, traced, evaluated, and secured. She is ready for production.

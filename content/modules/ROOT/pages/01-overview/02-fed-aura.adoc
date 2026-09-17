@@ -27,7 +27,7 @@ The platform now runs self-hosted models with vLLM, a distributed inference laye
 | No usage metering or access control | Subscription tiers with API key management
 |===
 
-*Sections*: 2.1 Model Catalog & Deployment, 2.4 Models as a Service
+*Sections*: 2.1 Model Catalog & Deployment, 2.2 Deploy a Model, 2.3 Deploy a Model with llm-d, 2.4 Models as a Service
 
 === Pillar 2 - Connecting Data to Models and Agents
 
@@ -82,7 +82,7 @@ The platform now deploys NeMo Guardrails at the inference boundary, uses Garak f
 | No security observability | Structured audit events, SIEM-ready
 |===
 
-*Sections*: 5.1 AI Safety & Secure Agent Onboarding
+*Sections*: 5.1 AI Safety, 5.2 Guardrails & Adversarial Testing, 5.3 OpenShell Agent Sandboxing
 
 == The personas
 

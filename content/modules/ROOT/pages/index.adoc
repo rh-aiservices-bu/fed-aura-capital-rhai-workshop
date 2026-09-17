@@ -1,4 +1,4 @@
-= Fed Aura Capital AI Workshop with Red Hat AI
+= {company_name} AI Workshop with Red Hat AI
 :icons: font
 
 Welcome to the {company_name} AI Workshop!
@@ -15,19 +15,19 @@ In this workshop, you will build an end-to-end AI platform for mortgage lending 
 
 === icon:server[] Fast, Flexible, and Efficient Inferencing
 
-* *Deploy and benchmark AI models* - Deploy LLMs on CPU and GPU, compare quantized vs unquantized performance, and scale inference with llm-d distributed serving
-* *Serve models as a managed service* - Publish models via MaaS with subscription tiers, API key management, and governed access for multiple teams
+* *Deploy and scale AI models* - Deploy an LLM on CPU with vLLM, then redeploy it with llm-d distributed inference across multiple replicas
+* *Consume models as a managed service* - Reach a shared model through the MaaS gateway with a scoped API key, a rate-limited subscription tier, and per-key usage metering
 
 === icon:database[] Connecting Data to Models and Agents
 
 * *Shape model behavior with prompts* - Use the GenAI Playground to engineer domain-specific personas and tune model responses for mortgage lending
-* *Build predictive models with AutoML* - Train binary classification models for loan underwriting decisions without writing ML code
 * *Ground responses in private data with RAG* - Connect your models to internal policy documents so answers reflect your organization's rules, not generic knowledge
 
 === icon:cogs[] Accelerate Agentic AI Innovation
 
 * *Connect agents to tools via MCP* - Register MCP servers so AI agents can call real tools: affordability calculators, risk assessments, compliance checks
-* *Trace and evaluate agent decisions* - Use MLflow tracing to follow every tool call and LLM invocation, and run evaluation pipelines to measure quality
+* *Trace and evaluate agent decisions* - Use MLflow tracing to follow every tool call and LLM invocation, and run evaluations to measure quality
+* *Train the model behind the tools (optional)* - Use AutoML to train the loan-approval classifier that the Risk MCP server calls, without writing model training code
 
 === icon:shield[] Securing AI from Sandbox to Production
 

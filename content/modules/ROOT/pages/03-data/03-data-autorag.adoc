@@ -8,7 +8,7 @@ From clean text to messy enterprise documents.
 
 In the previous section, you uploaded a well-structured product catalog PDF and RAG worked perfectly. Real enterprise data is rarely that clean. This section covers how to preprocess complex documents for RAG and how to automate the entire pipeline.
 
-Estimated time: *5 minutes* (plus optional 12+ minutes for AutoRAG)
+Estimated time: *5 minutes* (plus 12-20 minutes if you run the optional AutoRAG pipeline)
 
 == Learning Objectives
 
@@ -103,7 +103,7 @@ Across the previous sections, you asked the same question in four configurations
 
 == Optional: AutoRAG Pipeline
 
-WARNING: The AutoRAG pipeline takes at least *12 minutes* to complete. This section is optional and intended for participants who want to explore the automated pipeline approach.
+WARNING: The AutoRAG pipeline takes *12 to 20 minutes* to complete. This section is optional and intended for participants who want to explore the automated pipeline approach.
 
 The Playground's RAG toggle is a manual workflow - you upload files one at a time and the system processes them on the spot. This works for experimentation, but production RAG systems need to handle hundreds of documents, update automatically when new files arrive, and manage chunking and embedding parameters at scale.
 

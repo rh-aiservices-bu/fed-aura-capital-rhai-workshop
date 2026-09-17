@@ -7,11 +7,11 @@
 
 == Exercise 4: Models as a Service
 
-You've been observing a model `gpt-oss-20b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, of course {assistant_name} hasn't been using the model you deployed, because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. So, the model you deployed is not the one that {assistant_name} is using. The model that {assistant_name} is using is `gpt-oss-20b`, which is a much larger model and requires GPU to run.
+You've been observing a model `gpt-oss-120b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, of course {assistant_name} hasn't been using the model you deployed, because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. So, the model you deployed is not the one that {assistant_name} is using. The model that {assistant_name} is using is `gpt-oss-120b`, which is a much larger model and requires GPU to run.
 
 But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. MaaS is a way to expose models as endpoints that can be consumed by different applications and users.
 
-And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `gpt-oss-20b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
+And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `gpt-oss-120b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
 
 MaaS provides a consistent and governed way to access models, which means {company_name} can manage the model deployments centrally while still providing access to the models for different teams and applications.
 
@@ -19,19 +19,19 @@ MaaS provides a consistent and governed way to access models, which means {compa
 
 . Navigate to *Gen AI Studio > AI Asset Endpoints*. You will see the list of model endpoints available to you:
 +
-image::maas-asset-endpoints.png[AI Asset Endpoints list showing gpt-oss-20b and other available endpoints,link=self,window=blank,width=700]
+image::maas-asset-endpoints.png[AI Asset Endpoints list showing gpt-oss-120b and other available endpoints,link=self,window=blank,width=700]
 
-. Click on `gpt-oss-20b` to view its details — the endpoint URL, the underlying model, and the subscription tiers configured for it.
+. Click on `gpt-oss-120b` to view its details — the endpoint URL, the underlying model, and the subscription tiers configured for it.
 
 . On the endpoint detail page, click *Try in Playground* to confirm the endpoint is live and responding before you generate a key:
 +
-image::maas-try-in-playground.png[GenAI Playground opened from the gpt-oss-20b endpoint detail page,link=self,window=blank,width=700]
+image::maas-try-in-playground.png[GenAI Playground opened from the gpt-oss-120b endpoint detail page,link=self,window=blank,width=700]
 
 == Exercise 5: Generate an API Key
 
 To consume a MaaS endpoint from code or a tool, you need a scoped API key. Let's generate one now.
 
-. On the `gpt-oss-20b` endpoint detail page, click *Generate API Key*.
+. On the `gpt-oss-120b` endpoint detail page, click *Generate API Key*.
 
 . Select a subscription tier:
 +
@@ -72,23 +72,23 @@ curl -sk $MAAS_URL/v1/chat/completions \
   -H "Authorization: Bearer $MAAS_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-oss-20b",
+    "model": "gpt-oss-120b",
     "messages": [{"role": "user", "content": "What is Models as a Service?"}],
     "max_tokens": 256
   }' | jq -r '.choices[0].message.content'
 ----
 +
-You should see a response from `gpt-oss-20b`. The API is OpenAI-compatible — any application that already talks to OpenAI can point at this endpoint instead, with no code changes beyond swapping the base URL and key.
+You should see a response from `gpt-oss-120b`. The API is OpenAI-compatible — any application that already talks to OpenAI can point at this endpoint instead, with no code changes beyond swapping the base URL and key.
 
 == Exercise 7: Consume the MaaS Endpoint with Playground
 
-Let's connect the Playground to the MaaS endpoint so you can interact with `gpt-oss-20b` through a UI.
+Let's connect the Playground to the MaaS endpoint so you can interact with `gpt-oss-120b` through a UI.
 
 . Go to *Gen AI Studio > Playground* and click *Create Playground*.
 
-. In the model selector, choose the `gpt-oss-20b` MaaS endpoint. Paste your API key when prompted and click *Create*:
+. In the model selector, choose the `gpt-oss-120b` MaaS endpoint. Paste your API key when prompted and click *Create*:
 +
-image::maas-playground-model-select.png[Playground model selector showing the gpt-oss-20b MaaS endpoint,link=self,window=blank,width=700]
+image::maas-playground-model-select.png[Playground model selector showing the gpt-oss-120b MaaS endpoint,link=self,window=blank,width=700]
 
 . Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B — this is a 20-billion parameter model running on GPU.
 
@@ -116,7 +116,7 @@ image::workbench-vscode-starting.png[Workbenches list showing fedaura-vscode sta
 +
 image::maas-workbench-notebook.png[Jupyter notebook showing openai SDK calls to the MaaS endpoint,link=self,window=blank,width=700]
 +
-TIP: The `openai` Python SDK works here without modification because the MaaS gateway is OpenAI API-compatible. This is the same pattern {assistant_name}'s agent code uses to reach `gpt-oss-20b`.
+TIP: The `openai` Python SDK works here without modification because the MaaS gateway is OpenAI API-compatible. This is the same pattern {assistant_name}'s agent code uses to reach `gpt-oss-120b`.
 
 === On-premises vs cloud inference
 
@@ -128,7 +128,7 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
 
 == Exercise 9: Observe Your Usage
 
-. Go back to *Gen AI Studio > AI Asset Endpoints* and click on `gpt-oss-20b`. Select the *Usage* tab:
+. Go back to *Gen AI Studio > AI Asset Endpoints* and click on `gpt-oss-120b`. Select the *Usage* tab:
 +
 image::maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
 
@@ -142,12 +142,12 @@ Before we close this section, try asking {assistant_name} something specific abo
 
 . Ask:
 +
-[source,console,role=execute,subs=attributes+]
+[source,text]
 ----
 What is Fed Aura Capital's minimum credit score requirement for a conventional loan?
 ----
 
-. Observe the response. `gpt-oss-20b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
+. Observe the response. `gpt-oss-120b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
 
 This is the gap the next section addresses. Connecting the model to private knowledge through RAG is what turns a capable LLM into an assistant that can accurately answer domain-specific questions.
 
@@ -157,7 +157,7 @@ This is the gap the next section addresses. Connecting the model to private know
 
 * Explored the AI Asset Endpoints list and understood the role MaaS plays between consumers and model deployments
 * Generated a scoped API key with a rate-limited subscription tier
-* Called the `gpt-oss-20b` endpoint with curl, the Playground, and (optionally) a Jupyter notebook
+* Called the `gpt-oss-120b` endpoint with curl, the Playground, and (optionally) a Jupyter notebook
 * Observed per-key usage data in the usage dashboard
 
 *Key takeaways:*

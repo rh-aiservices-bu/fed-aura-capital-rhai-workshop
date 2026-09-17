@@ -17,7 +17,8 @@ if [ -f "$SCRIPT_DIR/.env" ]; then
     source "$SCRIPT_DIR/.env"
 fi
 OCP_TOKEN=$(oc whoami -t 2>/dev/null || true)
-MLFLOW_SANDBOX_URI="https://mlflow-redhat-ods-applications.${OCP_APPS_DOMAIN:-apps.ocp.nss6n.sandbox1466.opentlc.com}"
+OCP_APPS_DOMAIN="${OCP_APPS_DOMAIN:-$(detect_apps_domain || true)}"
+MLFLOW_SANDBOX_URI="https://mlflow-redhat-ods-applications.${OCP_APPS_DOMAIN}"
 
 PASS=0 FAIL=0 TOTAL=0
 track() { TOTAL=$((TOTAL + 1)); if [ "$1" -eq 0 ]; then PASS=$((PASS + 1)); else FAIL=$((FAIL + 1)); fi; }

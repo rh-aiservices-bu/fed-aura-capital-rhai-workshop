@@ -29,10 +29,10 @@ EvalHub is the centralized evaluation interface for the platform. It lets you ru
 // TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
 image::evals-evalhub-main.png[EvalHub interface showing existing evaluation runs for the mortgage-ai project,link=self,window=blank,width=700]
 
-. Click *New Evaluation Run*. Select the `gpt-oss-20b` model endpoint as the target:
+. Click *New Evaluation Run*. Select the `gpt-oss-120b` model endpoint as the target:
 +
 // TODO: screenshot of new evaluation run dialog (evals-evalhub-new-run.png)
-image::evals-evalhub-new-run.png[EvalHub new evaluation run dialog with gpt-oss-20b endpoint selected,link=self,window=blank,width=700]
+image::evals-evalhub-new-run.png[EvalHub new evaluation run dialog with gpt-oss-120b endpoint selected,link=self,window=blank,width=700]
 
 . For the dataset, select *ArcEasy* or *Science QnA* — whichever is available and runs faster on the cluster. Click *Start Evaluation*.
 
@@ -147,7 +147,7 @@ Reference: https://rhpds.github.io/agentops-in-prod-showroom/modules/08-module-0
 
 === What You Accomplished
 
-* Ran a model capability evaluation in EvalHub against `gpt-oss-20b` using ArcEasy or Science QnA
+* Ran a model capability evaluation in EvalHub against `gpt-oss-120b` using ArcEasy or Science QnA
 * Evaluated RAG pipeline quality with RAGAS — measuring faithfulness, answer relevancy, and context precision across a test set of mortgage questions
 * Used an LLM as judge to evaluate {assistant_name}'s open-ended agent responses, with results logged to MLflow
 * (Optional) Imported and ran a four-stage automated evaluation pipeline and reviewed results in MLflow

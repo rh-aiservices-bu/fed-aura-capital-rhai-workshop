@@ -35,7 +35,7 @@ image::cpu-deployment-ready.png[Model deployment list showing Qwen3 0.6B with a 
 
 GenAI Playground is here to test the model you just deployed, alongside other capabilities such as shaping a model's behavior with system prompts, and connecting the model to private knowledge and tools. In this exercise, we will use it to confirm that the model is responding to prompts.
 
-. Go to *Gen AI Studio > Playground*. Click *Create Playground* and select the model you just deployed. (Please don't worry about `gpt-oss-20b` yet.) Set *Max tokens* to `1024` and click *Create*:
+. Go to *Gen AI Studio > Playground*. Click *Create Playground* and select the model you just deployed. (Please don't worry about `gpt-oss-120b` yet.) Set *Max tokens* to `1024` and click *Create*:
 +
 image::playground-create.png[Create Playground dialog with Qwen3 0.6B selected and Max tokens set to 1024,link=self,window=blank,width=700]
 

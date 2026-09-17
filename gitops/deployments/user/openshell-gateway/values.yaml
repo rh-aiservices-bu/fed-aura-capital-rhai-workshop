@@ -10,6 +10,15 @@ namespacePrefix: wksp
 # Cluster-scoped prerequisite: the Agent Sandbox operator must already be
 # installed. That is global, so it belongs to the admin phase, not here.
 
+# Stable endpoint for the workshop instructions. Without this, the endpoint is
+# openshell-<user>:8080 and every instruction has to be parameterised.
+serviceAlias:
+  enabled: true
+  name: openshell
+  # The upstream chart labels its pods app.kubernetes.io/name=openshell; the
+  # instance label is taken from the release name automatically.
+  selectorName: openshell
+
 route:
   enabled: true
   name: openshell-gw

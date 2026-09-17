@@ -44,11 +44,11 @@ Now connect to the running sandbox and see what the agent can access.
 
 . Open a *Terminal* in your workbench (*File > New Terminal* in the VSCode workbench).
 
-. Register the gateway. It runs as a service in your own project, named after your user, so you reach it by name - there is no port-forward to start and nothing to keep alive in the background:
+. Register the gateway. It runs as a service in your own project, so you reach it by name - there is no port-forward to start and nothing to keep alive in the background:
 +
 [source,bash]
 ----
-openshell gateway add http://openshell-{user}:8080 --name openshift --local
+openshell gateway add http://openshell:8080 --name openshift --local
 ----
 
 . List the sandboxes:
@@ -74,6 +74,12 @@ openshell sandbox connect fedaura-opencode
 ----
 +
 You are now inside the sandbox. This is the agent's runtime environment: deny-by-default networking, a read-only filesystem apart from a few writable paths, and Landlock restrictions on what any process can reach.
++
+To leave without killing the shell inside, press *Ctrl-P Ctrl-Q*. Closing the terminal instead leaves your session holding the sandbox's input, and the next `connect` reports `attached read-only` - your keystrokes go nowhere. If that happens, disconnect the other session rather than stopping the sandbox.
+
+WARNING: Do not use `openshell sandbox stop` to clear a read-only attach. A stopped sandbox cannot re-bootstrap its gateway token and comes back with `IssueSandboxToken bootstrap exchange failed`, which needs the sandbox recreating.
+
+TIP: `openshell sandbox connect --editor vscode` launches a remote editor against the sandbox instead of a shell, installing the SSH config it needs on first use.
 
 . Create the document the rest of this section will try to steal. Treating it as customer data makes the point without shipping a real file:
 +

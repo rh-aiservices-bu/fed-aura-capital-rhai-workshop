@@ -4,10 +4,10 @@
 :toc: macro
 :toclevels: 1
 
-Lenora depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other section in this workshop.
+{assistant_name} depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other section in this workshop.
 
 .Section 2 focus: self-hosted model inference
-image::fed-aura-platform-architecture-models-focus.svg[The Fed Aura Capital platform architecture with the self-hosted models layer highlighted,align=center]
+image::fed-aura-platform-architecture-models-focus.svg[The {company_name} platform architecture with the self-hosted models layer highlighted,align=center]
 
 You will browse the Red Hat OpenShift AI Model Catalog, deploy models, scale inference with llm-d, and learn about Models as a Service concept.
 
@@ -56,7 +56,7 @@ image::model-catalog-other-tab.png[Other Models tab showing organization-uploade
 Before moving on, take a moment to understand what you just saw:
 
 * The Model Catalog is not just a list of downloads — it is a governed library where each model carries metadata about its origin, license, hardware requirements, and Red Hat validation status
-* When Fed Aura Capital's platform team adds a new model, it appears in *Other Models*
+* When {company_name}'s platform team adds a new model, it appears in *Other Models*
 
 == What's Next?
 

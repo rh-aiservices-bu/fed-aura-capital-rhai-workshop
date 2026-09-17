@@ -35,7 +35,7 @@ image::security-playground-guardrails.png[GenAI Playground showing the guardrail
 What are the current FHA loan limits?
 ----
 +
-Lenora responds normally. The guardrails inspected the input and output but found nothing to block - each configured rail returned `"status": "success"`. This is the key property: guardrails should be invisible for legitimate use.
+{assistant_name} responds normally. The guardrails inspected the input and output but found nothing to block - each configured rail returned `"status": "success"`. This is the key property: guardrails should be invisible for legitimate use.
 
 == Exercise 2: Prompt Injection
 
@@ -101,7 +101,7 @@ NOTE: The content safety model is not doing keyword matching - it understands in
 
 == Exercise 4: Competitor Mentions and Guardrail Configuration
 
-The guardrails also enforce business policy. Fed Aura Capital does not want Lenora discussing competitors.
+The guardrails also enforce business policy. {company_name} does not want {assistant_name} discussing competitors.
 
 . Ask about a competitor:
 +
@@ -188,7 +188,7 @@ This is the audit trail. When compliance asks "what did the guardrails block and
 
 Guardrails protect at runtime. But how do you know the model is robust _before_ deployment? Garak provides pre-deployment adversarial testing powered by Chatterbox Labs technology (acquired by Red Hat). The flow is: define a policy, generate synthetic attack prompts via SDG Hub, attack the model via Garak, and produce a report through EvalHub showing where the model breaks.
 
-Explore the Garak adversarial test results for Fed Aura Capital's model in this interactive demo:
+Explore the Garak adversarial test results for {company_name}'s model in this interactive demo:
 
 ++++
 <div style="position: relative; padding-bottom: calc(50.161117% + 41px); height: 0; width: 100%;">

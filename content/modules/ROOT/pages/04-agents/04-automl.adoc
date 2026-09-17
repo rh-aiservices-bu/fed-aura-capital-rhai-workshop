@@ -9,13 +9,13 @@ WARNING: This is an advanced optional section. It requires additional time and i
 
 == Where Does the Prediction Come From?
 
-In Exercise 4, you watched Lenora call `uw_predict_loan_approval` through the Risk MCP server. The response was not a rule — it was a machine learning prediction. But where does that prediction come from?
+In Exercise 4, you watched {assistant_name} call `uw_predict_loan_approval` through the Risk MCP server. The response was not a rule — it was a machine learning prediction. But where does that prediction come from?
 
 Behind the `uw_predict_loan_approval` tool is a scikit-learn classification model trained on historical loan application data. The model learned which combinations of DTI ratio, LTV, credit score, and asset sufficiency correlate with loan outcomes, and it applies that learning to new applications at inference time.
 
 Training that model by hand — selecting algorithms, tuning hyperparameters, tracking experiments — would take days. AutoML automates the entire process. It runs multiple algorithm configurations in parallel, compares the results, and surfaces the best-performing model — all logged to MLflow so every run is reproducible and auditable.
 
-This is how Fed Aura connects classical machine learning to generative AI: the LLM orchestrates and decides what to ask, the ML model predicts, and AutoML keeps that model accurate as new loan data comes in.
+This is how {company_name} connects classical machine learning to generative AI: the LLM orchestrates and decides what to ask, the ML model predicts, and AutoML keeps that model accurate as new loan data comes in.
 
 == Learning Objectives
 
@@ -27,7 +27,7 @@ By the end of this section, you will be able to:
 
 == Exercise: Train the Loan Approval Model
 
-. Open your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-userX > Workbench*.
+. Open your Workbench: *OpenShift AI Dashboard > Data Science Projects > {user_project} > Workbench*.
 
 . In the file browser, navigate to the `automl/` directory. Open `automl_training.ipynb`:
 +
@@ -60,7 +60,7 @@ image::automl-mlflow-best-run.png[MLflow best run detail showing algorithm confi
 // TODO: screenshot of model registry entry (automl-model-registry.png)
 image::automl-model-registry.png[MLflow Model Registry showing the loan-approval-classifier with the newly registered version,link=self,window=blank,width=700]
 
-. The Risk MCP server is already configured to load the latest version of `loan-approval-classifier` from the Model Registry at startup. Your newly trained model is now what Lenora calls when she runs `uw_predict_loan_approval` on a new application.
+. The Risk MCP server is already configured to load the latest version of `loan-approval-classifier` from the Model Registry at startup. Your newly trained model is now what {assistant_name} calls when she runs `uw_predict_loan_approval` on a new application.
 
 TIP: In production, this training pipeline would run on a schedule — weekly or monthly — as new loan outcome data arrives. AutoML ensures the model stays calibrated without requiring a data scientist to manually tune it each time.
 

@@ -19,7 +19,7 @@ The right panel includes the following tabs:
 | OCP Console | OpenShift Container Platform web console for cluster management
 | Terminal | Command-line access for `oc` commands and debugging
 | RHOAI Console | Red Hat AI dashboard for model management, experiments, and pipelines
-| Fed Aura Capital App | The mortgage lending web application with all four personas
+| {company_name} App | The mortgage lending web application with all four personas
 | MLflow Console | MLflow tracking server for traces, evaluations, and prompt registry
 | Grafana | Dashboards for metrics and monitoring
 |===
@@ -76,7 +76,7 @@ TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depen
 | An interactive environment in RHOAI for experimenting with deployed models. Supports system prompt configuration, temperature tuning, RAG knowledge attachment, and MCP tool connection without writing code.
 
 | LangGraph
-| An open-source framework for building stateful, multi-agent applications with LLMs. Fed Aura Capital uses LangGraph to orchestrate its five persona-based agents.
+| An open-source framework for building stateful, multi-agent applications with LLMs. {company_name} uses LangGraph to orchestrate its five persona-based agents.
 
 | llm-d
 | A distributed inference engine that scales LLM serving across multiple replicas with features like prefix caching and smart routing. Available as a deployment resource option in RHOAI.

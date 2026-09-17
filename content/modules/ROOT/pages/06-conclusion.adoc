@@ -4,39 +4,48 @@
 :toc: macro
 :toclevels: 1
 
-Congratulations! You have completed the Fed Aura Capital AI Workshop and built a production-ready AI platform on Red Hat OpenShift AI.
+Congratulations! You have worked through every layer of {company_name}'s production AI platform on Red Hat AI - from the model that generates the text to the sandbox that contains the agent.
 
 == What you accomplished
 
-Throughout this workshop, you progressed through four transformation waves, taking Fed Aura Capital from a prototype chatbot to a production-grade, observable, and secure AI system.
+You explored the four transformation pillars the CTO described in section 1.2, taking {company_name} from a prototype chatbot to a production-grade, observable, and secure AI system.
 
-=== Wave 1 - Inference: "From token consumer to token producer"
+=== Pillar 1 - Inference: "From token consumer to token producer"
 
-* Deployed LLMs from the RHOAI Model Catalog on both CPU and GPU
-* Benchmarked quantized vs unquantized models, measuring a 1.69x TTFT speedup
-* Scaled inference with llm-d distributed serving
-* Published models as managed services with subscription tiers and API key governance
+* Explored the Model Catalog and read a model card's license, tags, and performance benchmarks (2.1)
+* Deployed Qwen3 0.6B on CPU with vLLM and tested it in the GenAI Playground (2.2)
+* Redeployed the same model with llm-d distributed inference across two replicas (2.3)
+* Consumed a shared GPU-hosted model through the MaaS gateway with a scoped API key and a rate-limited subscription tier, from both curl and the Playground, then reviewed per-key usage data (2.4)
 
-=== Wave 2 - Data: "From generic to useful AI"
+=== Pillar 2 - Data: "From generic to useful AI"
 
-* Shaped model behavior with domain-specific system prompts in the GenAI Playground
-* Trained a predictive underwriting model with AutoML achieving 91.7% accuracy
-* Grounded responses in private policy documents with RAG and AutoRAG
-* Explored OGX capabilities for advanced data workflows
+* Shaped model behavior with system prompts in the GenAI Playground, and saved versions to the Prompt Registry (3.1)
+* Discovered where prompt-based context injection breaks down - context window limits, maintenance burden, staleness (3.1)
+* Enabled RAG, uploaded {company_name}'s product catalog, and verified answers were grounded in the document rather than training data (3.2)
+* Loaded the read-only global system prompt and combined it with RAG to reproduce {assistant_name}'s production behavior (3.2)
+* Learned how Docling converts charts, tables, and infographics into retrievable text, and how OGX and pgvector provide retrieval under the hood (3.2, 3.3)
 
-=== Wave 3 - Agentic: "From useful to productive AI"
+=== Pillar 3 - Agentic: "From useful to productive AI"
 
-* Connected agents to real tools via MCP servers registered as Kubernetes resources
-* Traced every agent decision end-to-end with MLflow, from input shield through tool calls to output shield
-* Ran automated evaluation pipelines to catch regressions before production
+* Watched {assistant_name} run a tool-backed risk assessment as the Loan Officer persona (4.1)
+* Traced a multi-step agent decision end-to-end in MLflow, from `input_shield` through `tool_auth` to each individual tool call (4.1)
+* Explored the MCP catalog and connected the Playground to the Risk MCP server (4.2)
+* Compared the same prompt with and without MCP tool access - the difference between an estimate and a calculation (4.2)
+* Ran a capability benchmark in EvalHub, and evaluated RAG quality and open-ended agent responses with RAGAS and llm-as-judge (4.3)
 
-=== Wave 4 - Safety: "From prototype to production-grade"
+=== Pillar 4 - Safety: "From prototype to production-grade"
 
-* Deployed NemoGuardrails for runtime input/output protection
-* Reviewed Garak adversarial test results validating model robustness
-* Explored OpenShell for secure agent onboarding with deny-by-default sandboxing, SPIFFE/SPIRE identity, and OCSF audit
+* Observed persona-based access control changing what {assistant_name} reveals for the same question (5.1)
+* Tested NeMo Guardrails against prompt injection, fraudulent requests, and competitor mentions, and read the rail configuration that blocked them (5.2)
+* Reviewed Garak adversarial test results and interpreted the pass/fail evidence (5.2)
+* Connected to an OpenShell Agent Sandbox, attempted data exfiltration, then applied a deny-by-default policy that blocked it (5.3)
 
-== Fed Aura Capital: before and after
+[TIP]
+====
+Two sections were optional and may still be waiting for you: the *AutoRAG optimization pipeline* (3.3), which tests multiple RAG configurations and ranks them on a leaderboard, and *Predictive AI with AutoML* (4.4), which trains the scikit-learn model behind the Risk MCP's `uw_predict_loan_approval` tool and registers it in MLflow.
+====
+
+== {company_name}: before and after
 
 [cols="1,1,1",options="header"]
 |===
@@ -44,64 +53,66 @@ Throughout this workshop, you progressed through four transformation waves, taki
 
 | Model hosting
 | External vendor, per-token billing
-| Self-hosted on RHOAI, fixed cost, 35.6ms TTFT
+| Self-hosted with vLLM on Red Hat AI, fixed infrastructure cost
+
+| Data residency
+| Every request leaves the network
+| Inference stays in-cluster, full data sovereignty
 
 | Model access
 | Each team deploys its own copy
-| Single deployment shared via MaaS gateway with subscription tiers
-
-| AI assistant behavior
-| Generic: "verify with a mortgage professional"
-| Domain expert: "I'll use our pricing engine to quote your rate"
-
-| Underwriting speed
-| 5+ days manual review per application
-| Sub-second prediction, 91.7% accuracy, transparent feature importance
+| Single deployment shared through the MaaS gateway with subscription tiers and per-key usage metering
 
 | Knowledge currency
 | Stale training data, hallucinated policy answers
-| RAG-grounded in current internal documents, updated in minutes
+| RAG-grounded in current internal documents, updated by uploading a file
+
+| Assistant behavior
+| Generic answers with disclaimers
+| Domain persona defined by a versioned global prompt, facts retrieved from company documents
 
 | Agent capabilities
-| Estimates with assumptions ($390K-$410K)
-| Precise calculations from real tools ($488,000 with DTI breakdown)
+| Hedged estimates: "verify with your underwriting guidelines"
+| Tool-calculated results with a clear assessment against {company_name}'s own thresholds
 
 | Decision visibility
-| Black box - no trace of what the agent did
-| Full MLflow traces: every tool call, LLM invocation, and decision path
+| Black box - no record of what the agent did
+| Full MLflow traces: every tool call, LLM invocation, and decision path, with per-step latency
 
 | Quality assurance
 | Manual spot-checking
-| Automated evaluation pipelines catching regressions before deployment
+| Capability benchmarks, RAGAS scoring, and llm-as-judge evaluation, runnable as a pipeline
 
 | Security posture
 | Standard containers, no sandboxing, CISO blocks deployment
-| Defense-in-depth: guardrails, adversarial testing, OpenShell sandboxing, SPIFFE identity, OCSF audit
+| Defense-in-depth: persona access control, guardrails at the inference boundary, adversarial test evidence, and sandboxed agents
 
 | Regulatory compliance
 | "We'll get back to you"
-| Structured, timestamped, reproducible traces with full audit trail
+| Structured, timestamped traces plus OCSF audit events, SIEM-ready
 |===
 
 == Key takeaways
 
-1. *The platform is the product.* Individual AI capabilities (inference, RAG, agents) are powerful alone, but their value multiplies when integrated on a single platform with shared observability and governance.
+1. *The platform is the product.* Individual AI capabilities are useful alone, but their value multiplies when integrated on one platform with shared observability and governance. A model endpoint is not an AI strategy.
 
-2. *Zero to Hero is achievable.* Every section started from nothing and built a real capability. AutoML trains models without ML engineering. AutoRAG enables RAG without vector database setup. MaaS publishes models without custom infrastructure.
+2. *It is not just the LLM.* Every answer {assistant_name} gives depends on retrieval, tool execution, identity, and policy enforcement working together. The model is one component in a pipeline.
 
-3. *Contrast drives understanding.* By showing what life looks like without each capability, you can articulate the business value of every investment in the AI platform.
+3. *Contrast drives understanding.* You asked the same question with no prompt, with a system prompt, with RAG, and with RAG plus the global prompt - and again with and without MCP tools. Seeing what breaks without each capability is what lets you justify investing in it.
 
-4. *Safety is not optional for production.* Defense-in-depth (NemoGuardrails + Garak + OpenShell) provides the security posture needed to move from "prototype approved" to "production deployed."
+4. *Managed services need not mean the public cloud.* MaaS gave you API keys, stable endpoints, tiers, and usage dashboards while every token stayed inside the cluster - the trade-off regulated industries actually need.
 
-5. *Observability enables trust.* When regulators ask "why did the AI recommend this?", MLflow traces provide a complete, reproducible answer.
+5. *Safety is not optional for production.* No single control is sufficient. Persona access controls who can ask, guardrails control what can be asked and answered, and sandboxes control what an agent can do once it is running.
+
+6. *Observability enables trust.* When a regulator asks "why did the AI recommend this?", a trace answers with timestamps, inputs, outputs, and every decision in between.
 
 == Next steps
 
-* *Start with inference*: Deploy a model from the catalog and publish it as MaaS for your team
-* *Ground in your data*: Upload your organization's policy documents via the Knowledge tab
-* *Trace everything*: Enable MLflow autolog and start building your trace corpus
-* *Evaluate before shipping*: Build an evaluation pipeline and run it before every prompt change
-* *Secure your agents*: Define OpenShell policies for your agent deployments
+* *Start with inference*: deploy a model from the catalog, then publish it through MaaS so other teams consume it instead of redeploying it
+* *Ground in your data*: upload your own policy documents via the Knowledge tab and compare answers before and after
+* *Trace everything*: enable MLflow tracing early, so you have a trace corpus before you need it for an incident
+* *Evaluate before shipping*: wire an evaluation run into your prompt-change workflow, so a quality drop blocks the change the way a failing test blocks a merge
+* *Secure your agents*: start deny-by-default and open up only what the agent proves it needs
 
 == Resources
 
@@ -117,4 +128,4 @@ Throughout this workshop, you progressed through four transformation waves, taki
 
 We value your feedback! Please share your experience with this workshop to help us improve future iterations.
 
-Thank you for participating in the Fed Aura Capital AI Workshop.
+Thank you for participating in the {company_name} AI Workshop.

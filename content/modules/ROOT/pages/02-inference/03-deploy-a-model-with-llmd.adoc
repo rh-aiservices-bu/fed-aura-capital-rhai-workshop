@@ -11,7 +11,7 @@ In the previous exercise you deployed Qwen3 0.6B on a single node using vLLM. Th
 
 llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. You get the same vLLM inference engine underneath — llm-d just makes the traffic distribution smarter.
 
-.llm-d in the Fed Aura platform
+.llm-d in the {company_name} platform
 image::fed-aura-platform-architecture-models-focus.svg[Platform architecture with the llm-d inference layer highlighted,align=center]
 
 NOTE: In this exercise you are deploying to CPU again. The llm-d architecture and deployment steps are identical on GPU — the only difference is the hardware profile you select.
@@ -20,7 +20,7 @@ NOTE: In this exercise you are deploying to CPU again. The llm-d architecture an
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models* and select the *Other Models* tab. Find *Qwen3 0.6B* and click *Deploy*.
 
-. Select your project `wksp-userX` and click *Next*.
+. Select your project `{user_project}` and click *Next*.
 
 . You will be prompted for the model location. Leave the defaults as-is and click *Next*.
 
@@ -79,4 +79,4 @@ The shared model that powers the MaaS gateway in the next exercise is already ru
 
 You've now deployed the same model two ways: single-node vLLM on CPU and distributed llm-d with two replicas. In both cases you talked to the model directly through the Playground.
 
-In the Fed Aura Capital organization, application teams don't deploy their own models and talk to model endpoints directly. They go through the MaaS gateway, which adds authentication, rate limiting, and usage metering on top. That's what Exercise 4 covers.
+In the {company_name} organization, application teams don't deploy their own models and talk to model endpoints directly. They go through the MaaS gateway, which adds authentication, rate limiting, and usage metering on top. That's what Exercise 4 covers.

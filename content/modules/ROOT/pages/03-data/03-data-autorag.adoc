@@ -118,7 +118,7 @@ image::module5-autorag-sidebar.png[OpenShift AI sidebar showing Gen AI studio ex
 . Click **Create AutoRAG optimization run**. Enter the following details and click **Next**:
 +
 * **Name**: `fed-aura-autorag`
-* **Description**: `Fed Aura Capital AutoRAG`
+* **Description**: `{company_name} AutoRAG`
 * **Open GenAI Stack connection**: select `fed-aura-ogx-connection`
 +
 image::module5-autorag-create.png[Create AutoRAG form with name and OGX connection filled in,link=self,window=blank,width=700]

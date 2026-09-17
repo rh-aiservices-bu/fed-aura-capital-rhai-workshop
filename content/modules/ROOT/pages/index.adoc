@@ -3,7 +3,7 @@
 
 Welcome to the {company_name} AI Workshop!
 
-This workshop was created and is maintained by the https://rh-aiservices-bu.github.io/cai/[Red Hat CAI Team]. A big thanks to all the contributors who helped shape the content, test the labs, and provide feedback along the way - this workshop wouldn't be possible without you.
+This workshop was created and is maintained by the https://rh-aiservices-bu.github.io/cai/[Red Hat CAI Team]. A big thanks to all the https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/graphs/contributors[contributors] who helped shape the content, test the labs, and provide feedback along the way - this workshop wouldn't be possible without you.
 
 If you have any questions or run into issues, reach out to https://github.com/rcarrata[Roberto Carratalá] or https://github.com/ckavili[Cansu Kavili-Örnek], or open an https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/issues[issue in the repository].
 

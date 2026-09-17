@@ -1,0 +1,30 @@
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: {{ .Values.model.name }}-access
+  namespace: {{ .Values.namespaces.tenant }}
+spec:
+  modelRefs:
+    - name: {{ .Values.model.name }}
+      namespace: {{ .Values.namespaces.externalModels }}
+  subjects:
+    groups:
+      - name: system:authenticated
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: {{ .Values.model.name }}-free
+  namespace: {{ .Values.namespaces.tenant }}
+spec:
+  modelRefs:
+    - name: {{ .Values.model.name }}
+      namespace: {{ .Values.namespaces.externalModels }}
+      tokenRateLimits:
+        - limit: {{ .Values.subscription.tokenLimit }}
+          window: {{ .Values.subscription.window }}
+  owner:
+    groups:
+      - name: system:authenticated
+  priority: {{ .Values.subscription.priority }}

@@ -1,0 +1,15 @@
+{{- if .Values.connection.enabled }}
+---
+# Consumed by AutoRAG and other clients of the OGX server.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.connection.name }}
+  namespace: {{ include "workshop.namespace" . }}
+  annotations:
+    openshift.io/display-name: {{ .Values.connection.name }}
+type: Opaque
+stringData:
+  OGX_CLIENT_API_KEY: {{ .Values.connection.apiKey | quote }}
+  OGX_CLIENT_BASE_URL: http://{{ .Values.serverName }}-service.{{ include "workshop.namespace" . }}.svc.cluster.local:{{ .Values.server.port }}
+{{- end }}

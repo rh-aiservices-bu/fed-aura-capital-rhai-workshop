@@ -1,0 +1,14 @@
+{{- if .Values.imagePuller.enabled }}
+---
+apiVersion: che.eclipse.org/v1alpha1
+kind: KubernetesImagePuller
+metadata:
+  name: fedaura-image-puller
+  namespace: {{ .Values.imagePuller.namespace }}
+spec:
+  daemonsetName: fedaura-image-puller
+  images: "fedaura-codeserver={{ .Values.image.repository }}:{{ .Values.imagePuller.tag }}"
+  cachingIntervalHours: {{ .Values.imagePuller.cachingIntervalHours | quote }}
+  cachingMemoryRequest: {{ .Values.imagePuller.cachingMemoryRequest | quote }}
+  cachingMemoryLimit: {{ .Values.imagePuller.cachingMemoryLimit | quote }}
+{{- end }}

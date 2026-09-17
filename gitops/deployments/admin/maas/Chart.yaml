@@ -1,0 +1,6 @@
+apiVersion: v2
+name: maas
+description: Models-as-a-Service wiring for the upstream MaaS/LiteLLM endpoint (global)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

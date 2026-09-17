@@ -1,0 +1,17 @@
+---
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: EvalHub
+metadata:
+  name: evalhub
+  namespace: {{ .Values.dashboardNamespace }}
+spec:
+  database:
+    type: {{ .Values.evalhub.databaseType }}
+  env:
+    - name: MLFLOW_TRACKING_URI
+      value: {{ .Values.mlflow.trackingUri | quote }}
+    - name: MLFLOW_WORKSPACE
+      value: {{ .Values.mlflow.workspace | quote }}
+  providers:
+{{ toYaml .Values.evalhub.providers | indent 4 }}
+  replicas: {{ .Values.evalhub.replicas }}

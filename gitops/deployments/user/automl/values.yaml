@@ -1,0 +1,10 @@
+username: user1
+namespacePrefix: wksp
+
+bucket: automl
+region: wonderland
+dataFile: cleaned_loan_data.csv
+job:
+  image: amazon/aws-cli
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 300

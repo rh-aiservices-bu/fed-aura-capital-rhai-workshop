@@ -1,0 +1,18 @@
+namespace: mcp-servers
+# Namespace running the RHOAI dashboard / Gen AI UI that consumes these servers.
+dashboardNamespace: redhat-ods-applications
+riskServer:
+  enabled: true
+  image: quay.io/rh-ai-quickstart/mortgage-ai-api:latest
+  port: 8081
+weatherServer:
+  enabled: true
+  image: quay.io/rh-aiservices-bu/mcp-weather:0.1.0-amd64
+  port: 3001
+  demoMode: "true"
+# Register the servers in the Gen AI UI MCP catalog ConfigMap.
+catalog:
+  enabled: true
+# Egress NetworkPolicies letting the Gen AI UI reach the MCP servers.
+networkPolicies:
+  enabled: true

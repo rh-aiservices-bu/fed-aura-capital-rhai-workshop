@@ -1,0 +1,52 @@
+{{- if .Values.networkPolicies.enabled }}
+{{- if .Values.weatherServer.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gen-ai-allow-mcp-weather
+  namespace: {{ .Values.dashboardNamespace }}
+spec:
+  podSelector:
+    matchLabels:
+      deployment: gen-ai-ui
+  egress:
+    - ports:
+        - protocol: TCP
+          port: {{ .Values.weatherServer.port }}
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.namespace }}
+          podSelector:
+            matchLabels:
+              app: mcp-weather
+  policyTypes:
+    - Egress
+{{- end }}
+{{- if .Values.riskServer.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gen-ai-allow-mcp-risk
+  namespace: {{ .Values.dashboardNamespace }}
+spec:
+  podSelector:
+    matchLabels:
+      deployment: gen-ai-ui
+  egress:
+    - ports:
+        - protocol: TCP
+          port: {{ .Values.riskServer.port }}
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.namespace }}
+          podSelector:
+            matchLabels:
+              app: mcp-risk-server
+  policyTypes:
+    - Egress
+{{- end }}
+{{- end }}

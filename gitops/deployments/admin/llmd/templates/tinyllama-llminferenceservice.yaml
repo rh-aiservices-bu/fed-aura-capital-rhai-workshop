@@ -1,0 +1,39 @@
+{{- if .Values.tinyllama.enabled }}
+---
+# TinyLlama LLMInferenceService via the inference gateway.
+# Do NOT override command/args - the preset template handles TLS and served-model-name.
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: tinyllama
+  namespace: {{ .Values.namespace }}
+  annotations:
+    opendatahub.io/model-type: generative
+    openshift.io/display-name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+    security.opendatahub.io/enable-auth: "true"
+  labels:
+    opendatahub.io/dashboard: "true"
+    opendatahub.io/genai-asset: "true"
+spec:
+  model:
+    name: tinyllama
+    uri: {{ .Values.tinyllama.uri }}
+  replicas: 1
+  router:
+    gateway:
+      refs:
+        - name: {{ .Values.tinyllama.gatewayRef.name }}
+          namespace: {{ .Values.tinyllama.gatewayRef.namespace }}
+    route: {}
+  template:
+    containers:
+      - name: main
+        image: {{ .Values.tinyllama.image }}
+        env:
+          - name: HF_HOME
+            value: /tmp/hf_home
+          - name: VLLM_CPU_KVCACHE_SPACE
+            value: "4"
+        resources:
+{{ toYaml .Values.tinyllama.resources | indent 10 }}
+{{- end }}

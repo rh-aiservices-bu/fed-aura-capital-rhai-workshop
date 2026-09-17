@@ -1,0 +1,20 @@
+{{- if .Values.routes.enabled }}
+{{- range $port := list "api" "ui" }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: minio-{{ $port }}
+  namespace: {{ include "workshop.namespace" $ }}
+spec:
+  to:
+    kind: Service
+    name: minio-service
+    weight: 100
+  port:
+    targetPort: {{ $port }}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+{{- end }}
+{{- end }}

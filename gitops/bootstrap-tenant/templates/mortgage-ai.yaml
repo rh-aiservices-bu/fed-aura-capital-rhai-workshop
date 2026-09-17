@@ -1,0 +1,80 @@
+{{- if .Values.components.mortgageAi.enabled }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: user-mortgage-ai
+  namespace: {{ .Values.bootstrap.argoNamespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "9"
+spec:
+  generators:
+    - list:
+        elements:
+{{- include "bootstrap.userElements" . }}
+  template:
+    metadata:
+      name: mortgage-ai-{{ `{{ user }}` }}
+      namespace: {{ .Values.bootstrap.argoNamespace }}
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: {{ .Values.bootstrap.project }}
+      source:
+        repoURL: {{ .Values.bootstrap.repoURL }}
+        targetRevision: {{ .Values.bootstrap.targetRevision }}
+        # Reuses the chart shipped at the repo root, same as the standalone install.
+        path: {{ .Values.components.mortgageAi.chartPath }}
+        helm:
+          values: |
+            secrets:
+              AUTH_DISABLED: "true"
+              COMPANY_NAME: "Fed Aura Capital"
+              # S3 -- per-user MinIO from the user/minio chart
+              S3_ENDPOINT: "http://minio-service:9000"
+              S3_ACCESS_KEY: "{{ .Values.minio.rootUser }}"
+              S3_SECRET_KEY: "{{ .Values.minio.rootPassword }}"
+              # LLM -- injected MaaS endpoint
+              LLM_BASE_URL: "{{ .Values.remotellm.url }}"
+              LLM_API_KEY: "{{ .Values.remotellm.apiToken }}"
+              LLM_MODEL: "{{ .Values.remotellm.id }}"
+              # Shared MCP risk server from the admin/mcp chart
+              MCP_RISK_SERVER_URL: "http://mcp-risk-server.mcp-servers.svc.cluster.local:8081/mcp"
+              # MLflow -- in-cluster RHOAI MLflow, authenticated with the pod's
+              # ServiceAccount token (no manually minted token needed).
+              MLFLOW_TRACKING_URI: "https://mlflow.redhat-ods-applications.svc.cluster.local:8443"
+              MLFLOW_TRACKING_AUTH: "kubernetes"
+              MLFLOW_EXPERIMENT_NAME: "mortgage-ai"
+              MLFLOW_WORKSPACE: "{{ .Values.user.namespacePrefix }}-{{ `{{ user }}` }}"
+              MLFLOW_TRACKING_INSECURE_TLS: "true"
+            # Components provided by other charts in this repo
+            keycloak:
+              enabled: false
+            minio:
+              enabled: false
+            mcpRiskServer:
+              enabled: false
+            mcpWeatherServer:
+              enabled: false
+            routes:
+              sharedHost: "mortgage-ai-{{ .Values.user.namespacePrefix }}-{{ `{{ user }}` }}.{{ .Values.deployer.domain }}"
+            seed:
+              enabled: {{ .Values.components.mortgageAi.seed }}
+            ui:
+              image:
+                tag: "{{ .Values.components.mortgageAi.uiImageTag }}"
+            mlflow:
+              rbac:
+                enabled: true
+                pipelineRunner:
+                  enabled: true
+      destination:
+        name: in-cluster
+        namespace: {{ .Values.user.namespacePrefix }}-{{ `{{ user }}` }}
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+{{- end }}

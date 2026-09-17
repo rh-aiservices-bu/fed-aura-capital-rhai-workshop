@@ -1,0 +1,17 @@
+{{- if .Values.dspa.enabled }}
+---
+apiVersion: datasciencepipelinesapplications.opendatahub.io/v1
+kind: DataSciencePipelinesApplication
+metadata:
+  name: dspa
+  namespace: {{ .Values.namespace }}
+spec:
+  dspVersion: v2
+  objectStorage:
+    disableHealthCheck: false
+    enableExternalRoute: true
+    minio:
+      deploy: true
+      image: {{ .Values.dspa.minioImage }}
+  podToPodTLS: false
+{{- end }}

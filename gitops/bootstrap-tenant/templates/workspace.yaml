@@ -1,0 +1,45 @@
+{{- if .Values.components.workspace.enabled }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: user-workspace
+  namespace: {{ .Values.bootstrap.argoNamespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  generators:
+    - list:
+        elements:
+{{- include "bootstrap.userElements" . }}
+  template:
+    metadata:
+      name: workspace-{{ `{{ user }}` }}
+      namespace: {{ .Values.bootstrap.argoNamespace }}
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: {{ .Values.bootstrap.project }}
+      source:
+        repoURL: {{ .Values.bootstrap.repoURL }}
+        targetRevision: {{ .Values.bootstrap.targetRevision }}
+        path: {{ include "bootstrap.path" (dict "ctx" . "chart" "user/workspace") }}
+        helm:
+          values: |
+            username: {{ `{{ user }}` }}
+            namespacePrefix: {{ .Values.user.namespacePrefix }}
+            remotellm:
+              enabled: {{ .Values.remotellm.enabled }}
+              url: "{{ .Values.remotellm.url }}"
+              id: "{{ .Values.remotellm.id }}"
+              apiToken: "{{ .Values.remotellm.apiToken }}"
+      destination:
+        name: in-cluster
+        namespace: {{ .Values.user.namespacePrefix }}-{{ `{{ user }}` }}
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+{{- end }}

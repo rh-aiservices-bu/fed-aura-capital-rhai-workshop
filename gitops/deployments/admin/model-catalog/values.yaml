@@ -1,0 +1,14 @@
+registriesNamespace: rhoai-model-registries
+dashboardNamespace: redhat-ods-applications
+# Job that force-applies the model-catalog-sources ConfigMap. It runs with
+# ttlSecondsAfterFinished, so ArgoCD re-creates it on every sync of a new revision.
+catalogSources:
+  enabled: true
+  image: registry.redhat.io/openshift4/ose-cli:latest
+servingRuntimeTemplate:
+  enabled: true
+  image: registry.redhat.io/rhaiis/vllm-cpu-rhel9@sha256:f05e773647dddd37ec6c2215cb14bec87e4ab5a7d37f2e110d16cd92355427d3
+llmd:
+  enabled: true
+  image: registry.redhat.io/rhaii/vllm-cpu-rhel9@sha256:a1ec87fc11e84aff94af69fe92827d7a708b78792bce052615fb3c4bf1fc0bef
+  runtimeVersion: 0.24.0+rhaiv.9

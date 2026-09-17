@@ -1,0 +1,24 @@
+# Tenant namespace holding the eval pipelines + object storage.
+namespace: evaluations
+dashboardNamespace: redhat-ods-applications
+evalhub:
+  replicas: 1
+  databaseType: sqlite
+  providers:
+    - garak
+    - garak-kfp
+    - lm-evaluation-harness
+    - ragas
+mlflow:
+  trackingUri: https://mlflow.redhat-ods-applications.svc.cluster.local:8443
+  # EvalHub reports runs into this MLflow workspace (must match .namespace).
+  workspace: evaluations
+dspa:
+  enabled: true
+  minioImage: quay.io/opendatahub/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance
+secretPatcher:
+  enabled: true
+  image: registry.redhat.io/openshift4/ose-cli:latest
+# Workaround NetworkPolicy for the eval-hub-ui BFF -> evalhub API on 8443.
+uiNetworkPolicy:
+  enabled: true

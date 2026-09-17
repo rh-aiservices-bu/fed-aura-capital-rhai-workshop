@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "workshop.namespace" . }}
+  labels:
+    opendatahub.io/dashboard: {{ .Values.dashboardLabel | quote }}
+    app.kubernetes.io/component: workshop-namespace
+  annotations:
+    openshift.io/display-name: "Workspace {{ .Values.username }}"
+    openshift.io/description: "Fed Aura Capital workshop namespace for {{ .Values.username }}"

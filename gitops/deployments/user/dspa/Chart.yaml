@@ -1,0 +1,6 @@
+apiVersion: v2
+name: dspa
+description: Per-user Data Science Pipelines Application backed by the user MinIO
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

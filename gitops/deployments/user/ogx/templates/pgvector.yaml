@@ -1,0 +1,90 @@
+{{- if .Values.pgvector.enabled }}
+{{- $ns := include "workshop.namespace" . }}
+---
+# The vector extension is auto-created at startup via this init script.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgvector-init-extensions
+  namespace: {{ $ns }}
+data:
+  create-vector-extension.sh: |
+    #!/bin/bash
+    psql -U postgres -d "${POSTGRESQL_DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS vector;"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: genai-pgvector-credentials
+  namespace: {{ $ns }}
+type: Opaque
+stringData:
+  password: {{ .Values.pgvector.password | quote }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genai-pgvector
+  namespace: {{ $ns }}
+  labels:
+    app: genai-pgvector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: genai-pgvector
+  template:
+    metadata:
+      labels:
+        app: genai-pgvector
+    spec:
+      containers:
+      - name: postgresql
+        image: {{ .Values.pgvector.image }}
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        env:
+        - name: POSTGRESQL_DATABASE
+          value: {{ .Values.pgvector.database }}
+        - name: POSTGRESQL_USER
+          value: {{ .Values.pgvector.user }}
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: genai-pgvector-credentials
+              key: password
+        - name: POSTGRESQL_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: genai-pgvector-credentials
+              key: password
+        resources:
+{{ toYaml .Values.pgvector.resources | indent 10 }}
+        volumeMounts:
+        - name: pgdata
+          mountPath: /var/lib/pgsql/data
+        - name: init-extensions
+          mountPath: /opt/app-root/src/postgresql-start/
+      volumes:
+      - name: pgdata
+        emptyDir: {}
+      - name: init-extensions
+        configMap:
+          name: pgvector-init-extensions
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: genai-pgvector
+  namespace: {{ $ns }}
+  labels:
+    app: genai-pgvector
+spec:
+  selector:
+    app: genai-pgvector
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+{{- end }}

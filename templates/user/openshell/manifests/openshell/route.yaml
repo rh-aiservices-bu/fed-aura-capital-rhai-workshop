@@ -5,7 +5,7 @@ metadata:
   namespace: wksp-user1
 spec:
   tls:
-    termination: passthrough
+    termination: edge
   to:
     kind: Service
     name: openshell

@@ -7,9 +7,34 @@
 
 Protecting customers and the business starts with who can ask what.
 
-{company_name} operates in a heavily regulated industry. ECOA prohibits discriminatory lending. ATR/QM requires verified ability-to-repay calculations. TRID mandates accurate disclosures. Before {assistant_name} goes to production, the security team must ensure she cannot be manipulated through prompt injection, leak sensitive customer data, or bypass compliance checks.
+Mortgage lending is one of the most tightly regulated businesses there is. A lender has to prove three things: that it never discriminates, that every affordability decision is based on verified numbers, and that the costs it quotes a borrower are accurate. Regulators audit those claims - and "the AI said it" is not a defense.
 
-The defense-in-depth model treats agents as "zero trust employees." No single mechanism is sufficient - it requires layered defense: persona-based access control at the application layer, NeMo Guardrails and the Guardrails Orchestrator at the inference boundary, Garak for pre-deployment adversarial testing (powered by Chatterbox Labs technology), and OpenShell for secure agent onboarding with Agent Sandbox isolation.
+So before {assistant_name} goes anywhere near production, the security team has to be confident she cannot be talked into leaking customer data, tricked into skipping a compliance check, or manipulated into saying something the company is liable for.
+
+That confidence does not come from one control. {company_name} treats agents like *zero trust employees*: every layer assumes the one in front of it might fail.
+
+* *Who is asking* - persona-based access control in the application decides what each user is even allowed to request. That is this section.
+* *What is being said* - NeMo Guardrails and the Guardrails Orchestrator inspect every prompt and every response at the inference boundary. Section 5.2.
+* *What breaks it* - Garak (powered by Chatterbox Labs technology) attacks the assistant before real customers can. Section 5.2.
+* *Where it runs* - OpenShell onboards new agents into an Agent Sandbox that denies everything by default. Section 5.3.
+
+.The three rules behind those requirements
+[%collapsible]
+====
+[cols="1,2",options="header"]
+|===
+|Rule |What it requires
+
+|*ECOA* - Equal Credit Opportunity Act
+|Credit decisions must not discriminate on protected characteristics such as race, sex, religion, national origin, or age.
+
+|*ATR/QM* - Ability-to-Repay / Qualified Mortgage
+|The lender must verify the borrower can actually afford the loan, using documented income and debts rather than estimates.
+
+|*TRID* - TILA-RESPA Integrated Disclosure
+|The rates, fees, and closing costs quoted to a borrower must be accurate and disclosed on a fixed timetable.
+|===
+====
 
 Estimated time: *10 minutes* (section 5 totals about 30 minutes across 5.1, 5.2, and 5.3)
 
@@ -24,68 +49,151 @@ By the end of this section, you will be able to:
 * Use policy enforcement to block data exfiltration from a sandboxed agent
 * Examine security traces in MLflow across all three defense layers
 
-== Exercise 1: Ask a Question as a Borrower
+== Exercise 1: Ask a Question as the CEO
 
-The {company_name} app assigns different capabilities depending on who logs in. A Borrower has access to mortgage guidance, application status, and product information. Start by seeing what {assistant_name} can do for an authenticated user.
+The {company_name} app assigns different capabilities depending on who logs in. The CEO persona has access to portfolio health, pipeline metrics, and officer performance. Start by seeing what {assistant_name} reveals to a fully authenticated executive.
 
-. Navigate to the *{company_name} App* tab. Click *Sign In* and select the *Borrower* persona:
+. Navigate to the *{company_name} App* tab. Click *Sign In* and select the *CEO* persona (David Park):
 +
-// TODO: screenshot of Borrower persona login (security-borrower-login.png)
-image::security-borrower-login.png[Sign in dialog with Borrower persona selected,link=self,window=blank,width=700]
+image::ceo-sign-in.png[Sign in dialog with the CEO persona selected,link=self,window=blank,width=700]
 
-. In the chat panel, ask:
+. Confirm you are signed in as the CEO. The header shows the active persona:
 +
-[source,text]
-----
-What is the CEO's vision for Fed Aura Capital's lending strategy?
-----
+image::security-ceo-signed-in.png[Application header showing David Park signed in with the CEO role,link=self,window=blank,width=290]
 
-. Observe the response. {assistant_name} provides a detailed answer grounded in the company's strategic direction - the CEO's priorities, the risk appetite, and how these translate into lending practices:
-+
-// TODO: screenshot of Borrower getting a detailed answer (security-borrower-answer.png)
-image::security-borrower-answer.png[{assistant_name}'s response to the Borrower with detailed lending strategy information,link=self,window=blank,width=700]
-+
-The Borrower persona is authenticated and has access to this information. {assistant_name} treats them as a trusted user within the scope of their role.
-
-== Exercise 2: Ask the Same Question as Public
-
-Now switch to the Public persona. This represents an unauthenticated user - someone who has not signed in. The same question should produce a very different result.
-
-. Click *Sign Out*, then click *Sign In* and select the *Public* persona (or access the chat without signing in):
-+
-// TODO: screenshot of Public persona login (security-public-login.png)
-image::security-public-login.png[Sign in dialog with Public persona selected,link=self,window=blank,width=700]
-
-. Ask the exact same question:
+. In the *Your Assistant* chat panel, ask:
 +
 [source,text]
 ----
-What is the CEO's vision for Fed Aura Capital's lending strategy?
+Show me the current pipeline status
 ----
 
-. Observe the response. This time, {assistant_name} rejects the question or provides only generic, publicly available information. The internal details about the CEO's strategy, risk appetite, and lending priorities are not disclosed:
+. Observe the response. {assistant_name} returns a detailed operational breakdown - active and closed application counts, stage-by-stage distribution, pull-through rate, and average days to close:
 +
-// TODO: screenshot of Public getting rejected (security-public-rejected.png)
-image::security-public-rejected.png[{assistant_name}'s restricted response to the Public persona,link=self,window=blank,width=700]
+image::security-ceo-pipeline-answer.png[Assistant responding to the CEO with a full pipeline overview,link=self,window=blank,width=450]
++
+This is internal business intelligence. The CEO persona is authorized to see it, so the agent calls the pipeline tools and returns the real numbers.
 
-This is persona-based access control in action. The same AI assistant, the same model, the same question - but the response changes based on who is asking. The Public persona cannot access internal information that the Borrower can.
+== Exercise 2: Ask the Same Question as the Public Chatbot
+
+Now ask the identical question as an unauthenticated visitor. This is the public chatbot on the {company_name} landing page - the persona anyone on the internet can reach without signing in.
+
+. Click *Sign Out* to leave the CEO session:
++
+image::security-ceo-signed-in.png[Sign Out link in the application header,link=self,window=blank,width=290]
+
+. Signing out lands you on the sign-in page. Click the *X* to the right of the *{company_name}* logo to dismiss it - you will land on the main public page:
++
+image::security-signin-close.png[Close button to the right of the Fed Aura Capital logo on the sign-in page,link=self,window=blank,width=350]
+
+. Click the small chat button in the bottom right corner to open the public assistant:
++
+image::security-public-chat-launcher.png[Public chat launcher button in the bottom right corner,link=self,window=blank,width=250]
+
+. Ask the exact same question. Note the scope declared under the title - *Ask about loans, rates, or eligibility*:
++
+[source,text]
+----
+Show me the current pipeline status
+----
+
+. Observe the response. The public persona is refused outright - no counts, no stage breakdown, no pull-through rate:
++
+image::security-public-denied.png[Public assistant refusing the pipeline status request,link=self,window=blank,width=430]
+
+This is persona-based access control in action. The same application, the same model, the same question - but the answer changes based on who is asking. The public persona has no access to the pipeline tools that produced the CEO's numbers, so there is nothing for it to leak.
+
+NOTE: The refusal wording is generated by the model and may differ slightly from the screenshot. What matters is that no pipeline data appears in the response.
 
 == Exercise 3: Check the Traces
 
-Both requests went through the same inference pipeline. The difference is visible in the traces.
+Both questions were identical and both went through the same inference pipeline. The traces show exactly where the two requests diverged - and they are the evidence that nothing leaked.
 
-. Navigate to *OpenShift AI Dashboard > Develop & Train > Experiments*.
-
-. Find the experiment tagged *GenAI* for the mortgage-ai project and click on *Traces*.
-
-. Locate the traces for the two requests you just made. Compare them side by side:
+. Navigate to *OpenShift AI Dashboard > Develop & train > Experiments*. With your project selected, you will see the `mortgage-ai` experiment:
 +
-// TODO: screenshot of trace comparison (security-trace-comparison.png)
-image::security-trace-comparison.png[MLflow traces showing the difference between Borrower and Public request paths,link=self,window=blank,width=700]
+image::security-traces-experiments.png[Experiments list showing the mortgage-ai experiment for the workshop project,link=self,window=blank,width=700]
 
-. Look at the trace for the Public request. You should see the auth check step rejecting the request or limiting the context before the agent processes it. The Borrower trace shows the full pipeline executing with access to internal context.
+. Click *mortgage-ai*. The experiment opens on the *GenAI* tab. In the left sidebar, under *Observability*, select *Traces*:
++
+image::security-traces-list.png[Traces table for the mortgage-ai experiment with Request, Session, Execution time and State columns,link=self,window=blank,width=700]
 
-TIP: Traces are the evidence layer. When a regulator or auditor asks "how do you ensure public users cannot access internal information?", the traces provide documented proof of every decision the system made.
+. You will see two traces whose *Request* is `Show me the current pipeline status` - one from the CEO session, one from the public session. Compare their *Execution time*: they differ by several seconds.
++
+image::security-traces-latency.png[The two pipeline status traces showing noticeably different execution times,link=self,window=blank,width=600]
++
+Look at the *Session* column as well. The CEO request carries an authenticated session, prefixed `user:`, while the public request has an anonymous session ID.
+
+. Open the *slower* of the two - this is the CEO request. Select the *Details & Timeline* tab and read the trace breakdown:
++
+image::security-trace-ceo-tools.png[CEO trace breakdown showing input_shield, agent, tool_auth, tools with ceo_pipeline_summary, and output_shield,link=self,window=blank,width=700]
++
+----
+LangGraph
+├── input_shield
+│   └── after_input_shield
+├── agent
+│   ├── ChatOpenAI
+│   └── should_continue
+├── tool_auth
+│   └── after_tool_auth
+├── tools
+│   └── ceo_pipeline_summary
+├── agent
+│   ├── ChatOpenAI
+│   └── should_continue
+└── output_shield
+----
++
+The *Chat* tab shows the whole exchange: the assistant decided to call `ceo_pipeline_summary`, passed it a reporting window, the tool returned the pipeline summary, and the assistant turned those numbers into its answer. Every argument sent and every value returned is recorded.
+
+. Close the trace with the *X* in the top right, then open the *faster* one - the public request. Read its breakdown:
++
+image::security-trace-public-refused.png[Public trace breakdown with no tool_auth or tools spans and the assistant declining the request,link=self,window=blank,width=700]
++
+----
+LangGraph
+├── input_shield
+│   └── after_input_shield
+├── agent
+│   ├── ChatOpenAI
+│   └── should_continue
+└── output_shield
+----
++
+The `tool_auth` and `tools` spans are simply *not there*. The public agent was never given the pipeline tools, so it had nothing to call - and the *Chat* tab shows it saying exactly that: _"I don't have access to internal pipeline or application status information."_
+
+. That absence is the whole point, and it explains the execution time gap you noticed in step 3. The CEO path spends its extra seconds authorizing and running `ceo_pipeline_summary`; the public path returns as soon as the model has declined.
+
+[cols="1,1,1",options="header"]
+|===
+| Trace detail | CEO request | Public request
+
+| Session
+| Authenticated, `user:` prefix
+| Anonymous session ID
+
+| Tool authorization
+| `tool_auth` span present
+| No `tool_auth` span
+
+| Tools called
+| `ceo_pipeline_summary`
+| None
+
+| Guardrails
+| `input_shield` and `output_shield`
+| `input_shield` and `output_shield`
+
+| Result
+| Full pipeline breakdown
+| Refusal, no internal data
+|===
+
+Notice that the guardrail spans ran on *both* requests. Persona scoping is a separate layer: it decides which tools the agent is allowed to see in the first place, before any guardrail has to make a judgement call about the output.
+
+NOTE: Exact latencies, application counts, and pull-through rates depend on your cluster's data and will not match the screenshots. What should match is the shape - tool spans present for the CEO, absent for the public request.
+
+TIP: Traces are the evidence layer. When a regulator or auditor asks "how do you ensure public users cannot access internal information?", this is the answer: a timestamped record showing the tools were never available to the unauthenticated caller, rather than a claim that the model chose not to answer.
 
 === What's Next?
 

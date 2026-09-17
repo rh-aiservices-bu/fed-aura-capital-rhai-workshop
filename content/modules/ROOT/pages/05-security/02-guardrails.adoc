@@ -99,7 +99,7 @@ image::security-app-injection-refused.png[The Fed Aura Capital assistant refusin
 +
 image::security-app-injection-variant-refused.png[The Fed Aura Capital assistant refusing the shorter instruction-override variation,link=self,window=blank,width=400]
 
-IMPORTANT: A refusal on its own does not tell you *which layer* refused. Modern instruction-tuned models decline overtly malicious prompts on their own, so a short "I can't comply with that" could be the input rail stopping the request, or the model's own alignment. That distinction matters enormously in a regulated business: model behaviour changes when you swap or upgrade a model, whereas a rail is configuration you control and can evidence. Click *View trace* under the response - you will resolve exactly this question in exercise 5.
+IMPORTANT: A refusal on its own does not tell you *which layer* refused. Modern instruction-tuned models decline overtly malicious prompts on their own, so a conversational "I can't comply with that, but I can help with..." is most likely the model's own alignment rather than a rail. That distinction matters enormously in a regulated business: model behaviour changes when you swap or upgrade a model, whereas a rail is configuration you control and can evidence. Click *View trace* under the response and keep it to hand - exercise 5 uses the trace to tell the two apart definitively.
 
 When a rail *is* the thing that fires, the guardrails service reports it explicitly. Checking content directly against the rails returns the rail-by-rail verdict:
 
@@ -141,11 +141,11 @@ For {company_name} the stakes here are different from the injection attempt. An 
 +
 image::security-app-harmful-refused.png[The Fed Aura Capital assistant refusing the request for help forging income documents,link=self,window=blank,width=400]
 
-The content moderation rails cover both directions, as the *Guardrails* settings spelled out in exercise 1 - toxicity, hate speech, sexual content, violence and harassment on the way in, and the same categories plus PII leak prevention on the way out.
+Content moderation covers both directions, as the *Guardrails* settings spelled out in exercise 1 - toxicity, hate speech, sexual content, violence and harassment on the way in, and the same categories plus PII leak prevention on the way out.
 
-NOTE: Rails that use the guardrail model reason about *intent* rather than matching keywords. "How does mortgage fraud detection work?" is a reasonable question from a curious borrower and should pass; "how do I forge documents" should not - even though both contain the same vocabulary. No keyword list draws that line.
+NOTE: Catching this reliably needs a rail that reasons about *intent* rather than matching keywords. "How does mortgage fraud detection work?" is a reasonable question from a curious borrower and should pass; "how do I forge documents" should not - even though both draw on the same vocabulary. No keyword list draws that line, which is why a rule like this calls for a self-check rail that puts the question to a judge model.
 
-IMPORTANT: That flexibility comes at a price. Rails that reason with a language model are flexible but not infallible, and Red Hat's guidance is explicit that they cannot guarantee 100% compliance. It is exactly why they are one layer among several - paired with the cheap deterministic detectors you will see in exercise 4, and with the access controls from 5.1 - and never the only thing standing between a customer and a bad answer.
+IMPORTANT: That flexibility comes at a price. Rails that reason with a language model are flexible but not infallible, and Red Hat's guidance is explicit that they cannot guarantee 100% compliance. It is exactly why they are one layer among several - paired with the cheap deterministic detectors you will meet in exercise 4, and with the access controls from 5.1 - and never the only thing standing between a customer and a bad answer.
 
 == Exercise 4: Competitor Mentions and Guardrail Configuration
 
@@ -158,17 +158,20 @@ ____
 
 {company_name} starts smaller than that: {assistant_name} does not discuss competitors.
 
-. Ask about a competitor:
+. In the *{company_name} App* tab, ask about a competitor:
 +
 [source,text]
 ----
-How does Green Aura handle mortgage applications compared to Fed Aura?
+Is GreenAura cheaper than you?
 ----
 
-. The guardrail blocks this. "Green Aura" is a competitor name, and the NeMo Guardrails configuration includes regex patterns that catch competitor mentions on both input and output:
+. This time the refusal is different - short, flat, and offering nothing:
 +
-// TODO: screenshot of competitor mention blocked (security-competitor-blocked.png)
-image::security-competitor-blocked.png[Guardrail blocking a competitor mention,link=self,window=blank,width=700]
+image::security-competitor-blocked.png[The assistant refusing to discuss a competitor with a blunt safety refusal,link=self,window=blank,width=420]
++
+Compare it with exercises 2 and 3. Those refusals were conversational - "I can help with mortgage product details instead" - because the model wrote them. This one is the shield's own message, returned without the model ever being asked. That difference in tone is the cheapest tell you have that a rail fired rather than the model declining.
+
+IMPORTANT: Ask this one in the *application*, not the Playground. The Playground has its own guardrails instance with its own configuration, and the competitor patterns are not in it - so the same question there will be answered rather than blocked. Both are NeMo Guardrails; they just load different ConfigMaps. Exercise 5 shows how to prove which one ran.
 
 . Now look at how this is configured. The NeMo Guardrails configuration is stored in a ConfigMap deployed in your namespace. The relevant section:
 +
@@ -179,40 +182,44 @@ rails:
     regex_detection:
       input:
         patterns:
-          - "\\d{3}-\\d{2}-\\d{4}"                           # SSN
-          - "\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}"       # Credit card
-          - "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}" # Email
-          - "\\b(password|hack|exploit|vulnerability)\\b"     # Security keywords
-          - "\\b(green\\s*aura|black\\s*aura|rob\\s*aura)\\b" # Competitors
+          - "\\d{3}-\\d{2}-\\d{4}"                                 # SSN
+          - "\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}"            # Credit card
+          - "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"        # Email
+          - "\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}"       # Phone number
+          - "\\b(password|hack|exploit|vulnerability|secret|api[_-]?key|token)\\b"
+          - "\\b(violence|illegal|harmful)\\b"
+          - "\\b(chatgpt|openai|claude|anthropic)\\b"               # AI vendors
+          - "\\b(green\\s*aura|black\\s*aura|rob\\s*aura)\\b"     # Competitors
+        case_insensitive: true
+      output:
+        patterns:
+          - "\\b(chatgpt|openai|claude|anthropic)\\b"
+          - "\\b(green\\s*aura|black\\s*aura|rob\\s*aura)\\b"
+          - "\\b(confidential|internal[_-]?only|do[_-]?not[_-]?share)\\b"
         case_insensitive: true
     sensitive_data_detection:
       input:
-        entities:
-          - CREDIT_CARD
-          - US_SSN
-          - EMAIL_ADDRESS
-          - PHONE_NUMBER
+        entities: [CREDIT_CARD, US_SSN, EMAIL_ADDRESS, PHONE_NUMBER]
+      output:
+        entities: [CREDIT_CARD, US_SSN]
   input:
     flows:
       - detect sensitive data on input
       - regex check input
-      - content safety check input $model=content_safety
   output:
     flows:
       - detect sensitive data on output
       - regex check output
-      - content safety check output $model=content_safety
 ----
 +
-The configuration defines three layers of input/output protection:
+The configuration defines two layers of input/output protection:
 +
 * *Sensitive data detection* - uses Presidio to detect PII entities (credit cards, SSNs, emails, phone numbers)
-* *Regex pattern matching* - matches specific patterns (competitor names, security keywords, SSN format)
-* *Content safety check* - hands the text to the configured guardrail model (`$model=content_safety`) to classify intent, rather than matching patterns
+* *Regex pattern matching* - matches specific patterns (competitor names, security keywords, SSN and card formats)
 +
 Each layer runs as a flow in both the input and output pipeline. The `rails.co` file defines custom Colang flows - an empty file means only built-in rails are used.
 +
-Notice the split between the first two layers and the third. Presidio and regex are *deterministic*: they run inside the guardrails pod, never call a model, and cost almost nothing - which is why they are the right tool for account numbers, secrets and a list of competitor names. The content safety check is *probabilistic*: it reasons about intent, which is the only way to enforce a rule like "no personalized investment advice", and it costs a model call to do it.
+Both of these are *deterministic*: they run inside the guardrails pod, never call a model, and cost almost nothing. That is why they are the right tool for account numbers, secrets and a fixed list of competitor names - and also their limitation. A regex knows "GreenAura" and nothing else; ask about "that other lender down the road" and it sails through. Enforcing a rule like "no personalized investment advice" needs a rail that reasons about intent, which means adding a *self-check* rail and paying for a model call on every turn.
 +
 This is also configuration rather than code. The rails live in a ConfigMap referenced by a `NemoGuardrails` resource, which the TrustyAI Operator reconciles - so the policy is reviewable in Git by the compliance team, and changing it does not mean changing the application.
 
@@ -240,28 +247,36 @@ The service exposes three endpoints. The exercises above went through the first;
 
 == Exercise 5: Check the Traces
 
-Every guardrail decision is traced via OpenTelemetry. NeMo Guardrails produces several trace span types:
+Exercise 2 left a question open: a refusal alone does not tell you whether a rail stopped the request or the model simply declined. The trace answers it, and the answer is visible in the *shape* of the trace before you read a single attribute.
 
-* *HTTP request span* - the root span for the entire request
-* *Input rail spans* - child spans for each input flow (`detect sensitive data on input`, `regex check input`, `content safety check input`)
-* *LLM call spans* - the call to the configured LLM (only for `/v1/chat/completions`)
-* *Output rail spans* - child spans for each output flow
-* *Custom action spans* - any custom Python actions defined in the configuration
+. Navigate to *OpenShift AI Dashboard > Develop & train > Experiments*, open the `mortgage-ai` experiment, and select *Traces* under *Observability*.
 
-. Navigate to *OpenShift AI Dashboard > Develop & Train > Experiments*.
-
-. Find the traces for the requests you just made. Look for the `input_shield` and `output_shield` spans:
+. Find the trace for the competitor question and open *Details & Timeline*:
 +
-// TODO: screenshot of guardrail traces (security-guardrail-traces.png)
-image::security-guardrail-traces.png[MLflow traces showing input_shield and output_shield spans for blocked requests,link=self,window=blank,width=700]
+image::security-guardrail-traces.png[Trace of the blocked competitor question, stopping at input_shield with safety_blocked true,link=self,window=blank,width=700]
 
-. Click on a blocked request trace. The `input_shield` span shows:
-** The detection method that triggered (regex, content safety, or sensitive data)
-** The specific pattern or category that matched
-** The decision: block or pass
-** Total latency for each rail, so you can identify bottlenecks
+. Look at the *Trace breakdown* on the left. It is three nodes and then it stops:
 +
-This is the audit trail. When compliance asks "what did the guardrails block and why?", the traces answer that question with timestamps, detection methods, and evidence.
+----
+LangGraph
+└── input_shield
+    └── after_input_shield
+----
++
+No `agent`. No `ChatOpenAI`. No `output_shield`. Compare that with the CEO trace in section 5.1, which ran `input_shield -> agent -> ChatOpenAI -> tool_auth -> tools -> agent -> output_shield`. Here the graph was cut short at the first node: the rail matched, the request was abandoned, and the model was never called.
+
+. Open *Inputs / Outputs*. Alongside the user message and the refusal you will find the attribute that makes this auditable:
++
+[source,text]
+----
+safety_blocked: true
+----
++
+That is the difference between the two kinds of refusal. In exercises 2 and 3 the model produced the refusal, so the trace shows the full path and no `safety_blocked` flag. Here the flag is set and the path is two nodes long.
+
+This is the audit trail. When compliance asks "prove the assistant cannot discuss competitors", the honest answer is not "we tested it once" - it is a timestamped trace showing the request stopped at the shield, with the model never invoked.
+
+TIP: Latency is a useful tell too. This trace took about 2.5 seconds against the twenty-plus of a grounded answer, because a blocked request skips both retrieval and generation. A rail firing is the *cheapest* possible outcome.
 
 == Exercise 6: Garak Adversarial Test Results
 

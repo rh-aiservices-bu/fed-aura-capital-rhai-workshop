@@ -1,30 +1,43 @@
-# Global / admin infrastructure -- installed ONCE per cluster, before any user
-# namespace exists. Creates one ArgoCD Application per component; ordering is
-# handled by sync waves.
+# Default values for the bootstrap-infra chart (ArgoCD app-of-apps parent).
 #
-# Per-user resources live in the sibling bootstrap-tenant chart.
+# This chart only creates ArgoCD Applications / ApplicationSets; the actual
+# workload charts live under <pathPrefix>/deployments/{admin,user}/*.
+#
+#   admin.*  global, cluster-wide infrastructure -- one Application each
+#   users.*  per-user resources -- one ApplicationSet each, fanned out over
+#            user1..userN into namespace <namespacePrefix>-<user>
+#
+# Ordering is handled by sync waves, so a single apply converges. The two groups
+# can also be driven independently from CI with the admin.enabled /
+# users.enabled switches (see gitops/README.md).
 #
 # Values marked "injected" are overridden per environment from
-# agd_v2/rhai-features-workshop/common.yaml -- see gitops/README.md.
+# agd_v2/rhai-features-workshop/common.yaml.
 
 bootstrap:
   # Git repository holding this chart and the deployments/ charts.
   repoURL: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop
   # Branch, tag or commit to track.
   targetRevision: main
-  # Path inside the repo containing bootstrap-infra/ and deployments/.
+  # Path inside the repo that contains bootstrap-infra/ and deployments/.
   # Use "automation/gitops" when this tree is hosted in rhai-features-workshop.
   pathPrefix: gitops
   argoNamespace: openshift-gitops
   project: default
 
-# Cluster coordinates (injected).
+# Cluster coordinates (injected). deployer.domain builds the mortgage-ai routes.
 deployer:
   apiUrl: https://api.cluster-guid.sandbox.opentlc.com:6443
   domain: apps.cluster-guid.sandbox.opentlc.com
 
-# Remote LLM / MaaS credentials (injected). Used here by the maas component to
-# publish the upstream endpoint as a governed model.
+# Workshop users -> namespaces wksp-user1 .. wksp-userN (injected).
+user:
+  count: 1
+  prefix: user
+  namespacePrefix: wksp
+
+# Remote LLM / MaaS credentials (injected).
+# Consumed by admin/maas, user/workspace, user/ogx and user/mortgage-ai.
 remotellm:
   enabled: true
   # OpenAI-compatible base URL, including /v1.
@@ -35,7 +48,17 @@ remotellm:
   id: "gpt-oss-120b"
   apiToken: "paste-your-token-here"
 
-components:
+# Shared MinIO credentials for the per-user object store (injected).
+minio:
+  rootUser: minio
+  rootPassword: "paste-your-password-here"
+
+# ---------------------------------------------------------------------------
+# Global / admin infrastructure -- applied once, before any user exists.
+# Set admin.enabled=false to skip the whole group.
+# ---------------------------------------------------------------------------
+admin:
+  enabled: true
   # RHOAI dashboard feature flags (wave -1).
   dashboardConfig:
     enabled: true
@@ -54,12 +77,45 @@ components:
   # Models-as-a-Service wiring for the upstream endpoint (wave 1).
   maas:
     enabled: true
-  # Inference gateway + in-cluster TinyLlama (wave 2).
-  # Requires cert-manager and the 'cert-manager-ingress-cert' secret in
-  # openshift-ingress, so it is opt-in. When enabled, also set
-  # tinyllama.enabled=true in the bootstrap-tenant chart.
+  # Inference gateway + in-cluster TinyLlama (wave 2). Requires cert-manager and
+  # the 'cert-manager-ingress-cert' secret in openshift-ingress, so it is opt-in.
+  # When enabled, user/ogx automatically registers the in-cluster endpoint as a
+  # second inference provider.
   llmd:
     enabled: false
   # EvalHub (TrustyAI) evaluation stack (wave 3).
   evalhub:
     enabled: true
+
+# ---------------------------------------------------------------------------
+# Per-user resources -- applied once the user count is known.
+# Set users.enabled=false to provision only the global infrastructure.
+# ---------------------------------------------------------------------------
+users:
+  enabled: true
+  # Namespace + injected LLM credentials (wave 5). Required by everything below.
+  workspace:
+    enabled: true
+  # Object store + RHOAI data connections (wave 6).
+  minio:
+    enabled: true
+  # Data Science Pipelines (wave 7).
+  dspa:
+    enabled: true
+  # AutoML training bucket + dataset upload (wave 7).
+  automl:
+    enabled: true
+  # vLLM CPU model serving per user (wave 7). One pod per enabled model per user
+  # (4-8 cores, 8-16Gi each) -- keep off unless the cluster is sized for it.
+  modelCatalog:
+    enabled: false
+  # OGX / llama-stack playground + PGVector (wave 8).
+  ogx:
+    enabled: true
+  # Multi-agent mortgage application (wave 9).
+  mortgageAi:
+    enabled: true
+    # Chart is reused from the repo root, shared with the standalone install.
+    chartPath: deployments/mortgage-ai
+    uiImageTag: "latest"
+    seed: true

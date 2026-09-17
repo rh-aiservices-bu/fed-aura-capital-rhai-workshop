@@ -1,27 +1,28 @@
-{{- if .Values.components.llmd.enabled }}
+{{- if and .Values.admin.enabled .Values.admin.dashboardConfig.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: admin-llmd
+  name: admin-dashboard-config
   namespace: {{ .Values.bootstrap.argoNamespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "-1"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: {{ .Values.bootstrap.project }}
   destination:
     name: in-cluster
-    namespace: llm
+    namespace: redhat-ods-applications
   source:
     repoURL: {{ .Values.bootstrap.repoURL }}
     targetRevision: {{ .Values.bootstrap.targetRevision }}
-    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/llmd") }}
+    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/dashboard-config") }}
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+      # OdhDashboardConfig is created by the RHOAI operator -- adopt, do not fight it.
+      - ServerSideApply=true
 {{- end }}

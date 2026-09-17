@@ -1,4 +1,4 @@
-{{- if .Values.components.maas.enabled }}
+{{- if and .Values.admin.enabled .Values.admin.maas.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application

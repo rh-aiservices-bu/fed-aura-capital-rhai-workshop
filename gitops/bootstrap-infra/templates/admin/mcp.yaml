@@ -1,9 +1,9 @@
-{{- if .Values.components.mlflow.enabled }}
+{{- if and .Values.admin.enabled .Values.admin.mcp.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: admin-mlflow
+  name: admin-mcp
   namespace: {{ .Values.bootstrap.argoNamespace }}
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -13,13 +13,15 @@ spec:
   project: {{ .Values.bootstrap.project }}
   destination:
     name: in-cluster
-    namespace: redhat-ods-applications
+    namespace: mcp-servers
   source:
     repoURL: {{ .Values.bootstrap.repoURL }}
     targetRevision: {{ .Values.bootstrap.targetRevision }}
-    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/mlflow") }}
+    path: {{ include "bootstrap.path" (dict "ctx" . "chart" "admin/mcp") }}
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
 {{- end }}

@@ -15,36 +15,48 @@ NOTE: OpenShell is Dev Preview in RHOAI 3.5, Tech Preview in 3.6, with GA target
 
 == Exercise 1: See the Sandbox in OpenShift
 
-A sandboxed OpenCode agent is already deployed in your environment. Start by finding it.
+A sandboxed OpenCode agent is already deployed in your environment. Start by finding it - not in the OpenShift console, but in the RHOAI dashboard, where agents are a first-class object alongside models and MCP servers.
 
-. Open the *Showroom Terminal* tab.
+. In the *OpenShift AI Dashboard*, expand *AI hub* in the left navigation and select *Agents*:
++
+image::security-openshell-agents-nav.png[AI hub expanded in the RHOAI navigation showing Agents, Models and MCP servers,link=self,window=blank,width=280]
++
+Agents sit next to *Models* and *MCP servers* for a reason: from the platform's point of view an agent is another deployable asset with its own lifecycle, permissions and audit trail.
 
-. Log in to OpenShift:
+. Select the *Deployments* tab and confirm your project is selected. You should see one agent, `+default--opencode-demo+`:
++
+image::security-openshell-deployment.png[Agents Deployments tab listing the opencode-demo agent as Sandboxed and Ready,link=self,window=blank,width=700]
++
+Two columns matter here:
++
+--
+* *Sandbox* reads `Sandboxed`. The agent is not running as a bare pod; it is wrapped in an OpenShell sandbox that mediates what it can reach.
+* *Status* reads `Ready` - the sandbox is up and accepting work.
+--
+
+. Note what the *Framework* column says: nothing. This is a whole-agent sandbox, so OpenShell does not need to know or care what the agent is built with. OpenCode ships as a container image, gets wrapped, and receives policy enforcement, credential injection and audit logging without a line of its code changing.
+
+TIP: The sandbox is a real Kubernetes object, so you can inspect it from the terminal as well: `oc get sandboxes.agents.x-k8s.io -n {user_project}` lists it, and the running pod carries an `agents.x-k8s.io/sandbox-name-hash` label tying it back to the sandbox that owns it.
+
+== Exercise 2: Connect to the Sandbox
+
+Now connect to the running sandbox and see what the agent can access.
+
+. Open the *Showroom Terminal* tab and log in to OpenShift if you have not already:
 +
 [source,bash]
 ----
 oc login
 ----
 
-. Navigate to the *OpenShift Console* and go to *Agents > Deployments*. You should see the `fed-aura-opencode-sandbox` deployment:
-+
-// TODO: screenshot of sandbox deployment in OpenShift UI (security-openshell-deployment.png)
-image::security-openshell-deployment.png[OpenShift Console showing the fed-aura-opencode-sandbox deployment,link=self,window=blank,width=700]
-+
-This is a whole-agent sandbox (Pattern 1). The OpenCode agent is packaged as a container image and wrapped in an OpenShell sandbox with policy enforcement, credential injection, and audit logging. No code changes to the agent were needed.
-
-== Exercise 2: Connect to the Sandbox
-
-Now connect to the running sandbox and see what the agent can access.
-
-. In the Showroom Terminal, list the available sandboxes:
+. List the available sandboxes:
 +
 [source,bash]
 ----
 openshell sandbox list
 ----
 +
-You should see the `fed-aura-opencode-sandbox` in the list with its status and policy.
+You should see `+default--opencode-demo+` in the list with its status and policy.
 
 . Connect to the sandbox:
 +

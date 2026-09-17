@@ -76,7 +76,7 @@ I have a client earning $8,000/month with $2,400 in monthly debts. What's their 
 // TODO: screenshot of response with MCP tool calls (mcp-risk-response.png)
 image::mcp-risk-response.png[Playground response showing tool calls to calculate_dti and the grounded DTI assessment,link=self,window=blank,width=700]
 
-NOTE: The Risk MCP server in this exercise requires no authentication. In production, Fed Aura's MCP gateway enforces API key authentication scoped per MCP server. It is the xxx bits on the traces.
+NOTE: The Risk MCP server in this exercise requires no authentication. In production, Fed Aura's MCP gateway enforces API key authentication scoped per MCP server - the `tool_auth` step you saw in the MLflow trace is where that check happens.
 
 == Exercise 5: Playground With and Without MCP
 

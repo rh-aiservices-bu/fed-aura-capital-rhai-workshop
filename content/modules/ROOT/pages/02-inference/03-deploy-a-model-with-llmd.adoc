@@ -1,4 +1,4 @@
-
+= Deploy a Model with llm-d
 :imagesdir: ../assets/images
 :navtitle: Deploy a Model with llm-d
 :toc:
@@ -59,9 +59,11 @@ Summarize the risks of using a single-node LLM deployment in production.
 +
 You should get a coherent response from the model. The experience looks identical to what you saw in Exercise 2 — and that is the point. llm-d does not change the API or the user experience; it changes what happens underneath, where requests are scheduled and served.
 
-NOTE: Because we are running on CPU with a small model and low concurrent load, you won't observe a latency difference compared to the single-replica deployment. In a real workload with many simultaneous users, the two-replica setup would show meaningfully lower tail latency and higher throughput. If you want to go deeper on llm-d performance, we have another workshop that explores GPU inference and llm-d in depth: <insert link>
+NOTE: Because we are running on CPU with a small model and low concurrent load, you won't observe a latency difference compared to the single-replica deployment. In a real workload with many simultaneous users, the two-replica setup would show meaningfully lower tail latency and higher throughput.
 
-ADD: check this arcade or video or build a simplictic version of this: https://rh-aiservices-bu.github.io/vllm-vertical-demo-/#page-1 
+// TODO(author): add link to the companion workshop covering GPU inference and llm-d performance in depth.
+// TODO(author): consider embedding an Arcade walkthrough or a simplified version of
+// https://rh-aiservices-bu.github.io/vllm-vertical-demo-/#page-1 to show llm-d routing behaviour under load.
 
 === Clean up
 

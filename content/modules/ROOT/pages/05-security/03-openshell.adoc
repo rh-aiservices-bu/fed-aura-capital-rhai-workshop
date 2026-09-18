@@ -66,29 +66,20 @@ fedaura-opencode  2026-09-17 20:18:56  Ready
 +
 `Ready` means the sandbox is running and accepting work. The corresponding Kubernetes object is the `+default--fedaura-opencode+` Sandbox you saw in exercise 1.
 
-. Connect to it:
+. Open a shell inside it:
 +
 [source,bash]
 ----
-openshell sandbox connect fedaura-opencode
+openshell sandbox exec --name fedaura-opencode --tty -- bash -l
 ----
 +
-You are now inside the sandbox. This is the agent's runtime environment: deny-by-default networking, a read-only filesystem apart from a few writable paths, and Landlock restrictions on what any process can reach.
+You are now inside the sandbox. This is the agent's runtime environment: deny-by-default networking, a read-only filesystem apart from a few writable paths, and Landlock restrictions on what any process can reach. `exit` returns you to the workbench.
 +
-To leave without killing the shell inside, press *Ctrl-P Ctrl-Q*. Closing the terminal instead leaves your session holding the sandbox's input, and the next `connect` either reports `attached read-only` and swallows your keystrokes, or hangs with no output at all.
-
+NOTE: There is also `openshell sandbox connect <name>`, which attaches to the shell the sandbox was started with. It is the more natural-looking command, but only one client may own that shell's input at a time, and the ownership is tracked by the gateway rather than by your terminal. Once something else holds it - a session that ended without pressing *Ctrl-P Ctrl-Q*, even in a workbench that no longer exists - every later `connect` reports `attached read-only` or simply hangs, and killing local processes does not release it. `exec --tty` allocates its own pseudo-terminal, so it never contends for that and cannot get stuck.
 +
-IMPORTANT: If that happens, quitting the CLI does not release it. `connect` works over SSH, and the `ssh` and `openshell ssh-proxy` processes it starts outlive it - they are what still hold the input. Clear them from the *workbench terminal*, not from inside the sandbox:
+WARNING: Do not try to clear a stuck `connect` with `openshell sandbox stop`. A stopped sandbox cannot re-bootstrap its gateway token, and every later start fails with `IssueSandboxToken bootstrap exchange failed` - including for newly created sandboxes. If a sandbox really is wedged, delete and recreate it.
 +
-[source,bash]
-----
-pkill -f 'openshell ssh-proxy'
-openshell sandbox connect fedaura-opencode
-----
-+
-WARNING: Do not reach for `openshell sandbox stop` to clear this. A stopped sandbox cannot re-bootstrap its gateway token, and every later start fails with `IssueSandboxToken bootstrap exchange failed` - for newly created sandboxes too, not just the stopped one. Recovering means reinstalling the gateway and recreating the sandbox.
-+
-TIP: `openshell sandbox connect --editor vscode` launches a remote editor against the sandbox instead of a shell, installing the SSH config it needs on first use.
+TIP: `openshell sandbox connect <name> --editor vscode` launches a remote editor against the sandbox instead of a shell, installing the SSH config it needs on first use.
 
 . Create the document the rest of this section will try to steal. Treating it as customer data makes the point without shipping a real file:
 +

@@ -10,14 +10,13 @@ data:
     models:
       - type: main
         engine: openai
+        model: {{ .Values.nemoGuardrails.llm.modelName | default .Values.secrets.LLM_MODEL | quote }}
         parameters:
           {{- if .Values.nemoGuardrails.proxy.enabled }}
-          openai_api_base: "http://nemo-guardrails-proxy:8081/v1"
+          base_url: "http://nemo-guardrails-proxy:8081/v1"
           {{- else }}
-          openai_api_base: {{ .Values.nemoGuardrails.llm.baseUrl | quote }}
+          base_url: {{ .Values.nemoGuardrails.llm.baseUrl | default .Values.secrets.LLM_BASE_URL | quote }}
           {{- end }}
-          model_name: {{ .Values.nemoGuardrails.llm.modelName | quote }}
-          model: {{ .Values.nemoGuardrails.llm.modelName | quote }}
       {{- if .Values.nemoGuardrails.contentSafety.deploy }}
       - type: "content_safety"
         engine: nim

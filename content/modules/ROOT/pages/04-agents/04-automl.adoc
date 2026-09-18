@@ -27,7 +27,7 @@ By the end of this section, you will be able to:
 
 == Exercise: Train the Loan Approval Model
 
-. Open your Workbench: *OpenShift AI Dashboard > Data Science Projects > {user_project} > Workbench*.
+. Open your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*.
 
 . In the file browser, navigate to the `automl/` directory. Open `automl_training.ipynb`:
 +

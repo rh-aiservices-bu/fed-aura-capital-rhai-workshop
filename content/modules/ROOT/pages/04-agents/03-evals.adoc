@@ -53,7 +53,7 @@ RAGAS is a framework that evaluates three things:
 * **Answer relevancy** — does the answer actually address the question asked?
 * **Context precision** — did the retrieval step surface the right document chunks, or did it retrieve irrelevant content?
 
-. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > {user_project} > Workbench*.
+. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*.
 
 . Open the notebook `evaluate_ragas.ipynb`. It is already available in your workbench and pre-configured to connect to the RAG pipeline you set up in section 3.2:
 +

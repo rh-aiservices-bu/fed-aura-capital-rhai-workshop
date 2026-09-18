@@ -96,7 +96,7 @@ image::maas-playground-model-select.png[Playground model selector showing the gp
 
 If you want to experience MaaS the way a developer building an application would, this optional exercise walks you through connecting to the endpoint from a VSCode workbench using the `openai` Python SDK.
 
-. Navigate to *OpenShift AI Dashboard > Data Science Projects > {user_project}*. Click *Create workbench* and fill in the form:
+. Navigate to *OpenShift AI Dashboard > Data Science Projects > wksp-{user}*. Click *Create workbench* and fill in the form:
 +
 --
 * *Name*: `fedaura-vscode`

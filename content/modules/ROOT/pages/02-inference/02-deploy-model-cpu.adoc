@@ -13,7 +13,7 @@ Now that you've found your model in the Catalog, let's deploy it. We are going t
 +
 image::cpu-deploy-button.png[Model card for Qwen3 0.6B with the Deploy button highlighted,link=self,window=blank,width=700]
 
-. Select your project `{user_project}` and click *Next*.
+. Select your project `wksp-{user}` and click *Next*.
 
 . You will be prompted for where the model lives. This information is already populated cause the catalog has the information — don't change anything, just click *Next*.
 

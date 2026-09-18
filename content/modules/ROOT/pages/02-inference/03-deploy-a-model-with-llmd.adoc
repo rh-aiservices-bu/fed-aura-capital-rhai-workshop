@@ -20,7 +20,7 @@ NOTE: In this exercise you are deploying to CPU again. The llm-d architecture an
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models* and select the *Other Models* tab. Find *Qwen3 0.6B* and click *Deploy*.
 
-. Select your project `{user_project}` and click *Next*.
+. Select your project `wksp-{user}` and click *Next*.
 
 . You will be prompted for the model location. Leave the defaults as-is and click *Next*.
 

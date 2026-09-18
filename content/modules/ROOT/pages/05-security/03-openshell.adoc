@@ -36,7 +36,7 @@ Two columns matter here:
 
 . Note what the *Framework* column says: nothing. This is a whole-agent sandbox, so OpenShell does not need to know or care what the agent is built with. OpenCode ships as a container image, gets wrapped, and receives policy enforcement, credential injection and audit logging without a line of its code changing.
 
-TIP: The sandbox is a real Kubernetes object, so you can inspect it from the terminal as well: `oc get sandboxes.agents.x-k8s.io -n {user_project}` lists it, and the running pod carries an `agents.x-k8s.io/sandbox-name-hash` label tying it back to the sandbox that owns it.
+TIP: The sandbox is a real Kubernetes object, so you can inspect it from the terminal as well: `oc get sandboxes.agents.x-k8s.io -n wksp-{user}` lists it, and the running pod carries an `agents.x-k8s.io/sandbox-name-hash` label tying it back to the sandbox that owns it.
 
 == Exercise 2: Connect to the Sandbox
 

@@ -30,7 +30,7 @@ oc login --insecure-skip-tls-verify $(oc whoami --show-server) -u {user} -p {pas
 +
 image::agentic-app-pre1.png[OpenShift SSO login page,link=self,window=blank,width=500]
 
-. Once logged in, you will see the `Projects` page and a single project: `{user_project}`. Navigate to **Workloads > Pods** to see the platform components running in your namespace:
+. Once logged in, you will see the `Projects` page and a single project: `wksp-{user}`. Navigate to **Workloads > Pods** to see the platform components running in your namespace:
 +
 image::workloads-pods.png[]
 +
@@ -43,7 +43,7 @@ image::agentic-app0.png[OpenShift Console Pods view showing mortgage-ai componen
 +
 [source,console,role=execute,subs=attributes+]
 ----
-MORTGAGE_HEALTH=$(oc get route mortgage-ai-api-health-route -n {user_project} -o jsonpath='{.spec.host}')
+MORTGAGE_HEALTH=$(oc get route mortgage-ai-api-health-route -n wksp-{user} -o jsonpath='{.spec.host}')
 curl -sk https://$\{MORTGAGE_HEALTH}/health/ | jq -r .
 ----
 +
@@ -80,7 +80,7 @@ NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic be
 ====
 [source,console,role=execute,subs=attributes+]
 ----
-oc get networkpolicies -n {user_project}
+oc get networkpolicies -n wksp-{user}
 ----
 
 NetworkPolicies define which pods can communicate with each other at the network level. This is the first layer of the defense-in-depth security model you will explore in section 5.
@@ -212,7 +212,7 @@ Now that you have seen the platform running, let's connect what you observed to 
 +
 [source,bash,role=execute,subs=attributes+]
 ----
-oc get pods -n {user_project} -o custom-columns="NAME:.metadata.name,STATUS:.status.phase,CONTAINERS:.spec.containers[*].name"
+oc get pods -n wksp-{user} -o custom-columns="NAME:.metadata.name,STATUS:.status.phase,CONTAINERS:.spec.containers[*].name"
 ----
 +
 You should see 5 core pods running. Here is what each one does:

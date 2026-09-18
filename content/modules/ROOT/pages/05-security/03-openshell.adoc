@@ -75,10 +75,19 @@ openshell sandbox connect fedaura-opencode
 +
 You are now inside the sandbox. This is the agent's runtime environment: deny-by-default networking, a read-only filesystem apart from a few writable paths, and Landlock restrictions on what any process can reach.
 +
-To leave without killing the shell inside, press *Ctrl-P Ctrl-Q*. Closing the terminal instead leaves your session holding the sandbox's input, and the next `connect` reports `attached read-only` - your keystrokes go nowhere. If that happens, disconnect the other session rather than stopping the sandbox.
+To leave without killing the shell inside, press *Ctrl-P Ctrl-Q*. Closing the terminal instead leaves your session holding the sandbox's input, and the next `connect` either reports `attached read-only` and swallows your keystrokes, or hangs with no output at all.
 
-WARNING: Do not use `openshell sandbox stop` to clear a read-only attach. A stopped sandbox cannot re-bootstrap its gateway token and comes back with `IssueSandboxToken bootstrap exchange failed`, which needs the sandbox recreating.
-
++
+IMPORTANT: If that happens, quitting the CLI does not release it. `connect` works over SSH, and the `ssh` and `openshell ssh-proxy` processes it starts outlive it - they are what still hold the input. Clear them from the *workbench terminal*, not from inside the sandbox:
++
+[source,bash]
+----
+pkill -f 'openshell ssh-proxy'
+openshell sandbox connect fedaura-opencode
+----
++
+WARNING: Do not reach for `openshell sandbox stop` to clear this. A stopped sandbox cannot re-bootstrap its gateway token, and every later start fails with `IssueSandboxToken bootstrap exchange failed` - for newly created sandboxes too, not just the stopped one. Recovering means reinstalling the gateway and recreating the sandbox.
++
 TIP: `openshell sandbox connect --editor vscode` launches a remote editor against the sandbox instead of a shell, installing the SSH config it needs on first use.
 
 . Create the document the rest of this section will try to steal. Treating it as customer data makes the point without shipping a real file:

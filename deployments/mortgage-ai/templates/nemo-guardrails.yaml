@@ -8,7 +8,7 @@ metadata:
     {{- include "mortgage-ai.nemo-guardrails.labels" . | nindent 4 }}
 type: Opaque
 data:
-  token: {{ .Values.nemoGuardrails.llm.apiKey | toString | b64enc | quote }}
+  token: {{ (.Values.nemoGuardrails.llm.apiKey | default .Values.secrets.LLM_API_KEY) | toString | b64enc | quote }}
 ---
 apiVersion: trustyai.opendatahub.io/v1alpha1
 kind: NemoGuardrails

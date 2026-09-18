@@ -322,11 +322,14 @@ llamastack:
 nemoGuardrails:
   enabled: false
 
-  # Main LLM that NeMo uses for response generation
+  # Main LLM that NeMo uses for response generation.
+  # Each field falls back to the matching secrets.LLM_* value, so by default
+  # NeMo uses exactly the same model and credentials as the API. Set these only
+  # to point NeMo at a different endpoint or model than the agents use.
   llm:
-    baseUrl: ""              # e.g. https://maas.apps.example.com/prelude-maas/llama-4-scout/v1
-    modelName: ""            # e.g. llama-4-scout-17b-16e-w4a16
-    apiKey: ""               # API key for the main LLM endpoint
+    baseUrl: ""              # defaults to secrets.LLM_BASE_URL
+    modelName: ""            # defaults to secrets.LLM_MODEL
+    apiKey: ""               # defaults to secrets.LLM_API_KEY
 
   # Content safety detector model (NemoGuard 8B via vLLM)
   contentSafety:

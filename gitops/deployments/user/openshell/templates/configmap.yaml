@@ -178,3 +178,13 @@ data:
 {{ .Files.Get "files/opencode-config.json" | default "    {}" | indent 4 }}
   policy.yaml.template: |
 {{ .Files.Get "files/policy-standard.yaml.template" | indent 4 }}
+  # Rendered copies for section 5.3. The templates above still carry the
+  # __OCP_APPS_DOMAIN__ placeholder because the Job substitutes it at run time, but a
+  # participant has no way to look the cluster domain up - reading
+  # ingresses.config is cluster-scoped and denied to a workbench - so these are
+  # substituted here, at chart render time, and can be used as-is.
+  policy.yaml: |
+{{ .Files.Get "files/policy-standard.yaml.template" | replace "__OCP_APPS_DOMAIN__" .Values.ocpAppsDomain | indent 4 }}
+  # Deliberately widens egress; the Job never applies it. Exercise 3 only.
+  policy-exfil-open.yaml: |
+{{ .Files.Get "files/policy-exfil-open.yaml.template" | replace "__OCP_APPS_DOMAIN__" .Values.ocpAppsDomain | indent 4 }}

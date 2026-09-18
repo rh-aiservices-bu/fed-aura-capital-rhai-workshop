@@ -83,7 +83,8 @@ spec:
             namespacePrefix: {{ .Values.user.namespacePrefix }}
             ocpAppsDomain: {{ .Values.deployer.domain }}
             gateway:
-              endpoint: http://openshell-{{ `{{ user }}` }}:8080
+              # Stable alias, not the per-user upstream Service name.
+              endpoint: http://openshell:8080
             sandbox:
               name: {{ .Values.users.openshell.sandboxName }}
             llm:

@@ -102,14 +102,28 @@ TIP: Prefer to stay outside the sandbox? `openshell sandbox exec --name fedaura-
 
 == Exercise 3: Attempt Data Exfiltration
 
-First see what an agent can do when its egress is open. From the *workbench terminal* (not inside the sandbox), widen the policy for a moment:
+First see what an agent can do when its egress is open.
 
+. In the *workbench terminal* (not inside the sandbox), fetch the two policies. They ship in a ConfigMap next to the sandbox, already rendered for your cluster:
++
+[source,bash]
+----
+oc get configmap openshell-provision -o jsonpath='{.data.policy\.yaml}' > policy.yaml
+oc get configmap openshell-provision -o jsonpath='{.data.policy-exfil-open\.yaml}' > policy-exfil-open.yaml
+
+wc -l policy.yaml policy-exfil-open.yaml
+----
++
+`policy.yaml` is the standard policy your sandbox is already running. `policy-exfil-open.yaml` is identical except that `api.github.com` is `read-write` instead of `read-only`, and it exists only for this exercise.
+
+. Widen the policy for a moment:
++
 [source,bash]
 ----
 openshell policy set --policy policy-exfil-open.yaml --wait --timeout 120 fedaura-opencode
 ----
-
-This policy is identical to the standard one except that `api.github.com` is `read-write` instead of `read-only`. GitHub gists are a realistic exfiltration route: a public gist is a document anyone can read, created with one HTTP request.
++
+GitHub gists are a realistic exfiltration route: a public gist is a document anyone can read, created with a single HTTP request.
 
 . Back inside the sandbox, check that ordinary reads work:
 +
@@ -142,11 +156,11 @@ WARNING: The lesson is not "the upload failed". It is that the only thing standi
 
 == Exercise 4: Enforce Policy to Block Exfiltration
 
-Now close it again. From the *workbench terminal*, apply the standard policy:
+Now close it again. From the *workbench terminal*, apply the standard policy you fetched in exercise 3:
 
 [source,bash]
 ----
-openshell policy set --policy policy-standard.yaml --wait --timeout 120 fedaura-opencode
+openshell policy set --policy policy.yaml --wait --timeout 120 fedaura-opencode
 ----
 
 [source,text]

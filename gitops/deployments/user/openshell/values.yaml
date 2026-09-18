@@ -44,6 +44,11 @@ llm:
   apiKey: ""
   model: ""
 
+# Lets the workbench read the policy ConfigMap for section 5.3. Without it the
+# exercise cannot fetch the policies and the participant sees a Forbidden error.
+workbenchRbac:
+  enabled: true
+
 mlflow:
   enabled: true
   experiment: opencode-sandbox

@@ -1,0 +1,37 @@
+{{- if .Values.serviceAlias.enabled }}
+{{- $ns := include "workshop.namespace" . }}
+# Stable, namespace-scoped alias for the gateway.
+#
+# The upstream chart names its Service after the fullname, and the fullname has to
+# be unique per user because the chart also creates cluster-scoped objects from it.
+# That would leave every user with a different endpoint - openshell-user7:8080 -
+# and the workshop instructions would have to be parameterised per user.
+#
+# A plain Service in each namespace selecting the same pods gives one endpoint that
+# is correct everywhere: http://openshell:8080. Service names are namespace-scoped,
+# so forty of these never collide.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.serviceAlias.name }}
+  namespace: {{ $ns }}
+  labels:
+    app.kubernetes.io/component: gateway-alias
+spec:
+  type: ClusterIP
+  selector:
+    # Matches the upstream chart's pod labels, which are name=openshell and
+    # instance=<release>. Derived rather than hardcoded so it holds whatever the
+    # release is called.
+    app.kubernetes.io/name: {{ .Values.serviceAlias.selectorName }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: grpc
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: metrics
+      port: 9090
+      targetPort: 9090
+      protocol: TCP
+{{- end }}

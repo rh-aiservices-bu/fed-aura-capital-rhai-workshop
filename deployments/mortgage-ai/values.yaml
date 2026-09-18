@@ -120,7 +120,12 @@ api:
   name: mortgage-ai-api
   image:
     repository: mortgage-ai-api
-    tag: "1.0.2"
+    # 1.0.3 registers the MLflow kubernetes auth plugin. On 1.0.2 the API starts
+    # with MLFLOW_TRACKING_AUTH=kubernetes but warns "Could not find any
+    # registered plugin for kubernetes. No authentication header will be added",
+    # then fails to initialise tracing - so no traces reach MLflow and the
+    # tracing and evaluation modules have nothing to show.
+    tag: "1.0.3"
   service:
     type: ClusterIP
     port: 8000

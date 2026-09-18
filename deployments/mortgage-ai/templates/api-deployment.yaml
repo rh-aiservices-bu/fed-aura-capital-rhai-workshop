@@ -285,8 +285,15 @@ spec:
             - name: MLFLOW_TRACKING_TOKEN
               valueFrom:
                 secretKeyRef:
+                  {{- if and .Values.mlflow.rbac.enabled (not .Values.secrets.MLFLOW_TRACKING_TOKEN) }}
+                  # ServiceAccount token minted by mlflow-rbac.yaml. Overridden by
+                  # secrets.MLFLOW_TRACKING_TOKEN if one is supplied explicitly.
+                  name: {{ include "mortgage-ai.fullname" . }}-mlflow-client-token
+                  key: token
+                  {{- else }}
                   name: {{ include "mortgage-ai.fullname" . }}-secret
                   key: MLFLOW_TRACKING_TOKEN
+                  {{- end }}
             - name: MLFLOW_TRACKING_AUTH
               valueFrom:
                 secretKeyRef:

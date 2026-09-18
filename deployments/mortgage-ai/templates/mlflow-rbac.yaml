@@ -46,6 +46,25 @@ metadata:
   labels:
     {{- include "mortgage-ai.labels" . | nindent 4 }}
 ---
+# Long-lived token for the MLflow client ServiceAccount.
+#
+# The API authenticates to the RHOAI MLflow server with a Bearer token, and the
+# server rejects anonymous calls with 401. The projected token at
+# /var/run/secrets/kubernetes.io/serviceaccount/token cannot be referenced from an
+# env var, and MLFLOW_TRACKING_AUTH=kubernetes is not a registered provider in the
+# application image, so a Secret-backed token is what makes tracing work.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "mortgage-ai.fullname" . }}-mlflow-client-token
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kubernetes.io/service-account.name: {{ include "mortgage-ai.fullname" . }}-mlflow-client
+  labels:
+    {{- include "mortgage-ai.labels" . | nindent 4 }}
+type: kubernetes.io/service-account-token
+
+---
 # ClusterRoleBinding to grant the mlflow-client ServiceAccount
 # the mlflow-integration ClusterRole permissions.
 apiVersion: rbac.authorization.k8s.io/v1

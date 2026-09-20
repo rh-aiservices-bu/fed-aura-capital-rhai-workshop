@@ -7,9 +7,9 @@
 
 == Exercise 4: Models as a Service
 
-You've been observing a model `gpt-oss-120b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, of course {assistant_name} hasn't been using the model you deployed, because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. So, the model you deployed is not the one that {assistant_name} is using. The model that {assistant_name} is using is `gpt-oss-120b`, which is a much larger model and requires GPU to run.
+You've been observing a model `gpt-oss-120b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, hate to break it to you but {assistant_name} hasn't been using the little model you deployed. Because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. The model that {assistant_name} is using is `gpt-oss-120b`, which is a much larger model and requires GPU to run.
 
-But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. MaaS is a way to expose models as endpoints that can be consumed by different applications and users.
+But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. With MaaS, an admin can expose models as endpoints that can be consumed by different applications and users.
 
 And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `gpt-oss-120b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
 
@@ -17,38 +17,62 @@ MaaS provides a consistent and governed way to access models, which means {compa
 
 === Explore AI Asset Endpoints
 
-. Navigate to *Gen AI Studio > AI Asset Endpoints*. You will see the list of model endpoints available to you:
+. Navigate to *Gen AI Studio > AI Asset Endpoints*. Observe that `gpt-oss-120b` is listed as an endpoint.
 +
-image::maas-asset-endpoints.png[AI Asset Endpoints list showing gpt-oss-120b and other available endpoints,link=self,window=blank,width=700]
+image::inference-maas-asset-endpoints.png[AI Asset Endpoints list showing available endpoints,link=self,window=blank,width=700]
 
-. Click on `gpt-oss-120b` to view its details — the endpoint URL, the underlying model, and the subscription tiers configured for it.
+. Click on *View* to view its details — the endpoint URL, the underlying model, and the subscription configured for it.
 
-. On the endpoint detail page, click *Try in Playground* to confirm the endpoint is live and responding before you generate a key:
+. On the endpoint detail page, click *Try in Playground* to confirm the endpoint is live and responding. The Playground creates a temporary API key on your behalf and connects to the endpoint so you can test it quickly.
 +
-image::maas-try-in-playground.png[GenAI Playground opened from the gpt-oss-120b endpoint detail page,link=self,window=blank,width=700]
+image::inference-maas-try-in-playground.png[GenAI Playground opened from the gpt-oss-120b endpoint detail page,link=self,window=blank,width=700]
 
 == Exercise 5: Generate an API Key
 
 To consume a MaaS endpoint from code or a tool, you need a scoped API key. Let's generate one now.
 
-. On the `gpt-oss-120b` endpoint detail page, click *Generate API Key*.
+. Go to *API Keys* page, and click *Create API Key*.
 
-. Select a subscription tier:
+. Give the key a name, for example `my-key`. You can add a description if you wish.
+
+. Select the subscription available to you. The subscription defines the model you have access to and the rate limits for the key. Observe that you have 10,000 tokens per hour as the rate limit for `gpt-oss-120b`. 
+
+. Leave the Expiration as 30 days. Click *Create API Key*.
+
+. Save the generated key somewhere safe. You will need it to call the endpoint from code or a tool. And you'll only get to see once.
 +
-[cols="1,2",options="header"]
-|===
-|Tier |Rate limit
+--
+Paste it here so you can refer to it during the exercises — it stays in your browser only, nothing is sent anywhere:
 
-|*Free Tier*
-|100 tokens / minute
+++++
+<div class="key-notepad">
+<style>
+  .key-notepad { margin: 0.75rem 0 0.25rem; }
+  .key-notepad input {
+    width: 100%;
+    max-width: 520px;
+    padding: 0.5rem 0.75rem;
+    font-family: monospace;
+    font-size: 0.82rem;
+    background: #0f1117;
+    border: 1px solid #3b82f6;
+    border-radius: 6px;
+    color: #93c5fd;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .key-notepad input::placeholder { color: #334d66; }
+  .key-notepad input:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+  .key-notepad-note { font-size: 0.68rem; color: #555; margin-top: 0.35rem; font-style: italic; }
+</style>
+<input type="password" placeholder="Paste your API key here…" autocomplete="off" spellcheck="false" />
+<div class="key-notepad-note">Stored in this page only — not saved, not sent anywhere. Refreshing the page clears it.</div>
+</div>
+++++
+--
 
-|*Premium Tier*
-|10,000 tokens / minute
-|===
-
-. Select *Free Tier* and click *Generate*. Copy the key — you will use it in the next two exercises:
 +
-image::maas-api-key.png[API key generation dialog showing tier selection and generated key,link=self,window=blank,width=700]
+image::inference-maas-api-key.png[API key generation dialog showing tier selection and generated key,link=self,window=blank,width=700]
 +
 NOTE: Each user generates their own key. The MaaS gateway tracks usage per key, which is how the platform enforces rate limits and produces the per-user usage data.
 
@@ -56,11 +80,11 @@ NOTE: Each user generates their own key. The MaaS gateway tracks usage per key, 
 
 With your key in hand, let's call the model directly from the terminal.
 
-. Navigate to the *Terminal* tab. Set your API key and endpoint URL as environment variables (replace the placeholders with the values from the endpoint detail page):
+. Navigate to the *Terminal* tab. Set your API key and endpoint URL as environment variables. Use the key you saved in the notepad above and the endpoint URL from the endpoint detail page:
 +
 [source,console,role=execute,subs=attributes+]
 ----
-export MAAS_API_KEY=<your-api-key>
+export MAAS_API_KEY=<paste-your-api-key>
 export MAAS_URL=<endpoint-url>
 ----
 
@@ -88,7 +112,7 @@ Let's connect the Playground to the MaaS endpoint so you can interact with `gpt-
 
 . In the model selector, choose the `gpt-oss-120b` MaaS endpoint. Paste your API key when prompted and click *Create*:
 +
-image::maas-playground-model-select.png[Playground model selector showing the gpt-oss-120b MaaS endpoint,link=self,window=blank,width=700]
+image::inference-maas-playground-model-select.png[Playground model selector showing the gpt-oss-120b MaaS endpoint,link=self,window=blank,width=700]
 
 . Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B — this is a 20-billion parameter model running on GPU.
 
@@ -104,17 +128,17 @@ If you want to experience MaaS the way a developer building an application would
 * *Hardware profile*: `CPU Profile`
 --
 +
-image::workbench-create-vscode.png[Create workbench form showing the FedAura Capital Custom Code Server image selected with CPU Profile,link=self,window=blank,width=700]
+image::inference-workbench-create-vscode.png[Create workbench form showing the FedAura Capital Custom Code Server image selected with CPU Profile,link=self,window=blank,width=700]
 
 . Wait for the workbench to start. You will see it in the Workbenches list with status *Starting* and then *Running*:
 +
-image::workbench-vscode-starting.png[Workbenches list showing fedaura-vscode starting with PVC attached,link=self,window=blank,width=700]
+image::inference-workbench-vscode-starting.png[Workbenches list showing fedaura-vscode starting with PVC attached,link=self,window=blank,width=700]
 
 . Once it is running, click the workbench name to open the VSCode environment.
 
 . Open the notebook `maas-test.ipynb`. Replace the placeholder `api_key` and `base_url` values with your key and endpoint URL, then run all cells:
 +
-image::maas-workbench-notebook.png[Jupyter notebook showing openai SDK calls to the MaaS endpoint,link=self,window=blank,width=700]
+image::inference-maas-workbench-notebook.png[Jupyter notebook showing openai SDK calls to the MaaS endpoint,link=self,window=blank,width=700]
 +
 TIP: The `openai` Python SDK works here without modification because the MaaS gateway is OpenAI API-compatible. This is the same pattern {assistant_name}'s agent code uses to reach `gpt-oss-120b`.
 
@@ -130,7 +154,7 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
 
 . Go back to *Gen AI Studio > AI Asset Endpoints* and click on `gpt-oss-120b`. Select the *Usage* tab:
 +
-image::maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
+image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
 
 . You should see the requests from your curl call and Playground session — token counts, request latency, and any rate-limit events. This is the data {company_name}'s platform team uses to track adoption and manage capacity across teams.
 

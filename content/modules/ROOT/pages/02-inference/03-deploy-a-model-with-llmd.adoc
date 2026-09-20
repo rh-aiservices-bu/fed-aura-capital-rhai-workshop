@@ -11,14 +11,11 @@ In the previous exercise you deployed Qwen3 0.6B on a single node using vLLM. Th
 
 llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. You get the same vLLM inference engine underneath — llm-d just makes the traffic distribution smarter.
 
-.llm-d in the {company_name} platform
-image::fed-aura-platform-architecture-models-focus.svg[Platform architecture with the llm-d inference layer highlighted,align=center]
-
 NOTE: In this exercise you are deploying to CPU again. The llm-d architecture and deployment steps are identical on GPU — the only difference is the hardware profile you select.
 
 === Deploy the Model
 
-. In the *OpenShift AI Dashboard*, go to *AI Hub > Models* and select the *Other Models* tab. Find *Qwen3 0.6B* and click *Deploy*.
+. In the *OpenShift AI Dashboard*, go to *AI Hub > Models* and select the *Other Models* tab. Again, find *Qwen3 0.6B* and click *Deploy*.
 
 . Select your project `wksp-{user}` and click *Next*.
 
@@ -30,25 +27,39 @@ NOTE: In this exercise you are deploying to CPU again. The llm-d architecture an
 
 . Then expand `> Customize resource requests and limits` and set the resource values as below:
 +
-image::llmd-resource-limits.png[Resource requests and limits configuration for llm-d deployment,link=self,window=blank,width=700]
+image::inference-cpu-resource-limits.png[Resource requests and limits configuration for llm-d deployment,link=self,window=blank,width=700]
+
+. For *Routing* configuration select `CPU LLM-d scheduling-policy` routing config. It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
 
 . For *Replica count* set the number of replicas to *2*. Click *Next*:
 +
-image::llmd-replica-config.png[Replica count set to 2 in the deployment configuration,link=self,window=blank,width=700]
+image::inference-llmd-replica-config.png[Replica count set to 2 in the deployment configuration,link=self,window=blank,width=700]
 +
 NOTE: Two replicas means llm-d will distribute incoming requests across two vLLM instances in a smart way.
 
-. On the final screen, select *Add as AI asset endpoint*. Leave the MaaS option out. Click *Deploy*.
+. On the next screen, select *Add as AI asset endpoint*. Don't worry about the MaaS option yet.
++
+image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
+
+. Again, lets add `custom runtime arguments` and pass `--max-model-len=2048` to limit the maximum length of the model's context window to 2048 tokens. 
+
+. Then add `custom runtime environment variables` as `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB.
++
+image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
+
+Click **Next** and then *Deploy*.
 
 . Wait for the deployment to show a green status indicator. This takes a minute or two while the model weights are pulled and loaded:
 +
-image::llmd-deployment-ready.png[llm-d deployment showing green ready status with 2 replicas,link=self,window=blank,width=700]
+image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready status with 2 replicas,link=self,window=blank,width=700]
 
 === Quick Test: GenAI Playground
 
 Let's confirm the model is responding before we move on.
 
-. Go to *Gen AI Studio > Playground*. Click *Create playground* and select the llm-d model you just deployed (ignore `gpt-oss-120b` for now). Set *Max tokens* to `1024` and click *Create*.
+. Go to *Gen AI Studio > AI asset endpoints*. Click *Try in playground* for the Qwen 0.6 model (ignore `gpt-oss-120b` for now). Set *Max tokens* to `1024` and click *Configure*.
++
+image::inference-try-in-playground.png[Try in Playground,link=self,window=blank,width=700]
 
 . Send a prompt of your choice — for example:
 +
@@ -57,26 +68,198 @@ Let's confirm the model is responding before we move on.
 Summarize the risks of using a single-node LLM deployment in production.
 ----
 +
-You should get a coherent response from the model. The experience looks identical to what you saw in Exercise 2 — and that is the point. llm-d does not change the API or the user experience; it changes what happens underneath, where requests are scheduled and served.
+(or try something more interesting🤭). You should get a coherent response from the model. The experience looks identical to what you saw in Exercise 2 — and that is the point. llm-d does not change the API or the user experience; it changes what happens underneath, where requests are scheduled and served.
 
-NOTE: Because we are running on CPU with a small model and low concurrent load, you won't observe a latency difference compared to the single-replica deployment. In a real workload with many simultaneous users, the two-replica setup would show meaningfully lower tail latency and higher throughput.
+NOTE: You can continue chatting but because we are running a low concurrent load (basically you sending consecutive messages), you won't observe a latency difference compared to the single-replica deployment. In a real workload with many simultaneous users, the two-replica setup would show meaningfully lower latency and higher throughput.
 
-// TODO(author): add link to the companion workshop covering GPU inference and llm-d performance in depth.
-// TODO(author): consider embedding an Arcade walkthrough or a simplified version of
-// https://rh-aiservices-bu.github.io/vllm-vertical-demo-/#page-1 to show llm-d routing behaviour under load.
+=== See how llm-d works vs plain vLLM
+
+The diagram below contrasts what happens when multiple requests arrive simultaneously — with plain vLLM round-robin versus llm-d's load-aware scheduler.
+
+++++
+<div class="llmd-diagram">
+<style>
+  .llmd-diagram {
+    font-family: "Red Hat Display", "Red Hat Text", sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.75rem;
+    background: #0f1117;
+    border-radius: 8px;
+    color: #d0d0d0;
+    margin: 1.5rem 0;
+  }
+  .llmd-requests {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .llmd-req-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .llmd-req {
+    border-radius: 4px;
+    font-size: 0.67rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .req-short { background: #0d1f33; border-color: #3b82f6; color: #93c5fd; }
+  .req-long  { background: #0d1f33; border-color: #3b82f6; color: #93c5fd; width: 140px; text-align:center; }
+  .llmd-req-note {
+    font-size: 0.68rem;
+    color: #555;
+    font-style: italic;
+    text-align: center;
+  }
+  .llmd-panels {
+    display: flex;
+    gap: 2rem;
+  }
+  .llmd-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .llmd-panel-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+    color: #888;
+  }
+  .llmd-box {
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.8rem;
+    text-align: center;
+    min-width: 150px;
+  }
+  .llmd-box.router { background: #1e1b2e; border-color: #7c3aed; color: #c4b5fd; }
+  .llmd-box.sched  { background: #0d2918; border-color: #16a34a; color: #86efac; }
+  .llmd-box.replica { background: #1a1a1a; border-color: #3f3f3f; font-size: 0.75rem; min-width: 110px; }
+  .llmd-box.r-busy { border-color: #ef4444; }
+  .llmd-box.r-ok   { border-color: #22c55e; }
+  .llmd-replicas   { display: flex; gap: 0.75rem; }
+  .llmd-arrow      { color: #555; font-size: 1rem; line-height: 1.6; }
+  .llmd-bar-wrap   { height: 5px; background: #2a2a2a; border-radius: 3px; margin-top: 5px; overflow: hidden; }
+  .llmd-bar        { height: 100%; border-radius: 3px; }
+  .bar-high { background: #ef4444; animation: pulse-high 1.6s ease-in-out infinite; }
+  .bar-low  { background: #3f3f3f; width: 12%; }
+  .bar-half { background: #22c55e; animation: pulse-half 2s ease-in-out infinite; }
+  @keyframes pulse-high { 0%,100% { width: 85%; } 50% { width: 95%; } }
+  @keyframes pulse-half { 0%,100% { width: 48%; } 50% { width: 55%; } }
+  .llmd-tag { font-size: 0.67rem; margin-top: 4px; }
+  .tag-bad  { color: #f87171; }
+  .tag-idle { color: #555; }
+  .tag-ok   { color: #4ade80; }
+  .llmd-caption {
+    font-size: 0.71rem;
+    color: #555;
+    text-align: center;
+    margin-top: 0.75rem;
+    max-width: 220px;
+    line-height: 1.5;
+  }
+  .llmd-queue {
+    font-size: 0.68rem;
+    color: #888;
+    margin-top: 3px;
+  }
+  .llmd-divider { width: 1px; background: #222; align-self: stretch; }
+  .llmd-section-label {
+    font-size: 0.7rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.25rem;
+  }
+</style>
+
+  <!-- Shared incoming requests -->
+  <div class="llmd-requests">
+    <div class="llmd-section-label">Incoming requests — variable length, unpredictable output</div>
+    <div class="llmd-req-row">
+      <div class="llmd-req req-short">Req A &nbsp;▬</div>
+      <div class="llmd-req req-long">Req B &nbsp;▬▬▬▬▬▬▬</div>
+      <div class="llmd-req req-short">Req C &nbsp;▬▬</div>
+      <div class="llmd-req req-long">Req D &nbsp;▬▬▬▬▬▬▬▬▬</div>
+    </div>
+    <div class="llmd-req-note">Input size and generated output length both vary — neither is predictable in advance</div>
+  </div>
+
+  <div class="llmd-panels">
+
+    <!-- Left: vLLM round-robin -->
+    <div class="llmd-panel">
+      <div class="llmd-panel-title" style="text-transform:none">Plain vLLM &nbsp;·&nbsp; 2 replicas</div>
+      <div class="llmd-box router">Round-Robin Load Balancer</div>
+      <div class="llmd-arrow">↙&nbsp;&nbsp;&nbsp;↘</div>
+      <div class="llmd-replicas">
+        <div class="llmd-box replica r-busy">
+          Replica 1
+          <div class="llmd-queue">B + D assigned</div>
+          <div class="llmd-bar-wrap"><div class="llmd-bar bar-high"></div></div>
+          <div class="llmd-tag tag-bad">generating… still busy</div>
+        </div>
+        <div class="llmd-box replica">
+          Replica 2
+          <div class="llmd-queue">A + C assigned</div>
+          <div class="llmd-bar-wrap"><div class="llmd-bar bar-low"></div></div>
+          <div class="llmd-tag tag-idle">done, sitting idle</div>
+        </div>
+      </div>
+      <div class="llmd-caption">Round-robin doesn't know input or output length. By chance, one replica ends up with all the heavy requests.</div>
+    </div>
+
+    <div class="llmd-divider"></div>
+
+    <!-- Right: llm-d -->
+    <div class="llmd-panel">
+      <div class="llmd-panel-title" style="text-transform:none">LLM-d &nbsp;·&nbsp; 2 replicas</div>
+      <div class="llmd-box sched">llm-d Scheduler</div>
+      <div class="llmd-arrow">↙&nbsp;&nbsp;&nbsp;↘</div>
+      <div class="llmd-replicas">
+        <div class="llmd-box replica r-ok">
+          Replica 1
+          <div class="llmd-queue">B assigned</div>
+          <div class="llmd-bar-wrap"><div class="llmd-bar bar-half"></div></div>
+          <div class="llmd-tag tag-ok">busy — tracked</div>
+        </div>
+        <div class="llmd-box replica r-ok">
+          Replica 2
+          <div class="llmd-queue">A, C, D assigned</div>
+          <div class="llmd-bar-wrap"><div class="llmd-bar bar-half" style="animation-delay:0.8s"></div></div>
+          <div class="llmd-tag tag-ok">busy — tracked</div>
+        </div>
+      </div>
+      <div class="llmd-caption">Scheduler sees Replica 1 is still working on B, so it steers C and D to Replica 2 instead.</div>
+    </div>
+
+  </div>
+</div>
+++++
+
+Both replicas run the same Qwen3 0.6B vLLM engine — llm-d only changes how traffic is distributed across them.
 
 === Clean up
 
-Delete the llm-d deployment to free up resources before moving to the MaaS exercise.
+Delete the llm-d deployment again to free up resources before moving to the MaaS exercise.
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
-. Select the model deployment you just created and click *Delete*.
+. Click the three dots next to the Qwen3 0.6B deployment you just created and click *Delete*.
 . Confirm the deletion.
-
-The shared model that powers the MaaS gateway in the next exercise is already running — you don't need to deploy it yourself.
 
 === What's Next?
 
-You've now deployed the same model two ways: single-node vLLM on CPU and distributed llm-d with two replicas. In both cases you talked to the model directly through the Playground.
+You've now deployed the same model two ways: single-node vLLM and distributed llm-d with two replicas. In both cases you talked to the model directly through the Playground.
 
 In the {company_name} organization, application teams don't deploy their own models and talk to model endpoints directly. They go through the MaaS gateway, which adds authentication, rate limiting, and usage metering on top. That's what Exercise 4 covers.

@@ -7,7 +7,7 @@
 {assistant_name} depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other section in this workshop.
 
 .Section 2 focus: self-hosted model inference
-image::fed-aura-platform-architecture-models-focus.svg[The {company_name} platform architecture with the self-hosted models layer highlighted,align=center]
+image::inference-fed-aura-platform-architecture-models-focus.svg[The {company_name} platform architecture with the self-hosted models layer highlighted,align=center]
 
 You will browse the Red Hat OpenShift AI Model Catalog, deploy models, scale inference with llm-d, and learn about Models as a Service concept.
 
@@ -28,7 +28,7 @@ Red Hat AI comes with a curated set of models that are ready for production use.
 
 . Navigate to the *OpenShift AI Dashboard* tab. On the left menu, select *AI Hub > Models*:
 +
-image::model-catalog-overview.png[Model Catalog showing available models with tags,link=self,window=blank,width=700]
+image::inference-model-catalog-overview.png[Model Catalog showing available models with tags,link=self,window=blank,width=700]
 
 . Look at the tags on the model cards. There are two types of certified models:
 +
@@ -41,15 +41,16 @@ image::model-catalog-overview.png[Model Catalog showing available models with ta
 ** *License and documentation* — the terms under which you can use and distribute the model
 ** *Performance insights* — Red Hat benchmarks this model on different hardware across common use cases such as chatbot, code generation, and document summarization, so you can compare expected throughput and latency before committing to a deployment
 +
-image::model-card-detail.png[Model card showing description, license, and performance benchmarks,link=self,window=blank,width=700]
+image::inference-model-card-detail.png[Model card showing description, license, and performance benchmarks,link=self,window=blank,width=700]
 +
 TIP: The performance benchmarks on the model card tell you how the model performs on specific hardware profiles. Use these numbers to size your deployment before you provision GPU capacity.
 
-. Go back to the Catalog and select the *Other Models* tab. This tab shows models that are not Large Language Models, but rather guardian models, embedding models, or the models that you make available within your organization:
-+
-image::model-catalog-other-tab.png[Other Models tab showing organization-uploaded models including Qwen3 0.6B,link=self,window=blank,width=700]
+. Go back to the Catalog and select the *Other Models* tab. This tab shows guardian models, embedding models, or the models that you make available within your organization.
 
 . Locate the model called *Qwen3 0.6B*. This is a small open-source LLM — at 0.6 billion parameters, it is compact enough to run on CPU, which makes it a good choice for a quick hands-on deployment without requiring a GPU.
++
+image::inference-model-catalog-other-tab.png[Other Models tab showing organization-uploaded models including Qwen3 0.6B,link=self,window=blank,width=700]
+
 
 === What's in the catalog?
 
@@ -62,4 +63,4 @@ Before moving on, take a moment to understand what you just saw:
 
 You have found the model. Now let's deploy it.
 
-In the next exercise, you will deploy Qwen3 0.6B using vLLM on CPU, interact with it through GenAI Playground, and then clean up before deploying the same model again using llm-d distributed inference.
+In the next exercise, you will deploy Qwen3 0.6B using vLLM on CPU, and interact with it through GenAI Playground.

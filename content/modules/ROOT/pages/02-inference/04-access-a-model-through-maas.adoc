@@ -24,6 +24,8 @@ image::inference-maas-asset-endpoints.png[AI Asset Endpoints list showing availa
 . Click on *View* to view its details — the endpoint URL, the underlying model, and the subscription configured for it.
 
 . On the endpoint detail page, click *Try in Playground* to confirm the endpoint is live and responding. The Playground creates a temporary API key on your behalf and connects to the endpoint so you can test it quickly.
+
+. Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B — this is a 20-billion parameter model running on GPU.
 +
 image::inference-maas-try-in-playground.png[GenAI Playground opened from the gpt-oss-120b endpoint detail page,link=self,window=blank,width=700]
 
@@ -104,21 +106,9 @@ curl -sk $MAAS_URL/v1/chat/completions \
 +
 You should see a response from `gpt-oss-120b`. The API is OpenAI-compatible — any application that already talks to OpenAI can point at this endpoint instead, with no code changes beyond swapping the base URL and key.
 
-== Exercise 7: Consume the MaaS Endpoint with Playground
+== Exercise 7: (Optional) Test with Continue in a Workbench
 
-Let's connect the Playground to the MaaS endpoint so you can interact with `gpt-oss-120b` through a UI.
-
-. Go to *Gen AI Studio > Playground* and click *Create Playground*.
-
-. In the model selector, choose the `gpt-oss-120b` MaaS endpoint. Paste your API key when prompted and click *Create*:
-+
-image::inference-maas-playground-model-select.png[Playground model selector showing the gpt-oss-120b MaaS endpoint,link=self,window=blank,width=700]
-
-. Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B — this is a 20-billion parameter model running on GPU.
-
-== Exercise 8: (Optional) Test with Continue in a Workbench
-
-If you want to experience MaaS the way a developer building an application would, this optional exercise walks you through connecting to the endpoint from a VSCode workbench using the `openai` Python SDK.
+If you want to experience MaaS the way a developer building an application would, this optional exercise walks you through connecting to the endpoint from a code server workbench using the `openai` Python SDK.
 
 . Navigate to *OpenShift AI Dashboard > Data Science Projects > wksp-{user}*. Click *Create workbench* and fill in the form:
 +
@@ -149,6 +139,115 @@ Everything you just did ran entirely within the OpenShift cluster. No data left 
 MaaS gives you the developer experience of a cloud API — stable endpoints, API keys, usage dashboards — with the data control of on-premises infrastructure.
 
 But self-hosted models are not the only thing MaaS can expose. The same gateway can also front external providers like OpenAI, Anthropic, or Gemini. From a user's perspective, nothing changes: you still browse the AI Asset Endpoints list, generate an API key, and call the endpoint the same way. The gateway handles the routing — whether the request goes to a locally deployed model or to an external API is transparent to the consumer. This means teams can use a mix of self-hosted and cloud models without managing separate credentials, SDKs, or rate-limiting policies for each one.
+
+++++
+<div class="maas-gateway-diagram">
+<style>
+  .maas-gateway-diagram {
+    font-family: "Red Hat Display", "Red Hat Text", sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.75rem;
+    background: #0f1117;
+    border-radius: 8px;
+    color: #d0d0d0;
+    margin: 1.5rem 0;
+  }
+  .mgd-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .mgd-col.consumers { align-items: flex-end; flex: 1; }
+  .mgd-col.backends  { align-items: flex-start; flex: 1; }
+  .mgd-box {
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.78rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .mgd-box.consumer { background: #0d1f33; border-color: #3b82f6; color: #93c5fd; min-width: 110px; }
+  .mgd-box.gateway  {
+    background: #1a0d2e;
+    border-color: #7c3aed;
+    color: #c4b5fd;
+    padding: 0.75rem 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 130px;
+    text-align: center;
+  }
+  .mgd-box.self-hosted { background: #0d2918; border-color: #22c55e; color: #86efac; min-width: 130px; }
+  .mgd-box.external    { background: #1f1020; border-color: #a78bfa; color: #c4b5fd; min-width: 130px; }
+  .mgd-arrows-left  { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; justify-content: center; color: #555; font-size: 0.85rem; }
+  .mgd-arrows-right { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; justify-content: center; color: #555; font-size: 0.85rem; }
+  .mgd-label {
+    font-size: 0.62rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+    margin-bottom: 0.2rem;
+  }
+  .mgd-tag {
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    margin-top: 3px;
+    display: inline-block;
+  }
+  .mgd-tag.green { background: #052e16; color: #4ade80; border: 1px solid #166534; }
+  .mgd-tag.purple { background: #1a0a2e; color: #a78bfa; border: 1px solid #5b21b6; }
+</style>
+
+  <!-- Consumers -->
+  <div class="mgd-col consumers">
+    <div class="mgd-label">Consumers</div>
+    <div class="mgd-box consumer">App Team A</div>
+    <div class="mgd-box consumer">App Team B</div>
+    <div class="mgd-box consumer">Data Scientist</div>
+  </div>
+
+  <!-- Arrows in -->
+  <div class="mgd-arrows-left">
+    <div>→</div>
+    <div>→</div>
+    <div>→</div>
+  </div>
+
+  <!-- Gateway -->
+  <div class="mgd-col">
+    <div class="mgd-label">Single endpoint</div>
+    <div class="mgd-box gateway">MaaS Gateway<br><span style="font-size:0.65rem;font-weight:400;color:#888">API key · rate limit · routing</span></div>
+  </div>
+
+  <!-- Arrows out -->
+  <div class="mgd-arrows-right">
+    <div>→</div>
+    <div>→</div>
+  </div>
+
+  <!-- Backends -->
+  <div class="mgd-col backends">
+    <div class="mgd-label">Backends</div>
+    <div class="mgd-box self-hosted">
+      gpt-oss-120b<br>
+      <span style="font-size:0.65rem;color:#555">on-cluster · vLLM</span>
+      <div><span class="mgd-tag green">data stays</span></div>
+    </div>
+    <div class="mgd-box external">
+      OpenAI / Anthropic<br>
+      <span style="font-size:0.65rem;color:#777">external API</span>
+      <div><span class="mgd-tag purple">data leaves</span></div>
+    </div>
+  </div>
+
+</div>
+++++
 
 == Exercise 9: Observe Your Usage
 

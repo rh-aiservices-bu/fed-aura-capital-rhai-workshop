@@ -63,7 +63,7 @@ Paste it here so you can refer to it during the exercises — it stays in your b
     outline: none;
     box-sizing: border-box;
   }
-  .key-notepad input::placeholder { color: #334d66; }
+  .key-notepad input::placeholder { color: #6b7280; }
   .key-notepad input:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
   .key-notepad-note { font-size: 0.68rem; color: #555; margin-top: 0.35rem; font-style: italic; }
 </style>

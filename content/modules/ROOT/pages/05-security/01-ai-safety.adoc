@@ -14,9 +14,9 @@ So before {assistant_name} goes anywhere near production, the security team has 
 That confidence does not come from one control. {company_name} treats agents like *zero trust employees*: every layer assumes the one in front of it might fail.
 
 * *Who is asking* - persona-based access control in the application decides what each user is even allowed to request. That is this section.
-* *What is being said* - NeMo Guardrails and the Guardrails Orchestrator inspect every prompt and every response at the inference boundary. Section 5.2.
-* *What breaks it* - Garak (powered by Chatterbox Labs technology) attacks the assistant before real customers can. Section 5.2.
-* *Where it runs* - OpenShell onboards new agents into an Agent Sandbox that denies everything by default. Section 5.3.
+* *What is being said* - NeMo Guardrails and the Guardrails Orchestrator inspect prompts and responses at the inference boundary, in front of every model they are configured for. xref:05-security/02-guardrails.adoc[Section 5.2].
+* *What breaks it* - Garak, together with the Chatterbox Labs technology Red Hat acquired, attacks the assistant before real customers can. xref:05-security/02-guardrails.adoc[Section 5.2].
+* *Where it runs* - OpenShell onboards new agents into an Agent Sandbox that denies everything by default. xref:05-security/03-openshell.adoc[Section 5.3].
 
 .The three rules behind those requirements
 [%collapsible]
@@ -40,18 +40,24 @@ Estimated time: *10 minutes* (section 5 totals about 30 minutes across 5.1, 5.2,
 
 == Learning Objectives
 
-By the end of this section, you will be able to:
+By the end of *this page*, you will be able to:
 
 * Observe how persona-based access controls what information the AI assistant reveals
+* Read a trace and tell an authorized request from a refused one by the spans it contains
+
+Across the rest of section 5, you will also:
+
 * Test input and output guardrails (NeMo Guardrails + Guardrails Orchestrator) against prompt injection, harmful content, and competitor mentions
 * Review Garak adversarial test results and interpret pass/fail evidence
-* Deploy an agent into an OpenShell Agent Sandbox with deny-by-default policies
+* Connect to an OpenShell Agent Sandbox running deny-by-default policies
 * Use policy enforcement to block data exfiltration from a sandboxed agent
 * Examine security traces in MLflow across all three defense layers
 
 == Exercise 1: Ask a Question as the CEO
 
 The {company_name} app assigns different capabilities depending on who logs in. The CEO persona has access to portfolio health, pipeline metrics, and officer performance. Start by seeing what {assistant_name} reveals to a fully authenticated executive.
+
+You will need two tabs from section 1.4 for this page: the *{company_name} App* and the *OpenShift AI Dashboard*, with your workshop project selected.
 
 . Navigate to the *{company_name} App* tab. Click *Sign In* and select the *CEO* persona (David Park):
 +
@@ -78,9 +84,7 @@ This is internal business intelligence. The CEO persona is authorized to see it,
 
 Now ask the identical question as an unauthenticated visitor. This is the public chatbot on the {company_name} landing page - the persona anyone on the internet can reach without signing in.
 
-. Click *Sign Out* to leave the CEO session:
-+
-image::security-ceo-signed-in.png[Sign Out link in the application header,link=self,window=blank,width=290]
+. Click *Sign Out* to leave the CEO session - it sits in the same header you just read the persona from.
 
 . Signing out lands you on the sign-in page. Click the *X* to the right of the *{company_name}* logo to dismiss it - you will land on the main public page:
 +
@@ -117,13 +121,15 @@ image::security-traces-experiments.png[Experiments list showing the mortgage-ai 
 +
 image::security-traces-list.png[Traces table for the mortgage-ai experiment with Request, Session, Execution time and State columns,link=self,window=blank,width=700]
 
-. You will see two traces whose *Request* is `Show me the current pipeline status` - one from the CEO session, one from the public session. Compare their *Execution time*: they differ by several seconds.
+. Find the two traces whose *Request* is `Show me the current pipeline status` - one from the CEO session, one from the public session. Tell them apart by the *Session* column: the CEO request carries an authenticated session, prefixed `user:`, while the public request has an anonymous session ID.
 +
-image::security-traces-latency.png[The two pipeline status traces showing noticeably different execution times,link=self,window=blank,width=600]
+image::security-traces-latency.png[The two pipeline status traces showing different sessions and noticeably different execution times,link=self,window=blank,width=600]
 +
-Look at the *Session* column as well. The CEO request carries an authenticated session, prefixed `user:`, while the public request has an anonymous session ID.
+Their *Execution time* differs by several seconds as well - the CEO request is normally the slower of the two, for a reason that becomes clear in a moment.
++
+NOTE: If you retried a step earlier you may have more than two matching traces. Take the most recent pair.
 
-. Open the *slower* of the two - this is the CEO request. Select the *Details & Timeline* tab and read the trace breakdown:
+. Open the CEO request - the one with the `user:` session. Select the *Details & Timeline* tab and read the trace breakdown:
 +
 image::security-trace-ceo-tools.png[CEO trace breakdown showing input_shield, agent, tool_auth, tools with ceo_pipeline_summary, and output_shield,link=self,window=blank,width=700]
 +
@@ -146,7 +152,7 @@ LangGraph
 +
 The *Chat* tab shows the whole exchange: the assistant decided to call `ceo_pipeline_summary`, passed it a reporting window, the tool returned the pipeline summary, and the assistant turned those numbers into its answer. Every argument sent and every value returned is recorded.
 
-. Close the trace with the *X* in the top right, then open the *faster* one - the public request. Read its breakdown:
+. Close the trace with the *X* in the top right, then open the public request - the one with the anonymous session. Read its breakdown:
 +
 image::security-trace-public-refused.png[Public trace breakdown with no tool_auth or tools spans and the assistant declining the request,link=self,window=blank,width=700]
 +

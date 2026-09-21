@@ -259,11 +259,7 @@ image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumpt
 
 === A question for {assistant_name}
 
-Before we close this section, try asking {assistant_name} something specific about {company_name}.
-
-. Go to the *{company_name} App* tab and sign in as the Borrower persona (Sarah Mitchell).
-
-. Ask:
+Before we close this section, ib the Playground, try asking something specific about {company_name}.
 +
 [source,text]
 ----
@@ -272,7 +268,9 @@ What is Fed Aura Capital's minimum credit score requirement for a conventional l
 
 . Observe the response. `gpt-oss-120b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
 
-This is the gap the next section addresses. Connecting the model to private knowledge through RAG is what turns a capable LLM into an assistant that can accurately answer domain-specific questions.
+*Next steps:*
+
+The model can generate fluent text, but it doesn't know anything about {company_name}'s specific policies or customer data. In the next section, you will connect it to that knowledge using RAG (Retrieval-Augmented Generation) — and watch {assistant_name} go from guessing to answering accurately.
 
 == Section Summary
 
@@ -280,15 +278,61 @@ This is the gap the next section addresses. Connecting the model to private know
 
 * Explored the AI Asset Endpoints list and understood the role MaaS plays between consumers and model deployments
 * Generated a scoped API key with a rate-limited subscription tier
-* Called the `gpt-oss-120b` endpoint with curl, the Playground, and (optionally) a Jupyter notebook
+* Called the `gpt-oss-120b` endpoint with curl, the Playground, and (optionally) a code server workbench
 * Observed per-key usage data in the usage dashboard
 
 *Key takeaways:*
 
-* MaaS decouples consumers from infrastructure — teams get a stable OpenAI-compatible API without managing model deployments
+* MaaS decouples consumers from infrastructure — teams get a stable endpoint without managing model deployments
 * Subscription tiers enforce fair use without blocking access; the platform team can see exactly who is using what
 * Self-hosted inference with MaaS gives you managed-API ergonomics with full data residency — the right trade-off for regulated industries like financial services
 
-*Next steps:*
+[%collapsible]
+.For the curious: how MaaS is configured under the hood (click to expand)
+====
+You have been using MaaS as a consumer — generating keys, calling endpoints, observing usage. But someone had to set all of this up. Here is what the platform team configured before you arrived, and how the pieces connect.
 
-The model can generate fluent text, but it doesn't know anything about {company_name}'s specific policies or customer data. In the next section, you will connect it to that knowledge using RAG — and watch {assistant_name} go from guessing to answering accurately.
+=== The MaaS object model
+
+MaaS is built on a set of Kubernetes custom resources. When the platform team exposes a model, they are creating and linking these objects:
+
+image::maas-object-model-governance.png[MaaS Object Model and Governance diagram showing AITenant, MaaSSubscription, MaaSAuthPolicy, and model infrastructure CRDs,link=self,window=blank,width=700]
+
+* **AITenant** — bootstraps an isolated MaaS tenant with its own namespace, auth policies, and RBAC. Each team or project gets one.
+* **MaaSSubscription** — the central resource that maps users and groups to models, and defines quota and rate limits. Every API key you generate is backed by a subscription.
+* **MaaSAuthPolicy** — authorizes specific users or groups to access model endpoints through the AI Gateway. It enforces the access rules at the HTTP level on every request.
+* **MaaSModelRef** — points to the actual inference server (an llm-d deployment, a vLLM runtime, or an external provider). The subscription references this to know where to route requests.
+* **ExternalProvider / ExternalModel** — when the backend is a cloud provider (OpenAI, Anthropic, Gemini), these resources configure the endpoint, credentials, and model name mapping. From the consumer's perspective, calling an ExternalModel is identical to calling a self-hosted one.
+
+NOTE: Both `MaaSSubscription` (quota) AND `MaaSAuthPolicy` (access) must exist for a consumer to reach an endpoint. Creating a subscription without an auth policy gives you rate limits but no access. The UI's *"Create matching authorization policy"* checkbox creates both at once.
+
+=== Anatomy of a subscription
+
+image::maas-subscription-anatomy.png[Anatomy of a MaaSSubscription showing CR properties, priority scheme, and two-layer governance model,link=self,window=blank,width=700]
+
+A `MaaSSubscription` has three key sections:
+
+* **spec.groups / spec.users / spec.serviceAccounts** — who this subscription applies to. Users inherit quota limits from every subscription they belong to; the highest-priority one wins when limits overlap.
+* **spec.priority** — a numeric value that determines which subscription takes precedence. The platform team at {company_name} follows this scheme:
+** *100* — production customer-facing apps, strict quotas, billed to the prod cost center
+** *50* — staging and pre-release validation
+** *0* — development and data science exploration (the default)
+** *-10* — personal sandbox and tutorial access (lowest precedence)
+* **spec.models and tokenLimits** — which models the subscription covers and the rate limits per model: tokens per request and tokens per time window (RPM/TPM).
+
+TIP: Use priority gaps (10, 20, 30...) between your tiers so you can insert new levels later without renumbering everything.
+
+=== How users, groups, and policies bind together
+
+image::maas-subscription-auth-relationships.png[Subscription, Group and Auth Policy Relationships diagram showing how users bind to subscriptions and how policies are enforced at the gateway,link=self,window=blank,width=700]
+
+When you made an API call in this exercise, the gateway evaluated your request like this:
+
+. Your OIDC token arrived with your user identity and group membership.
+. The gateway looked up which `MaaSSubscriptions` include your user or groups.
+. It evaluated the subscription priority to determine your effective quota.
+. It checked `MaaSAuthPolicy` to confirm you are authorized for the `/v1/chat/completions` endpoint on `gpt-oss-120b`.
+. Your request was routed to the model. Usage was recorded against your key.
+
+This all happened in milliseconds, invisibly. The reason it works reliably at scale is that the platform team defined it once as Kubernetes resources — version-controlled, auditable, and repeatable.
+====

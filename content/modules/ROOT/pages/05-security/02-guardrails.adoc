@@ -53,7 +53,7 @@ What are the current FHA loan limits?
 +
 image::security-guardrails-fha-answer.png[Playground answering the FHA loan limits question with guardrails enabled and one source retrieved,link=self,window=blank,width=700]
 +
-Nothing was blocked. The input rail read the question, the output rail read the answer, and both let it through - each configured rail returned `"status": "success"`. That is the property to hold onto for the rest of this section: *guardrails should be unnoticeable for legitimate use*. If they fire on questions like this one, they are misconfigured.
+Nothing was blocked. The input rail read the question, the output rail read the answer, and both let it through. Put the same content to the rails directly - through the checks endpoint in exercise 4 - and every configured rail comes back `"status": "success"`. That is the property to hold onto for the rest of this section: *guardrails should be unnoticeable for legitimate use*. If they fire on questions like this one, they are misconfigured.
 +
 NOTE: Expect this to take *20-30 seconds*, noticeably longer than an unguarded chat. A single turn now does considerably more work: the input rail is evaluated, the knowledge base is searched, the answer is generated, and the output rail is evaluated before you see anything. Safety and grounding both cost latency - which is why the rails are scoped to what actually needs them. The badges above the response show the elapsed time and time to first token.
 
@@ -267,7 +267,7 @@ This is the audit trail. When compliance asks you to prove the assistant cannot 
 
 == Exercise 6: Garak Adversarial Test Results
 
-Guardrails protect at runtime. But how do you know the model is robust _before_ deployment? Garak provides pre-deployment adversarial testing powered by Chatterbox Labs technology (acquired by Red Hat). The flow is: define a policy, generate synthetic attack prompts via SDG Hub, attack the model via Garak, and produce a report through EvalHub showing where the model breaks.
+Guardrails protect at runtime. But how do you know the model is robust _before_ deployment? Garak is an open source adversarial scanner for LLMs, and Red Hat pairs it with the Chatterbox Labs technology it acquired to turn a scan into a compliance artifact. The flow is: define a policy, generate synthetic attack prompts via SDG Hub, attack the model via Garak, and produce a report through EvalHub showing where the model breaks.
 
 The interactive demo below is a *pre-recorded walkthrough from a different model*, not {assistant_name} or anything you deployed in this workshop. Read it for the shape of the report and the workflow around it - the categories, the pass and fail evidence, how findings are presented - rather than for the specific numbers:
 

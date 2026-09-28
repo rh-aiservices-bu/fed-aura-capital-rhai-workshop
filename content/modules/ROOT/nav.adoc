@@ -10,6 +10,7 @@
 ** xref:02-inference/02-deploy-model-cpu.adoc[2.2 Deploy a Model]
 ** xref:02-inference/03-deploy-a-model-with-llmd.adoc[2.3 Deploy a Model with llm-d]
 ** xref:02-inference/04-access-a-model-through-maas.adoc[2.4 Models as a Service]
+** xref:02-inference/05-maas-configuration.adoc[2.5 MaaS Configuration (Optional)]
 
 * 3. Connecting Data to Models and Agents
 ** xref:03-data/01-system-prompts.adoc[3.1 System Prompts]

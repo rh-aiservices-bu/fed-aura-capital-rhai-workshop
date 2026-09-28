@@ -5,47 +5,39 @@
 :toc-placement: preamble
 :icons: font
 
-Shipping a model is not the finish line.
+You built {assistant_name}, tested her, and everything looked good. But the model is just one variable. The documents behind RAG will change as policies update. New tools will be added to the MCP catalog. Someone will tweak the system prompt. Any of those changes — without a model update — can shift her behavior in ways that are hard to spot until something goes wrong in production.
 
-{assistant_name} is running. She has documents (RAG), tools (MCP), and full traceability (MLflow). But how do you know she is getting better over time and not worse? How do you catch a regression when someone edits the system prompt? How do you measure whether the Risk MCP is producing reliable predictions across the range of applications it sees?
-
-The answer is continuous evaluation — automated pipelines that measure quality on every change, before it reaches production.
+Continuous evaluation is how you stay ahead of that — automated pipelines that measure quality on every change, before it reaches production.
 
 == Learning Objectives
 
 By the end of this section, you will be able to:
 
 * Run a model capability evaluation in EvalHub
-* Evaluate RAG pipeline quality with RAGAS through a notebook
-* Run an llm-as-judge evaluation in MLflow through a notebook
+* Evaluate RAG pipeline quality with RAGAS
+* Run an llm-as-judge evaluation in MLflow
 * (Optional) Import and run an automated evaluation pipeline and review results in MLflow
 
 == Exercise 6: Evaluate the Model with EvalHub
 
 EvalHub is the centralized evaluation interface for the platform. It lets you run standardized benchmarks against any model endpoint and compare results across versions.
 
-. Navigate to *OpenShift AI Dashboard > Evaluations*. You will land on the EvalHub interface showing existing evaluation runs for the mortgage-ai project:
+. Navigate to *OpenShift AI Dashboard > Develop & train > Evaluations*. You will land on the EvalHub interface showing existing evaluation runs for the mortgage-ai project:
 +
 // TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
 image::evals-evalhub-main.png[EvalHub interface showing existing evaluation runs for the mortgage-ai project,link=self,window=blank,width=700]
+Select the `gpt-oss-120b` model endpoint as the target:
 
-. Click *New Evaluation Run*. Select the `gpt-oss-120b` model endpoint as the target:
-+
-// TODO: screenshot of new evaluation run dialog (evals-evalhub-new-run.png)
-image::evals-evalhub-new-run.png[EvalHub new evaluation run dialog with gpt-oss-120b endpoint selected,link=self,window=blank,width=700]
-
-. For the dataset, select *ArcEasy* or *Science QnA* — whichever is available and runs faster on the cluster. Click *Start Evaluation*.
+. For the dataset, select *Basic Science QnA*  by clicking *Start benchmark*.
 
 . Wait for the run to complete, then review the results — overall accuracy score and the per-question breakdown:
 +
 // TODO: screenshot of evaluation results (evals-evalhub-results.png)
 image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy score and per-question breakdown,link=self,window=blank,width=700]
 
-NOTE: ArcEasy and Science QnA measure general model capability, not mortgage-specific quality. They are useful baselines — a sudden drop in ArcEasy accuracy after a model update is a signal that something changed in the model's core capabilities. Domain-specific evaluations like RAGAS are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
+NOTE: Basic Science QnA measures general model capability, not mortgage-specific quality. They are useful baselines — a sudden drop in the basic science accuracy after a model update is a signal that something changed in the model's core capabilities. Domain-specific evaluations are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
 
 == Exercise 7: Evaluate RAG Quality with RAGAS
-
-General capability benchmarks tell you whether the model is working. RAGAS tells you whether your RAG pipeline is working.
 
 RAGAS is a framework that evaluates three things:
 
@@ -71,7 +63,7 @@ image::evals-ragas-notebook.png[Jupyter notebook evaluate_ragas.ipynb open in th
 * *Answer relevancy* — if this is low, the model is answering a question it made up rather than the one asked
 * *Context precision* — if this is low, the retrieval step is pulling in the wrong document chunks
 
-TIP: Low faithfulness with high context precision usually means the model is ignoring the retrieved context and answering from training data. Low context precision means the chunking or embedding configuration needs tuning.
+TIP: If faithfulness is low but context precision is high, the model has the right documents but is ignoring them — it's answering from its own training data instead of what you gave it. If context precision is low, the system is pulling in the wrong documents when it searches, so the answer has nothing good to work with. Both cases point to different things to fix: the first is a model behavior issue, the second is a search quality issue.
 
 References:
 
@@ -154,7 +146,7 @@ Reference: https://rhpds.github.io/agentops-in-prod-showroom/modules/08-module-0
 
 === Key Takeaways
 
-* Benchmarks like ArcEasy measure baseline model capability — they catch model-level regressions but do not measure domain-specific quality
+* Benchmarks like Basic Science QnA measure baseline model capability — they catch model-level regressions but do not measure domain-specific quality
 * RAGAS decomposes RAG quality into components (faithfulness, relevancy, precision) so you can diagnose exactly what is going wrong and where
 * llm-as-judge enables evaluation of open-ended responses where there is no single correct answer — useful for catching persona regressions and reasoning failures
 * Automated evaluation pipelines remove the human from the quality gate — quality is measured continuously, not just when someone remembers to check

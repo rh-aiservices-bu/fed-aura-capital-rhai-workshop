@@ -9,7 +9,7 @@
 
 In the previous exercise you deployed Qwen3 0.6B on a single node using vLLM. That works for experimentation, but as soon as multiple users send requests at the same time, a single replica becomes a bottleneck. The obvious fix is to add more replicas — but here's the catch: OpenShift's default load balancing routes requests round-robin across replicas without knowing anything about what each one is doing. One replica might be halfway through generating a long response while another is completely idle, and new requests still get spread evenly. The result is unpredictable latency and wasted capacity.
 
-llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. You get the same vLLM inference engine underneath — llm-d just makes the traffic distribution smarter.
+llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. You get the same vLLM inference engine underneath — llm-d makes the traffic distribution smarter.
 
 NOTE: In this exercise you are deploying to CPU again. The llm-d architecture and deployment steps are identical on GPU — the only difference is the hardware profile you select.
 
@@ -46,9 +46,9 @@ image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self
 . Then add `custom runtime environment variables` as `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB.
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
-
++
 Click **Next** and then *Deploy*.
-
++
 . Wait for the deployment to show a green status indicator. This takes a minute or two while the model weights are pulled and loaded:
 +
 image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready status with 2 replicas,link=self,window=blank,width=700]
@@ -57,7 +57,9 @@ image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready 
 
 Let's confirm the model is responding before we move on.
 
-. Go to *Gen AI Studio > AI asset endpoints*. Click *Try in playground* for the Qwen 0.6 model (ignore `gpt-oss-120b` for now). Set *Max tokens* to `1024` and click *Configure*.
+. Go to *Gen AI Studio > AI asset endpoints*. Click *Try in playground* for the Qwen 0.6 model (ignore `gpt-oss-120b` for now). 
++
+Remember to set *Max tokens* to `1024` and click *Configure*.
 +
 image::inference-try-in-playground.png[Try in Playground,link=self,window=blank,width=700]
 
@@ -70,11 +72,11 @@ Summarize the risks of using a single-node LLM deployment in production.
 +
 (or try something more interesting🤭). You should get a coherent response from the model. The experience looks identical to what you saw in Exercise 2 — and that is the point. llm-d does not change the API or the user experience; it changes what happens underneath, where requests are scheduled and served.
 
-NOTE: You can continue chatting but because we are running a low concurrent load (basically you sending consecutive messages), you won't observe a latency difference compared to the single-replica deployment. In a real workload with many simultaneous users, the two-replica setup would show meaningfully lower latency and higher throughput.
+NOTE: You can continue chatting but because we are running a low concurrent load (basically only you sending consecutive messages), you won't observe a latency difference compared to the single-replica deployment. In a real workload with many simultaneous users, the two-replica setup would show meaningfully lower latency and higher throughput.
 
 === See how llm-d works vs plain vLLM
 
-The diagram below contrasts what happens when multiple requests arrive simultaneously — with plain vLLM round-robin versus llm-d's load-aware scheduler.
+The diagram below contrasts what happens when multiple requests arrive simultaneously — with plain vLLM round-robin versus llm-d's load-aware scheduler. On the left, round-robin distributes blindly: one replica ends up overloaded while the other sits idle. On the right, llm-d tracks each replica's load and routes new requests to whoever has capacity — both replicas stay busy, and no request waits unnecessarily.
 
 ++++
 <div class="llmd-diagram">
@@ -85,9 +87,10 @@ The diagram below contrasts what happens when multiple requests arrive simultane
     flex-direction: column;
     gap: 1.25rem;
     padding: 1.75rem;
-    background: #0f1117;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
-    color: #d0d0d0;
+    color: #1a1a1a;
     margin: 1.5rem 0;
   }
   .llmd-requests {
@@ -108,11 +111,11 @@ The diagram below contrasts what happens when multiple requests arrive simultane
     border: 1px solid;
     white-space: nowrap;
   }
-  .req-short { background: #0d1f33; border-color: #3b82f6; color: #93c5fd; }
-  .req-long  { background: #0d1f33; border-color: #3b82f6; color: #93c5fd; width: 140px; text-align:center; }
+  .req-short { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
+  .req-long  { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; width: 140px; text-align:center; }
   .llmd-req-note {
     font-size: 0.68rem;
-    color: #555;
+    color: #666;
     font-style: italic;
     text-align: center;
   }
@@ -133,37 +136,37 @@ The diagram below contrasts what happens when multiple requests arrive simultane
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 0.5rem;
-    color: #888;
+    color: #444;
   }
   .llmd-box {
-    border: 1px solid #444;
+    border: 1px solid #ccc;
     border-radius: 6px;
     padding: 0.45rem 1.1rem;
     font-size: 0.8rem;
     text-align: center;
     min-width: 150px;
   }
-  .llmd-box.router { background: #1e1b2e; border-color: #7c3aed; color: #c4b5fd; }
-  .llmd-box.sched  { background: #0d2918; border-color: #16a34a; color: #86efac; }
-  .llmd-box.replica { background: #1a1a1a; border-color: #3f3f3f; font-size: 0.75rem; min-width: 110px; }
+  .llmd-box.router { background: #f5f3ff; border-color: #7c3aed; color: #5b21b6; }
+  .llmd-box.sched  { background: #f0fdf4; border-color: #16a34a; color: #15803d; }
+  .llmd-box.replica { background: #f9f9f9; border-color: #d1d5db; color: #1a1a1a; font-size: 0.75rem; min-width: 110px; }
   .llmd-box.r-busy { border-color: #ef4444; }
   .llmd-box.r-ok   { border-color: #22c55e; }
   .llmd-replicas   { display: flex; gap: 0.75rem; }
-  .llmd-arrow      { color: #555; font-size: 1rem; line-height: 1.6; }
-  .llmd-bar-wrap   { height: 5px; background: #2a2a2a; border-radius: 3px; margin-top: 5px; overflow: hidden; }
+  .llmd-arrow      { color: #888; font-size: 1rem; line-height: 1.6; }
+  .llmd-bar-wrap   { height: 5px; background: #e5e7eb; border-radius: 3px; margin-top: 5px; overflow: hidden; }
   .llmd-bar        { height: 100%; border-radius: 3px; }
   .bar-high { background: #ef4444; animation: pulse-high 1.6s ease-in-out infinite; }
-  .bar-low  { background: #3f3f3f; width: 12%; }
+  .bar-low  { background: #d1d5db; width: 12%; }
   .bar-half { background: #22c55e; animation: pulse-half 2s ease-in-out infinite; }
   @keyframes pulse-high { 0%,100% { width: 85%; } 50% { width: 95%; } }
   @keyframes pulse-half { 0%,100% { width: 48%; } 50% { width: 55%; } }
   .llmd-tag { font-size: 0.67rem; margin-top: 4px; }
-  .tag-bad  { color: #f87171; }
-  .tag-idle { color: #555; }
-  .tag-ok   { color: #4ade80; }
+  .tag-bad  { color: #dc2626; }
+  .tag-idle { color: #9ca3af; }
+  .tag-ok   { color: #16a34a; }
   .llmd-caption {
     font-size: 0.71rem;
-    color: #555;
+    color: #666;
     text-align: center;
     margin-top: 0.75rem;
     max-width: 220px;
@@ -174,10 +177,10 @@ The diagram below contrasts what happens when multiple requests arrive simultane
     color: #888;
     margin-top: 3px;
   }
-  .llmd-divider { width: 1px; background: #222; align-self: stretch; }
+  .llmd-divider { width: 1px; background: #e5e7eb; align-self: stretch; }
   .llmd-section-label {
     font-size: 0.7rem;
-    color: #555;
+    color: #666;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin-bottom: 0.25rem;
@@ -260,6 +263,10 @@ Delete the llm-d deployment again to free up resources before moving to the MaaS
 
 === What's Next?
 
-You've now deployed the same model two ways: single-node vLLM and distributed llm-d with two replicas. In both cases you talked to the model directly through the Playground.
+You've now deployed the same model two ways: single-node vLLM and distributed llm-d with two replicas. In both cases you owned the deployment end-to-end — you decided the model, the resources, the replicas.
 
-In the {company_name} organization, application teams don't deploy their own models and talk to model endpoints directly. They go through the MaaS gateway, which adds authentication, rate limiting, and usage metering on top. That's what Exercise 4 covers.
+Now imagine every team at {company_name} doing the same thing. The borrower team deploys their own model. The underwriting team deploys theirs. The CEO dashboard team deploys another. Each one holds GPU capacity for its own use, sits mostly idle between requests, and bills to no one in particular. There's no visibility into who deployed what, how much each team is consuming, or whether a model is even being used. When something breaks, nobody knows whose model it is.
+
+This is the problem Models as a Service solves. Instead of every team running their own stack, a shared gateway exposes models as API endpoints — with authentication so only authorised applications can call them, rate limiting so one team can't starve another, and usage metering so you can see exactly who is using what. Teams get the same model access without the operational overhead, and the platform gets visibility across the whole organisation.
+
+That's what Exercise 4 covers.

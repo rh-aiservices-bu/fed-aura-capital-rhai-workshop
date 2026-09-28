@@ -10,14 +10,14 @@ By the end of this section, you will be able to:
 
 * Describe what {company_name} is and why it rebuilt its AI platform
 * Explain the CTO's four-phase platform rebuild and the problems each phase solved
-* Identify the persona-based agent architecture that powers {assistant_name}
+* Identify the persona-based agent architecture that powers {assistant_name}, the AI assistant for mortgage lending
 * Navigate the workshop's structure and understand how sections connect
 
 == What is this workshop about?
 
 Traditional AI demos show a model answering questions. Production AI requires a complete platform: model serving, governed access, domain grounding, tool integration, observability, evaluation, and security. Each capability solves a real business problem, and they must work together.
 
-This workshop takes you through the full Red Hat AI product portfolio by putting you inside a real production deployment. You've just joined *{company_name}* as an engineer - the AI platform is already running, and your job is to understand every layer of it. Each section introduces a capability, shows you what {company_name}'s setup looks like in practice, and gives you hands-on time with the same tools. By the end, you'll know why the platform looks the way it does and what each component contributes.
+This workshop takes you through the Red Hat AI product portfolio by putting you in the shoes of a newly joined engineer at *{company_name}*. The AI platform is already running, and your job is to get up to speed on every layer of it. Each section introduces a capability, shows you what {company_name}'s setup looks like in practice, and gives you hands-on time with the same tools. By the end, you'll know why the platform looks the way it does and what each component contributes.
 
 == Meet {company_name}
 
@@ -40,7 +40,7 @@ We rebuilt the platform in four phases. First, we took control of our own infere
 Each of these phases solved a real problem.
 ____
 
-*Your job*: explore each of those four pillars throughout this workshop and understand the platform well enough to support it.
+*Your job*: Work through each of those four pillars throughout this workshop and understand the platform well enough to support it.
 
 == What's next
 

@@ -22,10 +22,12 @@ MaaS provides a consistent and governed way to access models, which means {compa
 image::inference-maas-asset-endpoints.png[AI Asset Endpoints list showing available endpoints,link=self,window=blank,width=700]
 
 . Click on *View* to view its details — the endpoint URL, the underlying model, and the subscription configured for it.
++
+image::inference-maas-endpoint-details.png[AI Asset Endpoint details,link=self,window=blank,width=700]
 
 . On the endpoint detail page, click *Try in Playground* to confirm the endpoint is live and responding. The Playground creates a temporary API key on your behalf and connects to the endpoint so you can test it quickly.
 
-. Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B — this is a 20-billion parameter model running on GPU.
+. Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B. This is a 20-billion parameter model running on GPU, much bigger and more powerful.
 +
 image::inference-maas-try-in-playground.png[GenAI Playground opened from the gpt-oss-120b endpoint detail page,link=self,window=blank,width=700]
 
@@ -50,9 +52,14 @@ Paste it here so you can refer to it during the exercises — it stays in your b
 <div class="key-notepad">
 <style>
   .key-notepad { margin: 0.75rem 0 0.25rem; }
+  .key-notepad-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 560px;
+  }
   .key-notepad input {
-    width: 100%;
-    max-width: 520px;
+    flex: 1;
     padding: 0.5rem 0.75rem;
     font-family: monospace;
     font-size: 0.82rem;
@@ -65,9 +72,23 @@ Paste it here so you can refer to it during the exercises — it stays in your b
   }
   .key-notepad input::placeholder { color: #6b7280; }
   .key-notepad input:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+  .key-notepad-toggle {
+    background: none;
+    border: 1px solid #3b82f6;
+    border-radius: 6px;
+    color: #93c5fd;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .key-notepad-toggle:hover { background: #1e3a5f; }
   .key-notepad-note { font-size: 0.68rem; color: #555; margin-top: 0.35rem; font-style: italic; }
 </style>
-<input type="password" placeholder="Paste your API key here…" autocomplete="off" spellcheck="false" />
+<div class="key-notepad-wrap">
+  <input type="password" id="api-key-input" placeholder="Paste your API key here…" autocomplete="off" spellcheck="false" />
+  <button class="key-notepad-toggle" onclick="(function(){var i=document.getElementById('api-key-input');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'Show':'Hide';}).call(this)">Show</button>
+</div>
 <div class="key-notepad-note">Stored in this page only — not saved, not sent anywhere. Refreshing the page clears it.</div>
 </div>
 ++++
@@ -84,11 +105,86 @@ With your key in hand, let's call the model directly from the terminal.
 
 . Navigate to the *Terminal* tab. Set your API key and endpoint URL as environment variables. Use the key you saved in the notepad above and the endpoint URL from the endpoint detail page:
 +
-[source,console,role=execute,subs=attributes+]
-----
-export MAAS_API_KEY=<paste-your-api-key>
-export MAAS_URL=<endpoint-url>
-----
+[subs=attributes+]
+++++
+<style>
+  .maas-env-wrap {
+    position: relative;
+    margin: 0.5rem 0;
+  }
+  .maas-env-block {
+    background: #1e1e1e;
+    border-radius: 6px;
+    padding: 0.75rem 3.5rem 0.75rem 1rem;
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: #d4d4d4;
+    white-space: pre;
+  }
+  .maas-env-key { color: #9cdcfe; }
+  .maas-env-placeholder { color: #6b7280; font-style: italic; }
+  .maas-env-btn {
+    position: absolute;
+    top: 0.4rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.3rem 0.55rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0.35;
+    transition: opacity 0.2s;
+  }
+  .maas-env-btn:hover { opacity: 1; }
+  #maas-copy-btn { right: 3rem; }
+  #maas-send-btn { right: 0.5rem; }
+</style>
+<div class="listingblock maas-env-wrap">
+  <div class="maas-env-block" id="maas-env-block"><span class="maas-env-key">export MAAS_API_KEY=</span><span id="maas-key-display" class="maas-env-placeholder">&lt;paste-your-api-key&gt;</span>
+<span class="maas-env-key">export MAAS_URL=</span>{maas_url}</div>
+  <button class="maas-env-btn" id="maas-copy-btn" title="Copy" onclick="(function(){
+    var text = document.getElementById('maas-env-block').innerText;
+    navigator.clipboard.writeText(text).then(function(){
+      var b = document.getElementById('maas-copy-btn');
+      b.textContent = '✓'; setTimeout(function(){ b.textContent = '⎘'; }, 1500);
+    });
+  })()">⎘</button>
+  <button class="maas-env-btn" id="maas-send-btn" title="Send to terminal" onclick="(function(){
+    var text = document.getElementById('maas-env-block').innerText.trim();
+    var frames = window.parent ? window.parent.document.querySelectorAll('iframe') : [];
+    var frame = null;
+    for (var i=0;i<frames.length;i++){if((frames[i].src||'').indexOf('/terminal')!==-1){frame=frames[i];break;}}
+    if(!frame){alert('Terminal tab not found.');return;}
+    try{frame.contentWindow.postMessage({type:'paste',data:text+'\n'},'*');}catch(e){alert('Could not send to terminal.');}
+    var b = document.getElementById('maas-send-btn');
+    b.textContent = '✓'; setTimeout(function(){ b.textContent = '▶'; }, 1500);
+  })()">▶</button>
+</div>
+<script>
+  (function() {
+    function syncKey() {
+      var input = document.getElementById('api-key-input');
+      var display = document.getElementById('maas-key-display');
+      if (!input || !display) return;
+      var val = input.value.trim();
+      if (val) {
+        display.textContent = val;
+        display.className = 'maas-env-key';
+      } else {
+        display.innerHTML = '&lt;paste-your-api-key&gt;';
+        display.className = 'maas-env-placeholder';
+      }
+    }
+    var input = document.getElementById('api-key-input');
+    if (input) { input.addEventListener('input', syncKey); }
+    else { document.addEventListener('DOMContentLoaded', function() {
+      var i = document.getElementById('api-key-input');
+      if (i) i.addEventListener('input', syncKey);
+    }); }
+  })();
+</script>
+++++
 
 . Send a completion request:
 +
@@ -149,9 +245,10 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
     align-items: center;
     gap: 1.25rem;
     padding: 1.75rem;
-    background: #0f1117;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
-    color: #d0d0d0;
+    color: #1a1a1a;
     margin: 1.5rem 0;
   }
   .mgd-col {
@@ -163,31 +260,31 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
   .mgd-col.consumers { align-items: flex-end; flex: 1; }
   .mgd-col.backends  { align-items: flex-start; flex: 1; }
   .mgd-box {
-    border: 1px solid #444;
+    border: 1px solid #d1d5db;
     border-radius: 6px;
     padding: 0.4rem 0.9rem;
     font-size: 0.78rem;
     text-align: center;
     white-space: nowrap;
   }
-  .mgd-box.consumer { background: #0d1f33; border-color: #3b82f6; color: #93c5fd; min-width: 110px; }
+  .mgd-box.consumer { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; min-width: 110px; }
   .mgd-box.gateway  {
-    background: #1a0d2e;
+    background: #f5f3ff;
     border-color: #7c3aed;
-    color: #c4b5fd;
+    color: #5b21b6;
     padding: 0.75rem 1.1rem;
     font-size: 0.85rem;
     font-weight: 600;
     min-width: 130px;
     text-align: center;
   }
-  .mgd-box.self-hosted { background: #0d2918; border-color: #22c55e; color: #86efac; min-width: 130px; }
-  .mgd-box.external    { background: #1f1020; border-color: #a78bfa; color: #c4b5fd; min-width: 130px; }
-  .mgd-arrows-left  { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; justify-content: center; color: #555; font-size: 0.85rem; }
-  .mgd-arrows-right { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; justify-content: center; color: #555; font-size: 0.85rem; }
+  .mgd-box.self-hosted { background: #f0fdf4; border-color: #22c55e; color: #15803d; min-width: 130px; }
+  .mgd-box.external    { background: #faf5ff; border-color: #a78bfa; color: #6d28d9; min-width: 130px; }
+  .mgd-arrows-left  { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; justify-content: center; color: #9ca3af; font-size: 0.85rem; }
+  .mgd-arrows-right { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; justify-content: center; color: #9ca3af; font-size: 0.85rem; }
   .mgd-label {
     font-size: 0.62rem;
-    color: #555;
+    color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     text-align: center;
@@ -200,8 +297,8 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
     margin-top: 3px;
     display: inline-block;
   }
-  .mgd-tag.green { background: #052e16; color: #4ade80; border: 1px solid #166534; }
-  .mgd-tag.purple { background: #1a0a2e; color: #a78bfa; border: 1px solid #5b21b6; }
+  .mgd-tag.green { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+  .mgd-tag.purple { background: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd; }
 </style>
 
   <!-- Consumers -->
@@ -222,7 +319,7 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
   <!-- Gateway -->
   <div class="mgd-col">
     <div class="mgd-label">Single endpoint</div>
-    <div class="mgd-box gateway">MaaS Gateway<br><span style="font-size:0.65rem;font-weight:400;color:#888">API key · rate limit · routing</span></div>
+    <div class="mgd-box gateway">MaaS Gateway<br><span style="font-size:0.65rem;font-weight:400;color:#7c3aed">API key · rate limit · routing</span></div>
   </div>
 
   <!-- Arrows out -->
@@ -259,14 +356,14 @@ image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumpt
 
 === A question for {assistant_name}
 
-Before we close this section, ib the Playground, try asking something specific about {company_name}.
-+
+Before we close this section, in the Playground, try asking something specific about {company_name}.
+
 [source,text]
 ----
 What is Fed Aura Capital's minimum credit score requirement for a conventional loan?
 ----
 
-. Observe the response. `gpt-oss-120b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
+Observe the response. `gpt-oss-120b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
 
 *Next steps:*
 
@@ -274,65 +371,15 @@ The model can generate fluent text, but it doesn't know anything about {company_
 
 == Section Summary
 
-*What you accomplished:*
+You started with a model in a catalog and ended with a production-grade inference platform. Here is what that progression looked like:
 
-* Explored the AI Asset Endpoints list and understood the role MaaS plays between consumers and model deployments
-* Generated a scoped API key with a rate-limited subscription tier
-* Called the `gpt-oss-120b` endpoint with curl, the Playground, and (optionally) a code server workbench
-* Observed per-key usage data in the usage dashboard
+* *Model Catalog* — models don't just appear in production. They go through a governed library with metadata about origin, license, and validation status before anyone can deploy them.
+* *Single-node vLLM* — deploying a model is straightforward, but a single replica under concurrent load becomes a bottleneck with no intelligent routing.
+* *llm-d* — adding replicas only helps if requests are routed smartly. llm-d tracks replica load and distributes work to minimize wait time across the pool. The API and the user experience stay identical — the improvement is entirely under the hood.
+* *Models as a Service* — even well-distributed inference creates chaos if every team manages their own stack. MaaS puts a shared gateway in front: one endpoint, scoped API keys, rate limits, and usage visibility per consumer.
 
-*Key takeaways:*
+*Key takeaway:*
 
-* MaaS decouples consumers from infrastructure — teams get a stable endpoint without managing model deployments
-* Subscription tiers enforce fair use without blocking access; the platform team can see exactly who is using what
-* Self-hosted inference with MaaS gives you managed-API ergonomics with full data residency — the right trade-off for regulated industries like financial services
+Each layer solved a real problem the previous one left open. The result is not just a running model, it is a platform that scales, governs access, and gives the platform team observability over who uses what.
 
-[%collapsible]
-.For the curious: how MaaS is configured under the hood (click to expand)
-====
-You have been using MaaS as a consumer — generating keys, calling endpoints, observing usage. But someone had to set all of this up. Here is what the platform team configured before you arrived, and how the pieces connect.
-
-=== The MaaS object model
-
-MaaS is built on a set of Kubernetes custom resources. When the platform team exposes a model, they are creating and linking these objects:
-
-image::maas-object-model-governance.png[MaaS Object Model and Governance diagram showing AITenant, MaaSSubscription, MaaSAuthPolicy, and model infrastructure CRDs,link=self,window=blank,width=700]
-
-* **AITenant** — bootstraps an isolated MaaS tenant with its own namespace, auth policies, and RBAC. Each team or project gets one.
-* **MaaSSubscription** — the central resource that maps users and groups to models, and defines quota and rate limits. Every API key you generate is backed by a subscription.
-* **MaaSAuthPolicy** — authorizes specific users or groups to access model endpoints through the AI Gateway. It enforces the access rules at the HTTP level on every request.
-* **MaaSModelRef** — points to the actual inference server (an llm-d deployment, a vLLM runtime, or an external provider). The subscription references this to know where to route requests.
-* **ExternalProvider / ExternalModel** — when the backend is a cloud provider (OpenAI, Anthropic, Gemini), these resources configure the endpoint, credentials, and model name mapping. From the consumer's perspective, calling an ExternalModel is identical to calling a self-hosted one.
-
-NOTE: Both `MaaSSubscription` (quota) AND `MaaSAuthPolicy` (access) must exist for a consumer to reach an endpoint. Creating a subscription without an auth policy gives you rate limits but no access. The UI's *"Create matching authorization policy"* checkbox creates both at once.
-
-=== Anatomy of a subscription
-
-image::maas-subscription-anatomy.png[Anatomy of a MaaSSubscription showing CR properties, priority scheme, and two-layer governance model,link=self,window=blank,width=700]
-
-A `MaaSSubscription` has three key sections:
-
-* **spec.groups / spec.users / spec.serviceAccounts** — who this subscription applies to. Users inherit quota limits from every subscription they belong to; the highest-priority one wins when limits overlap.
-* **spec.priority** — a numeric value that determines which subscription takes precedence. The platform team at {company_name} follows this scheme:
-** *100* — production customer-facing apps, strict quotas, billed to the prod cost center
-** *50* — staging and pre-release validation
-** *0* — development and data science exploration (the default)
-** *-10* — personal sandbox and tutorial access (lowest precedence)
-* **spec.models and tokenLimits** — which models the subscription covers and the rate limits per model: tokens per request and tokens per time window (RPM/TPM).
-
-TIP: Use priority gaps (10, 20, 30...) between your tiers so you can insert new levels later without renumbering everything.
-
-=== How users, groups, and policies bind together
-
-image::maas-subscription-auth-relationships.png[Subscription, Group and Auth Policy Relationships diagram showing how users bind to subscriptions and how policies are enforced at the gateway,link=self,window=blank,width=700]
-
-When you made an API call in this exercise, the gateway evaluated your request like this:
-
-. Your OIDC token arrived with your user identity and group membership.
-. The gateway looked up which `MaaSSubscriptions` include your user or groups.
-. It evaluated the subscription priority to determine your effective quota.
-. It checked `MaaSAuthPolicy` to confirm you are authorized for the `/v1/chat/completions` endpoint on `gpt-oss-120b`.
-. Your request was routed to the model. Usage was recorded against your key.
-
-This all happened in milliseconds, invisibly. The reason it works reliably at scale is that the platform team defined it once as Kubernetes resources — version-controlled, auditable, and repeatable.
-====
+NOTE: Want to understand how MaaS is configured under the hood — the Kubernetes custom resources, subscription model, and auth policy chain? See the optional xref:02-inference/05-maas-configuration.adoc[2.5 MaaS Configuration] page.

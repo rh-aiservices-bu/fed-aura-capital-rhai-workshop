@@ -5,8 +5,6 @@
 :toc-placement: preamble
 :icons: font
 
-WARNING: This is an advanced optional section. It requires additional time and is intended for participants who want to understand how the Risk MCP's predictive model was trained. The main section exercises are complete — this section is self-contained and can be done independently.
-
 == Where Does the Prediction Come From?
 
 In Exercise 4, you watched {assistant_name} call `uw_predict_loan_approval` through the Risk MCP server. The response was not a rule — it was a machine learning prediction. But where does that prediction come from?

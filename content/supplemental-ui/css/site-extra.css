@@ -3,6 +3,23 @@
     align-items: flex-start;
   }
 
+/* thin border on all content images */
+.doc .imageblock img {
+    border: 1px solid #ccc;
+  }
+
+/* larger collapsible summary title */
+.doc details > summary.title {
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+/* extra spacing above collapsible blocks */
+.doc details {
+    margin-top: 1.5rem;
+  }
+
 /* add a shadow to the image container */
 .doc .bordershadow .content{
     border: solid 1px black;

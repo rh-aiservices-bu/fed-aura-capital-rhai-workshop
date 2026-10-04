@@ -28,14 +28,16 @@ EvalHub is the centralized evaluation interface for the platform. It lets you ru
 // TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
 image::evals-evalhub-main.png[EvalHub interface to start a new evaluation run,link=self,window=blank,width=700]
 
-. Here you will see a list of available datasets for different categories of evaluation.For the dataset, select *Basic Science QnA*  by clicking *Select benchmark*.
+. You will see a list of available benchmarks. Use the *Name* filter and search for `ifeval` to find *Instruction Following Evaluation (IFEval)*. Click *Select benchmark*.
 +
-image::evals-evalhub-science.png[Evaluate the model against basic science questions,link=self,window=blank,width=700]
+IFEval tests whether a model can follow explicit formatting instructions — things like "respond in exactly 3 sentences," "include the keyword X," "output valid JSON," or "write in all caps." This matters directly for {assistant_name}: we built a detailed system prompt that enforces corporate language, formatting rules, and strict tool-use behavior. If the underlying model can't reliably follow structured instructions, {assistant_name} will break those rules — responding in markdown when told not to, skipping tool calls, or ignoring persona constraints.
++
+image::evals-ifeval-select.png[Search for ifeval and select the IFEval benchmark,link=self,window=blank,width=700]
 +
 . Fill in the evaluation run form:
 +
 --
-* *Run name*: `Basic Science QnA`
+* *Run name*: `IFEval`
 * *MLflow Experiment*: Create new, call it `EvalHub`
 * *Source*: `Model` — we are evaluating how capable the model is on the given topic, not a full application
 * *Model*: Select *Other (External endpoint)*
@@ -110,16 +112,17 @@ TIP: If you no longer have your API key, you can always go back to the *API Keys
 +
 --
 * *API Key Secret*: `evalhub-secret`
-* *Benchmark parameters*: `{"tokenizer": "Qwen/Qwen3-235B-A22B"}`
+* *Benchmark parameters*: `{"tokenizer": "Qwen/Qwen3-235B-A22B","backend": "chat", "num_examples": 50}`
 --
 +
-image::evals-evalhub-start.png
-image::evals-evalhub-start-2.png[Start evaluation,link=self,window=blank,width=700]
-. Click *Start evaluation run*. Wait for the run to complete, then review the results — overall accuracy score and the per-question breakdown:
+. Click *Start evaluation run*. Wait for the run to complete. It may take a few minutes to finish.
++
+. When it is completed, you can click the nme *IFEval* to see the full evaluation report.
 +
 image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy score and per-question breakdown,link=self,window=blank,width=700]
 
-NOTE: Basic Science QnA measures general model capability, not mortgage-specific quality. They are useful baselines — a sudden drop in the basic science accuracy after a model update is a signal that something changed in the model's core capabilities. Domain-specific evaluations are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
+NOTE: IFEval measures instruction-following capability, not mortgage-specific quality. It is a useful baseline — if a model can't follow explicit formatting constraints, it will also struggle with tool call schemas and system prompt rules in production. A sudden drop in IFEval scores after a model update is a signal that something changed in the model's core compliance behavior. Domain-specific evaluations are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
+
 
 == Exercise 7: Evaluate RAG Quality with RAGAS
 
@@ -169,11 +172,80 @@ RAGAS requires a test set with known source documents. But what about open-ended
 
 That is where llm-as-judge comes in. Instead of scoring against a ground truth, you use a second LLM to evaluate the quality of the first LLM's responses. The judge model reads the question, the context the agent had available, and the agent's answer, then scores dimensions like correctness, helpfulness, and groundedness.
 
-. In your Workbench, open `evaluate_agent.ipynb`:
+. Open `evaluate_agent.ipynb` from the `notebooks/` folder:
 +
 // TODO: screenshot of evaluate_agent.ipynb open in Workbench (evals-agent-notebook.png)
 image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in the Workbench,link=self,window=blank,width=700]
 
+. The notebook needs the MaaS endpoint and API key to call the model. Find the empty configuration cell at the top and paste the following values:
++
+[subs=attributes+]
+++++
+<style>
+  .llm-env-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.85rem; margin: 0.5rem 0; }
+  .llm-env-table th { background: #2d2d2d; color: #ccc; text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #444; font-weight: 600; }
+  .llm-env-table td { background: #1e1e1e; color: #d4d4d4; padding: 0.5rem 0.75rem; border: 1px solid #333; }
+  .llm-env-table .oc-key { color: #9cdcfe; font-weight: 600; }
+  .llm-env-table .oc-val { color: #ce9178; }
+  .llm-env-table .oc-placeholder { color: #6b7280; font-style: italic; }
+  .llm-copy-btn {
+    background: #28a745; color: white; border: none; border-radius: 3px;
+    padding: 0.15rem 0.4rem; font-size: 0.75rem; cursor: pointer;
+    opacity: 0.4; transition: opacity 0.2s; margin-left: 0.5rem; vertical-align: middle;
+  }
+  .llm-copy-btn:hover { opacity: 1; }
+</style>
+<table class="llm-env-table">
+  <tr><th colspan="2">Paste these three lines into the empty cell</th></tr>
+  <tr>
+    <td><span class="oc-key">os.environ["LLM_BASE_URL"]</span> = </td>
+    <td>
+      <span class="oc-val">"{maas_url}"</span>
+      <button class="llm-copy-btn" title="Copy line" onclick="navigator.clipboard.writeText('os.environ[&quot;LLM_BASE_URL&quot;] = &quot;{maas_url}&quot;').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+  </tr>
+  <tr>
+    <td><span class="oc-key">os.environ["LLM_API_KEY"]</span> = </td>
+    <td>
+      <span class="oc-placeholder" id="llm-key-val">"&lt;paste-your-api-key&gt;"</span>
+      <button class="llm-copy-btn" id="llm-key-copy-btn" title="Copy line" onclick="navigator.clipboard.writeText('os.environ[&quot;LLM_API_KEY&quot;] = &quot;' + (document.getElementById('llm-key-raw').textContent || '') + '&quot;').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+      <span id="llm-key-raw" style="display:none"></span>
+    </td>
+  </tr>
+  <tr>
+    <td><span class="oc-key">os.environ["LLM_MODEL"]</span> = </td>
+    <td>
+      <span class="oc-val">"qwen3-235b"</span>
+      <button class="llm-copy-btn" title="Copy line" onclick="navigator.clipboard.writeText('os.environ[&quot;LLM_MODEL&quot;] = &quot;qwen3-235b&quot;').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+  </tr>
+</table>
+<script>
+  (function() {
+    function syncLlmKey() {
+      var keyInput = document.getElementById('api-key-input');
+      var keyVal = document.getElementById('llm-key-val');
+      var keyRaw = document.getElementById('llm-key-raw');
+      if (keyInput && keyVal) {
+        var k = keyInput.value.trim();
+        keyVal.textContent = k ? '"' + k + '"' : '"<paste-your-api-key>"';
+        keyVal.className = k ? 'oc-val' : 'oc-placeholder';
+        if (keyRaw) keyRaw.textContent = k;
+      }
+    }
+    function attach() {
+      var k = document.getElementById('api-key-input');
+      if (k) k.addEventListener('input', syncLlmKey);
+      syncLlmKey();
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); }
+    else { attach(); }
+  })();
+</script>
+++++
++
+TIP: If you no longer have your API key, go back to the *API Keys* tab and create a new one.
++
 . The notebook runs a set of loan assessment queries through {assistant_name}'s agent and collects the responses. Run the first section of cells to generate the responses.
 
 . The second section configures the judge model and scoring criteria — correctness, groundedness, refusal appropriateness. Run these cells to start the evaluation.
@@ -226,7 +298,6 @@ image::evals-pipeline-stages.png[OpenShift AI Pipelines view showing the four ev
 
 TIP: In production, this pipeline would be scheduled to run on every commit to the prompt registry. A drop in evaluation score blocks the deployment — the same way a failing unit test blocks a code merge.
 
-Reference: https://rhpds.github.io/agentops-in-prod-showroom/modules/08-module-06-dev-to-production.html#_exercise_1_import_an_evaluation_pipeline[Evaluation Pipeline exercise,window=blank]
 
 == Section Summary
 

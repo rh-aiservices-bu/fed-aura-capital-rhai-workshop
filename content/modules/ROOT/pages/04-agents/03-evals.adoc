@@ -47,7 +47,19 @@ RAGAS is a framework that evaluates three things:
 
 . Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*.
 
+<<<<<<< Updated upstream
 . Open the notebook `evaluate_ragas.ipynb`. It is already available in your workbench and pre-configured to connect to the RAG pipeline you set up in section 3.2:
+=======
+. Let's clone this repository to get the evaluation notebooks. In the terminal, run:
+[source,bash]
+----
+git clone https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop.git
+----
++
+TIP: Or you can ask OpenCode to clone the repo for you 🤭
++
+. Go to folder `fed-aura-capital-rhai-workshop/notebooks` and open the notebook `evaluate_ragas.ipynb`:
+>>>>>>> Stashed changes
 +
 // TODO: screenshot of evaluate_ragas.ipynb open in Workbench (evals-ragas-notebook.png)
 image::evals-ragas-notebook.png[Jupyter notebook evaluate_ragas.ipynb open in the Workbench,link=self,window=blank,width=700]

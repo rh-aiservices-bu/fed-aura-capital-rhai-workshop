@@ -17,19 +17,19 @@ NOTE: In this exercise you are deploying to CPU again. The llm-d architecture an
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models* and select the *Other Models* tab. Again, find *Qwen3 0.6B* and click *Deploy*.
 
-. Select your project `wksp-{user}` and click *Next*.
+. Select your project `Workspace {user}` and click *Next*.
 
 . You will be prompted for the model location. Leave the defaults as-is and click *Next*.
 
 . On the deployment configuration screen, keep the name as-is. Under deployment options, select *LLM inference service with llm-d*.
 
-. For *Topology type* keeps `Single node`, and for *Topology configuration* select `Single node on CPU`.
+. For *Topology type* keeps `Single node`, and for *Topology configuration*, from the drop down menu, select `Single node on CPU`.
 
 . Then expand `> Customize resource requests and limits` and set the resource values as below:
 +
 image::inference-cpu-resource-limits.png[Resource requests and limits configuration for llm-d deployment,link=self,window=blank,width=700]
 
-. For *Routing* configuration select `CPU LLM-d scheduling-policy` routing config. It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
+. For *Routing* configuration, from the drop down menu, select `CPU LLM-d scheduling-policy` routing config. It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
 
 . For *Replica count* set the number of replicas to *2*. Click *Next*:
 +
@@ -58,8 +58,6 @@ image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready 
 Let's confirm the model is responding before we move on.
 
 . Go to *Gen AI Studio > AI asset endpoints*. Click *Try in playground* for the Qwen 0.6 model (ignore `gpt-oss-120b` for now). 
-+
-Remember to set *Max tokens* to `1024` and click *Configure*.
 +
 image::inference-try-in-playground.png[Try in Playground,link=self,window=blank,width=700]
 

@@ -39,7 +39,7 @@ If you do not see pods, make sure you select your project:
 image::select-project.png[]
 image::agentic-app0.png[OpenShift Console Pods view showing mortgage-ai components running,link=self,window=blank,width=700]
 
-. Check the API service health endpoint:
+. Go back to terminal and check the API service health endpoint:
 +
 [source,console,role=execute,subs=attributes+]
 ----
@@ -120,7 +120,7 @@ NOTE: Because the application uses generative AI, responses are non-deterministi
 === Try the Borrower experience (Sarah Mitchell)
 
 [start=4]
-. From the application landing page, click **Sign In**:
+. Close the chat bot and from the application landing page, click **Sign In**:
 +
 image::sign-in.png[]
 

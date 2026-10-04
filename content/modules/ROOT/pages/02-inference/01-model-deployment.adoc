@@ -26,7 +26,7 @@ By the end of this section you will be able to:
 
 Red Hat AI comes with a curated set of models that are ready for production use. Before deploying anything, you can check what models are available and how to evaluate them. Let's explore the Model Catalog and learn how to identify the right model for your use case.
 
-. Navigate to the *OpenShift AI Dashboard* tab. On the left menu, select *AI Hub > Models*:
+. Navigate to the *OpenShift AI Dashboard* by clicking on the *RHOAI Console* tab. On the left menu, select *AI Hub > Models*:
 +
 image::inference-model-catalog-overview.png[Model Catalog showing available models with tags,link=self,window=blank,width=700]
 

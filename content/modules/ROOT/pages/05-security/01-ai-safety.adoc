@@ -1,8 +1,6 @@
 = AI Safety
 :navtitle: AI Safety
 :imagesdir: ../assets/images
-:toc:
-:toc-placement: preamble
 :icons: font
 
 Protecting customers and the business starts with who can ask what.
@@ -36,7 +34,7 @@ That confidence does not come from one control. {company_name} treats agents lik
 |===
 ====
 
-Estimated time: *10 minutes* (section 5 totals about 30 minutes across 5.1, 5.2, and 5.3)
+Estimated time: *10 minutes* 
 
 == Learning Objectives
 

@@ -21,6 +21,15 @@ In this section you take the security team's side of the table and try to break 
 
 Estimated time: *10 minutes*
 
+*In this section:*
+
+* <<Exercise 1: Guardrails in the Playground>>
+* <<Exercise 2: Prompt Injection>>
+* <<Exercise 3: Harmful Content>>
+* <<Exercise 4: Competitor Mentions and Guardrail Configuration>>
+* <<Exercise 5: Check the Traces>>
+* <<Exercise 6: Garak Adversarial Test Results>>
+
 == Exercise 1: Guardrails in the Playground
 
 Before attacking the guardrails, see how they are wired into the inference pipeline - and confirm they are invisible when nothing is wrong.

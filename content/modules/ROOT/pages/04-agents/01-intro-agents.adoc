@@ -35,7 +35,7 @@ image::agents-loan-officer-login.png[Sign in dialog with Loan Officer persona se
 +
 [source,text]
 ----
-Run a risk assessment on application #3730
+Run a risk assessment on application #191
 ----
 
 . Observe the response. {assistant_name} returns a structured risk assessment with precise numbers — DTI ratio, LTV, credit score, approval recommendation, basically things a loan officer needs to know:

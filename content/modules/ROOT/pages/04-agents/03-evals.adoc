@@ -201,7 +201,7 @@ image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in th
   <tr>
     <td><span class="oc-key">os.environ["LLM_BASE_URL"]</span> = </td>
     <td>
-      <span class="oc-val">"{maas_url}"</span>
+      <span class="oc-val">"{maas_url}/v1"</span>
       <button class="llm-copy-btn" title="Copy line" onclick="navigator.clipboard.writeText('os.environ[&quot;LLM_BASE_URL&quot;] = &quot;{maas_url}&quot;').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
     </td>
   </tr>

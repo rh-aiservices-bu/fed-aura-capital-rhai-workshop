@@ -46,10 +46,11 @@ Now connect to the running sandbox and see what the agent can access.
 
 . Open a *Terminal* in your workbench (*File > New Terminal* in the VSCode workbench).
 
-. Register the gateway. It runs as a service in your own project, so you reach it by name - there is no port-forward to start and nothing to keep alive in the background:
+. Register the gateway. The `openshell` CLI needs to know where the gateway is before it can talk to any sandbox. The gateway runs as a Kubernetes Service in your own project, so you reach it by name — there is no port-forward to start and nothing to keep alive in the background. The first line removes any stale registration from a previous session; the second registers the current endpoint:
 +
 [source,bash]
 ----
+openshell gateway remove openshift 2>/dev/null
 openshell gateway add http://openshell:8080 --name openshift --local
 ----
 

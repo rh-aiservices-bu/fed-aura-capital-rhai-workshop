@@ -50,7 +50,7 @@ RAGAS is a framework that evaluates three things:
 . Open the notebook `evaluate_ragas.ipynb`. It is already available in your workbench and pre-configured to connect to the RAG pipeline you set up in section 3.2:
 +
 // TODO: screenshot of evaluate_ragas.ipynb open in Workbench (evals-ragas-notebook.png)
-image::evals-ragas-notebook.png[Jupyter notebook evaluate_ragas.ipynb open in the Workbench,link=self,window=blank,width=700]
+image::evals-ragas-notebook.png[The notebook evaluate_ragas.ipynb open in the Workbench,link=self,window=blank,width=700]
 
 . Run all cells. The notebook:
 .. Sends a test set of mortgage questions through the RAG pipeline

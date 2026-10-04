@@ -13,11 +13,15 @@ We are going to deploy Qwen3 0.6B using vLLM as the runtime. vLLM is a high-perf
 +
 image::inference-cpu-deploy-button.png[Model card for Qwen3 0.6B with the Deploy button highlighted,link=self,window=blank,width=700]
 
-. Select your project `wksp-{user}` and click *Next*.
+. Select your project `Workspace {user}` and click *Next*.
 
 . You will be prompted for where the model lives. This information is already populated cause the catalog has the information — don't change anything, just click *Next*.
 
-. On the deployment configuration screen, keep the name as-is. Under deployment options, select *LLM inference service*. Then, under **Hardware profile**  expand `> Customize resource requests and limits` and set the resource values as shown below:
+. On the deployment configuration screen, keep the name as-is. 
+
+. Under deployment options, select *LLM inference service*.
+
+. Then, with the **Hardware profile**, as **CPU Profile**, expand `> Customize resource requests and limits` to set the resource values as shown below:
 +
 image::inference-cpu-resource-limits.png[Resource requests and limits configuration for the CPU deployment,link=self,window=blank,width=700]
 
@@ -28,6 +32,8 @@ image::inference-cpu-accelerator-config.png[Accelerator configuration showing vL
 . On the final screen, select *Add as AI asset endpoint*. Don't worry about the MaaS option yet — we'll get to that in Exercise 4.
 +
 image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
+
+. Make sure you *unchecked* the *Token authentication* option.
 
 . On this screen, we can add `Add custom runtime arguments` if we want to pass any additional arguments to the vLLM runtime. 
 +
@@ -62,7 +68,7 @@ What is the capital of France?
 +
 You should see a response from the model, hopefully with the correct answer "Paris" 🤭
 
-. Now try shaping the model's behavior with a system prompt. On the right side of the Playground, in the *Settings*, to the *Prompt* field, enter:
+. Now try shaping the model's behavior with a system prompt. Click on the *+ New chat* on the top right first. Then, again on the right side of the Playground, under the *Settings*, to the *Prompt* field, enter:
 +
 [source,text]
 ----

@@ -87,13 +87,14 @@ EOF</div>
 <script>
   (function() {
     function syncEvalhubKey() {
-      var keyInput = document.getElementById('api-key-input');
       var keyVal = document.getElementById('evalhub-key-val');
-      if (keyInput && keyVal) {
-        var k = keyInput.value.trim();
-        keyVal.textContent = k || '<paste-your-api-key>';
-        keyVal.className = k ? '' : 'evalhub-placeholder';
-      }
+      if (!keyVal) return;
+      var k = '';
+      var keyInput = document.getElementById('api-key-input');
+      if (keyInput) k = keyInput.value.trim();
+      if (!k) { try { k = localStorage.getItem('workshop-api-key') || ''; } catch(e) {} }
+      keyVal.textContent = k || '<paste-your-api-key>';
+      keyVal.className = k ? '' : 'evalhub-placeholder';
     }
     function attach() {
       var k = document.getElementById('api-key-input');
@@ -223,15 +224,16 @@ image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in th
 <script>
   (function() {
     function syncLlmKey() {
-      var keyInput = document.getElementById('api-key-input');
       var keyVal = document.getElementById('llm-key-val');
       var keyRaw = document.getElementById('llm-key-raw');
-      if (keyInput && keyVal) {
-        var k = keyInput.value.trim();
-        keyVal.textContent = k ? '"' + k + '"' : '"<paste-your-api-key>"';
-        keyVal.className = k ? 'oc-val' : 'oc-placeholder';
-        if (keyRaw) keyRaw.textContent = k;
-      }
+      if (!keyVal) return;
+      var k = '';
+      var keyInput = document.getElementById('api-key-input');
+      if (keyInput) k = keyInput.value.trim();
+      if (!k) { try { k = localStorage.getItem('workshop-api-key') || ''; } catch(e) {} }
+      keyVal.textContent = k ? '"' + k + '"' : '"<paste-your-api-key>"';
+      keyVal.className = k ? 'oc-val' : 'oc-placeholder';
+      if (keyRaw) keyRaw.textContent = k;
     }
     function attach() {
       var k = document.getElementById('api-key-input');

@@ -89,8 +89,9 @@ Paste it here so you can refer to it during the exercises — it stays in your b
 <div class="key-notepad-wrap">
   <input type="password" id="api-key-input" placeholder="Paste your API key here…" autocomplete="off" spellcheck="false" />
   <button class="key-notepad-toggle" onclick="(function(){var i=document.getElementById('api-key-input');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'Show':'Hide';}).call(this)">Show</button>
+  <button class="key-notepad-toggle" style="background:#8b0000;" onclick="(function(){var i=document.getElementById('api-key-input');i.value='';try{localStorage.removeItem('workshop-api-key');}catch(e){}i.dispatchEvent(new Event('input'));}).call(this)">Clear</button>
 </div>
-<div class="key-notepad-note">Stored in this page only — not saved, not sent anywhere. Refreshing the page clears it.</div>
+<div class="key-notepad-note">Your key is saved in your browser's local storage so it carries across pages. Click Clear to remove it.</div>
 </div>
 ++++
 --
@@ -172,17 +173,21 @@ With your key in hand, let's call the model directly from the terminal.
       if (val) {
         display.textContent = val;
         display.className = 'maas-env-key';
+        try { localStorage.setItem('workshop-api-key', val); } catch(e) {}
       } else {
         display.innerHTML = '&lt;paste-your-api-key&gt;';
         display.className = 'maas-env-placeholder';
       }
     }
+    function initKey() {
+      var input = document.getElementById('api-key-input');
+      if (!input) return;
+      input.addEventListener('input', syncKey);
+      try { var saved = localStorage.getItem('workshop-api-key'); if (saved && !input.value) { input.value = saved; syncKey(); } } catch(e) {}
+    }
     var input = document.getElementById('api-key-input');
-    if (input) { input.addEventListener('input', syncKey); }
-    else { document.addEventListener('DOMContentLoaded', function() {
-      var i = document.getElementById('api-key-input');
-      if (i) i.addEventListener('input', syncKey);
-    }); }
+    if (input) { initKey(); }
+    else { document.addEventListener('DOMContentLoaded', initKey); }
   })();
 </script>
 ++++

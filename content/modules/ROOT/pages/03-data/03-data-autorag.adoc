@@ -123,7 +123,7 @@ image::module5-autorag-sidebar.png[OpenShift AI sidebar showing Gen AI studio ex
 +
 image::module5-autorag-create.png[Create AutoRAG form with name and OGX connection filled in,link=self,window=blank,width=700]
 
-. In the **Knowledge setup** section, select `minio` as the **S3 connection**. Click **Select file or folder** and then **Browse bucket**:
+. In the **Knowledge setup** section, select `autorag` as the **S3 connection**. Click **Select file or folder** and then **Browse bucket**:
 +
 image::module5-autorag-experiment.png[AutoRAG experiment configuration showing Knowledge setup with S3 connection,link=self,window=blank,width=400]
 

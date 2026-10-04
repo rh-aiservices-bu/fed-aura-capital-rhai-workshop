@@ -1,7 +1,8 @@
 = Advanced: Predictive AI with AutoML
 :navtitle: AutoML (Advanced)
 :imagesdir: ../assets/images
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
@@ -19,62 +20,56 @@ This is how {company_name} connects classical machine learning to generative AI:
 
 By the end of this section, you will be able to:
 
-* Run an AutoML training job using pre-prepared notebook collateral
+* Run an AutoML experiment from the OpenShift AI dashboard
 * Review the resulting experiment in MLflow and compare model runs
 * Understand how the trained model connects to the Risk MCP server
 
 == Exercise: Train the Loan Approval Model
 
-. Open your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*.
+. Navigate to *OpenShift AI Dashboard > Develop & Train > AutoML*. 
 
-. In the file browser, navigate to the `automl/` directory. Open `automl_training.ipynb`:
+. Create an experiment called *fed-aura-automl*.
 +
-// TODO: screenshot of automl_training.ipynb open in Workbench (automl-notebook-open.png)
-image::automl-notebook-open.png[automl_training.ipynb open in the Workbench showing the training configuration cells,link=self,window=blank,width=700]
+image::automl-create.png[Run AutoML experiment,link=self,window=blank,width=700]
 
-. Review the first few cells. The notebook:
+. On the left side, under *Documents*, select the S3 connection *automl* from the dropdown. Click *Select file from bucket*, then *Browse bucket* and select `cleaned_loan_data.csv` — this is a synthetic dataset of historical loan applications with known outcomes.
+
+. On the right side, configure the experiment details:
 +
-* Loads a synthetic dataset of historical loan applications with known outcomes
-* Defines a set of algorithm candidates (logistic regression, random forest, gradient boosting)
-* Configures MLflow to log every run automatically
-
-. Run all cells. The training job will take a few minutes. As it runs, each algorithm configuration is evaluated and logged as a separate run in MLflow:
+--
+* *Target column*: `loan_approved` — the column the model will learn to predict
+* *Prediction type*: *Multiclass classification* (recommended) — the model will classify applications into approval categories
+* *Run preset*: *Faster* (4 vCPU / 16 GiB) — sufficient for this dataset size
+* Leave the rest default
+--
 +
-// TODO: screenshot of notebook cells executing with MLflow logging output (automl-notebook-running.png)
-image::automl-notebook-running.png[Notebook output showing MLflow run logging as AutoML training progresses,link=self,window=blank,width=700]
+image::automl-experiment-config.png[AutoML experiment configuration showing data source and prediction settings,link=self,window=blank,width=700]
 
-. Once training completes, navigate to *OpenShift AI Dashboard > Develop & Train > Experiments* and find the experiment named `automl-loan-approval`. You will see multiple runs — one per algorithm configuration — with their accuracy, precision, and recall scores:
+. Click *Start run*. AutoML will evaluate multiple algorithm configurations automatically. This takes a couple of minutes.
+
+. Once completed, the *Results* table shows the ranked models. In this case, *LightGBM_BAG_L1_FULL* came out on top with an optimized accuracy of *0.986*:
 +
-// TODO: screenshot of automl-loan-approval experiment in MLflow (automl-mlflow-experiment.png)
-image::automl-mlflow-experiment.png[MLflow automl-loan-approval experiment showing multiple algorithm runs with metrics,link=self,window=blank,width=700]
+image::automl-results.png[AutoML results showing LightGBM_BAG_L1_FULL ranked first with 0.986 accuracy,link=self,window=blank,width=700]
 
-. Click on the run marked as best (or the one with the highest accuracy). Review the parameters — algorithm, hyperparameters — and the metrics. MLflow captures the full lineage: what data went in, what configuration was used, what results came out:
+. Click on the model name to open *Model details*. Here you can see the full configuration — preset, label column, evaluation metric — along with tabs for *Feature summary*, *Model evaluation*, *Confusion matrix*, *ROC curve*, and *Precision recall*:
 +
-// TODO: screenshot of best run detail in MLflow (automl-mlflow-best-run.png)
-image::automl-mlflow-best-run.png[MLflow best run detail showing algorithm configuration and accuracy metrics,link=self,window=blank,width=700]
-
-. The best model is automatically registered in the *MLflow Model Registry*. Navigate to *Model Registry* and find `loan-approval-classifier`. The latest version is the model you just trained:
+image::automl-model-details.png[Model details showing configuration and evaluation tabs for the best model,link=self,window=blank,width=700]
 +
-// TODO: screenshot of model registry entry (automl-model-registry.png)
-image::automl-model-registry.png[MLflow Model Registry showing the loan-approval-classifier with the newly registered version,link=self,window=blank,width=700]
 
-. The Risk MCP server is already configured to load the latest version of `loan-approval-classifier` from the Model Registry at startup. Your newly trained model is now what {assistant_name} calls when she runs `uw_predict_loan_approval` on a new application.
+You can also *Download* the report or *Save* the model to the Model Registry directly from here. Fed Aura is already running the latest model in the Risk MCP server, so you don't need to do that step for this exercise.
+
 
 TIP: In production, this training pipeline would run on a schedule — weekly or monthly — as new loan outcome data arrives. AutoML ensures the model stays calibrated without requiring a data scientist to manually tune it each time.
-
-Reference: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/tree/dev/templates/user/automl[AutoML collateral on GitHub,window=blank]
 
 == Section Summary
 
 === What You Accomplished
 
-* Ran an AutoML training job that evaluated multiple algorithm configurations against historical loan application data
-* Reviewed the resulting MLflow experiment and compared run metrics to identify the best-performing model
-* Registered the best model in the MLflow Model Registry and confirmed that the Risk MCP server loads it automatically
+* Ran an AutoML experiment from the OpenShift AI dashboard that evaluated multiple algorithm configurations against historical loan application data
 
 === Key Takeaways
 
 * AutoML reduces the time from raw data to deployed model — algorithm selection, hyperparameter tuning, and experiment tracking are automated rather than manual
-* MLflow provides full lineage for every run: data, configuration, metrics, and the resulting model artifact are all linked and auditable
+* It provides full lineage for every run: data, configuration, metrics, and the resulting model artifact are all linked and auditable
 * The connection between AutoML and the MCP server is the Model Registry — the MCP server loads whatever version is marked latest, so retraining and redeploying the model requires no changes to the agent code
 * Classical ML and generative AI are complementary: the LLM handles language, reasoning, and orchestration; the ML model handles structured prediction tasks that require statistical pattern recognition

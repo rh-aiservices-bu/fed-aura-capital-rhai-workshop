@@ -1,7 +1,8 @@
 = Guardrails & Adversarial Testing
 :navtitle: Guardrails & Adversarial Testing
 :imagesdir: ../assets/images
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 

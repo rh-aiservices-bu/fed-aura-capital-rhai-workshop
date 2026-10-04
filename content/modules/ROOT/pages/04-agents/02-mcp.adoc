@@ -1,7 +1,8 @@
 = Exercise 3: Tools and MCP
 :navtitle: MCP and Tool Access
 :imagesdir: ../assets/images
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
@@ -13,19 +14,17 @@ The platform hosts an MCP gateway that registers tool servers centrally. Agents 
 
 == Exercise 3: Explore the MCP Catalog
 
-. Navigate to *Gen AI Studio > AI Asset Endpoints* and select the *MCP Servers* tab:
+. Navigate to *AI Hub > MCP Servers* and observe catalog tab:
 +
-// TODO: screenshot of AI Asset Endpoints with MCP Servers tab selected (mcp-catalog-tab.png)
-image::mcp-catalog-tab.png[AI Asset Endpoints showing the MCP Servers tab with registered tool servers,link=self,window=blank,width=700]
+image::mcp-catalog-tab.png[MCP Catalog,link=self,window=blank,width=700]
 
-. Browse the registered MCP servers. You will see a catalog of available tool servers — some built by Red Hat, and some from the broader partner ecosystem.
+. You will see a catalog of available tool servers — some built by Red Hat, and some from the broader partner ecosystem.
 
-. There are also already 2 MCP servers deployed in your environment. Go to AI Asset endpoints > MCP servers in order to see them. The two servers are:
+. There are also already 2 MCP servers deployed in your environment. Go to *AI Asset endpoints > MCP servers* in order to see them. The two servers are:
 +
 * *Risk Server MCP* — ML-backed loan approval prediction, provides assessments a loan officer needs to know
 * *Weather MCP* — provides weather and climate data, used by {assistant_name} to flag flood risk and climate exposure for property locations
 +
-// TODO: screenshot of Risk Server MCP and Weather MCP in the catalog (mcp-catalog-deployed.png)
 image::mcp-catalog-deployed.png[MCP catalog showing the Risk Server and Weather MCP servers with active status,link=self,window=blank,width=700]
 
 
@@ -58,7 +57,7 @@ The difference between a chatbot and an agent is not the model — it is tool ac
 
 === Without MCP
 
-. Go to *Gen AI Studio > Playground* and create a new Playground with the `gpt-oss-120b` model. Do *not* connect any MCP tools.
+. Go to *Gen AI Studio > Playground* and create a new Playground with the `qwen3-235b` model. Do *not* connect any MCP tools.
 
 . Send:
 +
@@ -69,21 +68,17 @@ I have a client earning $8,000/month with $2,400 in monthly debts. What's their 
 
 . Observe the response. The model calculates DTI from the numbers you gave (30%) but hedges: "this is generally considered acceptable, but you should verify with your specific underwriting guidelines." It is doing arithmetic from the prompt — there is no tool call, no lookup against {company_name}'s actual thresholds, and no certainty.
 +
-// TODO: screenshot of response without MCP (mcp-without-response.png)
-image::mcp-without-response.png[Playground response without MCP showing estimated DTI with hedge language,link=self,window=blank,width=700]
-
 === With MCP
 
-. Click *Configure > MCP* and connect to the *Risk Server MCP*:
+. Under *Settings > MCP*, connect to the *Risk Server MCP* by clicking the lock icon 🔒 under *Auth* and click *Save*. Then check the box to enable the Risk Server MCP for this Playground.:
 +
 // TODO: screenshot of Playground MCP configuration (mcp-playground-connect.png)
-image::mcp-playground-connect.png[Playground Configure panel showing the MCP tab with Risk Server MCP connected,link=self,window=blank,width=700]
+image::mcp-playground-connect.png[Playground Settings panel showing the MCP tab with Risk Server MCP connected,link=self,window=blank,width=700]
 
 . Send the exact same prompt again.
 
-. Observe the difference. The model now calls `calculate_dti` and `assess_asset_sufficiency`, returns values grounded in {company_name}'s underwriting rules, and gives a clear assessment — acceptable or not — without hedging:
+. Observe the difference. The model now calls `calculate_dti`, returns values grounded in {company_name}'s underwriting rules, and gives a clear assessment — acceptable or not — without hedging:
 +
-// TODO: screenshot of response with MCP (mcp-with-response.png)
 image::mcp-with-response.png[Playground response with MCP showing tool-backed DTI assessment without hedge language,link=self,window=blank,width=700]
 
 [cols="1,1,1",options="header"]

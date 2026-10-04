@@ -1,7 +1,8 @@
 = Deploy a Model on CPU
 :imagesdir: ../assets/images
 :navtitle: Deploy a Model on CPU
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
@@ -37,11 +38,11 @@ image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self
 
 . On this screen, we can add `Add custom runtime arguments` if we want to pass any additional arguments to the vLLM runtime. 
 +
-Let's pass `--max-model-len=2048` to limit the maximum length of the model's context window to 2048 tokens. 
+Let's pass `--max-model-len=2048` to limit the maximum length of the model's context window to 2048 tokens. This controls how many tokens (words and word pieces) the model can process in a single request, including both the input prompt and the generated output. We set it to 2048 (lower than the model's default) to reduce memory usage, since we are deploying on a CPU with limited resources.
 +
 . We can also add `custom runtime environment variables` if we want to pass any additional environment variables to the vLLM runtime. 
 +
-Let's add `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB.
+Let's add `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB. Setting this to 8GB gives the model enough cache space to handle requests efficiently.
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
 + 
@@ -50,14 +51,20 @@ Click **Next** and then *Deploy*.
 . Wait for the deployment to show a green status indicator. It takes a couple of minutes while the model weights are loaded:
 +
 image::inference-cpu-deployment-ready.png[Model deployment list showing Qwen3 0.6B with a green ready status,link=self,window=blank,width=700]
++
+You can get the inference endpoints on this view and start using the model. But let's go to the GenAI Playground to test it out!
 
 === Quick Test: GenAI Playground
 
 GenAI Playground is here to test the model you just deployed, alongside other capabilities such as shaping a model's behavior with system prompts, and connecting the model to private knowledge and tools. In this exercise, we will use it to confirm that the model is responding to prompts.
 
-. Go to *Gen AI Studio > Playground*. Click *Create Playground* and select the model you just deployed. (Please don't worry about `gpt-oss-120b` yet.) Set *Max tokens* to `1024` and click *Create*:
+. Go to *Gen AI Studio > Playground*. When the model is in Running state, click *Create Playground*.
 +
-image::inference-playground-create.png[Create Playground dialog with Qwen3 0.6B selected and Max tokens set to 1024,link=self,window=blank,width=700]
+image::inference-playground.png[Create Playground with Qwen3 0.6B,link=self,window=blank,width=700]
+
+. And select the model you just deployed. (Please don't worry about `qwen3-235b` yet, keep it unchecked.) Set *Max tokens* to `1024` and click *Create*:
++
+image::inference-playground-create.png[Select Qwen3 0.6B and set Max tokens to 1024,link=self,window=blank,width=700]
 
 . When the Playground is ready, send a prompt of your choice — for example:
 +
@@ -81,14 +88,16 @@ image::inference-playground-system-prompt.png[GenAI Playground showing the syste
 +
 NOTE: The Instructions field is how you pass a system prompt to the model — instructions that shape its persona, tone, and behavior before the user says anything. This is the simplest form of prompt engineering, and it works on any model regardless of how it was deployed.
 
+=== What's Next?
+
+You have deployed a model on a single node with one replica. That works for testing, but it is just one model getting all the requests. We may need to scale the model for production use. But we need to do it smartly. In the next exercise, you will deploy the same model using llm-d: a distributed inference scheduler that routes requests across multiple replicas for higher throughput and lower latency under load.
+
 === Clean up
 
-Let's delete the model deployment to free up resources before the next exercise. More exciting things are coming up!
+Let's delete the model deployment to free up resources for llm-d. More exciting things are coming up!
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
 . Click the three dots next to the Qwen3 0.6B deployment you just created and click *Delete*.
 . Confirm the deletion.
-
-=== What's Next?
-
-You have deployed a model on a single node with one replica. That works for testing, but it is just one model getting all the requests. We may need to scale the model for production use. But we need to do it smartly. In the next exercise, you will deploy the same model using llm-d: a distributed inference scheduler that routes requests across multiple replicas for higher throughput and lower latency under load.
++
+image::inference-delete-model.png[Delete Qwen3 0.6B to free up resources,link=self,window=blank,width=700]

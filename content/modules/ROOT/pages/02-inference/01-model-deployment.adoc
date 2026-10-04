@@ -48,7 +48,7 @@ TIP: The performance benchmarks on the model card tell you how the model perform
 
 . Go back to the Catalog and select the *Other Models* tab. This tab shows guardian models, embedding models, or the models that you make available within your organization.
 
-. Locate the model called *Qwen3 0.6B*. This is a small open-source language model (0.6 billion parameters). It is compact enough to run on CPU, which makes it a good choice for a quick hands-on deployment without requiring a GPU.
+. Locate the model called *Qwen3 0.6B* under *Other Models* tab. This is a small open-source language model (0.6 billion parameters). It is compact enough to run on CPU, which makes it a good choice for a quick hands-on deployment without requiring a GPU.
 +
 image::inference-model-catalog-other-tab.png[Other Models tab showing organization-uploaded models including Qwen3 0.6B,link=self,window=blank,width=700]
 

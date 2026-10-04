@@ -1,23 +1,24 @@
 = Models as a Service
 :imagesdir: ../assets/images
 :navtitle: Models as a Service
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
 == Exercise 4: Models as a Service
 
-You've been observing a model `gpt-oss-120b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, hate to break it to you but {assistant_name} hasn't been using the little model you deployed. Because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. The model that {assistant_name} is using is `gpt-oss-120b`, which is a much larger model and requires GPU to run.
+You've been observing a model `qwen3-235b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, hate to break it to you but {assistant_name} hasn't been using the little model you deployed. Because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. The model that {assistant_name} is using is `qwen3-235b`, which is a much larger model and requires GPU to run.
 
 But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. With MaaS, an admin can expose models as endpoints that can be consumed by different applications and users.
 
-And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `gpt-oss-120b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
+And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `qwen3-235b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
 
 MaaS provides a consistent and governed way to access models, which means {company_name} can manage the model deployments centrally while still providing access to the models for different teams and applications.
 
 === Explore AI Asset Endpoints
 
-. Navigate to *Gen AI Studio > AI Asset Endpoints*. Observe that `gpt-oss-120b` is listed as an endpoint.
+. Navigate to *Gen AI Studio > AI Asset Endpoints*. Observe that `qwen3-235b` is listed as an endpoint.
 +
 image::inference-maas-asset-endpoints.png[AI Asset Endpoints list showing available endpoints,link=self,window=blank,width=700]
 
@@ -27,9 +28,9 @@ image::inference-maas-endpoint-details.png[AI Asset Endpoint details,link=self,w
 
 . On the endpoint detail page, click *Try in Playground* to confirm the endpoint is live and responding. The Playground creates a temporary API key on your behalf and connects to the endpoint so you can test it quickly. (Try refreshing the page if the Playground is not showing up.)
 
-. Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B. This is a 20-billion parameter model running on GPU, much bigger and more powerful.
+. Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B. This is a 235-billion parameter model running on GPU, much bigger and more powerful.
 +
-image::inference-maas-try-in-playground.png[GenAI Playground opened from the gpt-oss-120b endpoint detail page,link=self,window=blank,width=700]
+image::inference-maas-try-in-playground.png[GenAI Playground opened from the qwen3-235b endpoint detail page,link=self,window=blank,width=700]
 
 == Exercise 5: Generate an API Key
 
@@ -39,7 +40,7 @@ To consume a MaaS endpoint from code or a tool, you need a scoped API key. Let's
 
 . Give the key a name, for example `my-key`. You can add a description if you wish.
 
-. Select a subscription available to you. The subscription defines the model you have access to and the rate limits for the key. Observe that you have 10,000 tokens per hour as the rate limit for `gpt-oss-120b`. 
+. Select a subscription available to you. The subscription defines the model you have access to and the rate limits for the key. Observe that you have 10,000 tokens per hour as the rate limit for `qwen3-235b`. 
 
 . Leave the Expiration as 30 days. Click *Create API Key*.
 
@@ -194,19 +195,23 @@ curl -sk $MAAS_URL/v1/chat/completions \
   -H "Authorization: Bearer $MAAS_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-oss-120b",
+    "model": "qwen3-235b",
     "messages": [{"role": "user", "content": "What is Models as a Service?"}],
     "max_tokens": 256
   }' | jq -r '.choices[0].message.content'
 ----
 +
-You should see a response from `gpt-oss-120b`. The API is OpenAI-compatible — any application that already talks to OpenAI can point at this endpoint instead, with no code changes beyond swapping the base URL and key.
+You should see a response from `qwen3-235b`. The API is OpenAI-compatible — any application that already talks to OpenAI can point at this endpoint instead, with no code changes beyond swapping the base URL and key.
 
 == Exercise 7: (Optional) Use OpenCode with MaaS as Your Coding Assistant
+
+Let's explore another use case apart from {assistant_name}: using MaaS as a coding assistant.
 
 Most AI coding assistants default to cloud-hosted models — sending your code to an external provider. In a regulated environment like financial services, that's often not acceptable. But because MaaS exposes an OpenAI-compatible API, you are not locked into any particular tool or model: any coding assistant that supports a custom endpoint works. You can swap the model behind it — a smaller, faster model for autocomplete, a larger one for complex reasoning — without changing your tooling.
 
 This exercise uses *OpenCode*, an open-source AI coding assistant built into the workbench, connected to the {company_name} MaaS endpoint — coding assistance powered by a self-hosted model, with no code leaving the cluster.
+
+By pointing OpenCode at MaaS, you ensure that your code and prompts stay within your data center — they are never sent to a third-party model provider. But a capable coding agent can do more than just generate code: it can access files, call APIs, and interact with endpoints. Keeping the model on-premises is one half of the story. In the xref:05-security/03-openshell.adoc[OpenShell Agent Sandboxing] section, you will see the other half: how to constrain _what the agent can do_ — blocking network access to external endpoints, preventing data uploads, and ensuring the agent cannot take actions it is not supposed to.
 
 . Navigate to *OpenShift AI Dashboard > Data Science Projects > wksp-{user}*. Click *Create workbench* and fill in the form:
 +
@@ -220,79 +225,85 @@ image::inference-workbench-create-codeserver.png[Create workbench in your projec
 +
 image::inference-workbench-create-codeserver-2.png[FedAura Capital Custom Code Server image selected with CPU Profile,link=self,window=blank,width=700]
 +
-. Scroll down and enter your API key, model name, and endpoint URL as environment variables. These will be available to any code you run in the workbench:
+. Scroll down and enter your API key, model name, and endpoint URL as environment variables. These will be available to you in the workbench, so you'd be using your own key:
 + *Environment variables* > *Secret* > *Key / value*
++
+Click *Add variable* three times to create three rows, then fill in each row with the key and value from the table below:
 +
 [subs=attributes+]
 ++++
 <style>
-  .opencode-env-wrap { position: relative; margin: 0.5rem 0; }
-  .opencode-env-block {
-    background: #1e1e1e;
-    border-radius: 6px;
-    padding: 0.75rem 3.5rem 0.75rem 1rem;
-    font-family: monospace;
-    font-size: 0.82rem;
-    color: #d4d4d4;
-    white-space: pre;
+  .oc-env-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.85rem; margin: 0.5rem 0; }
+  .oc-env-table th { background: #2d2d2d; color: #ccc; text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #444; font-weight: 600; }
+  .oc-env-table td { background: #1e1e1e; color: #d4d4d4; padding: 0.5rem 0.75rem; border: 1px solid #333; position: relative; }
+  .oc-env-table .oc-key { color: #9cdcfe; font-weight: 600; }
+  .oc-env-table .oc-val { color: #ce9178; }
+  .oc-env-table .oc-placeholder { color: #6b7280; font-style: italic; }
+  .oc-copy-btn {
+    background: #28a745; color: white; border: none; border-radius: 3px;
+    padding: 0.15rem 0.4rem; font-size: 0.75rem; cursor: pointer;
+    opacity: 0.4; transition: opacity 0.2s; margin-left: 0.5rem; vertical-align: middle;
   }
-  .opencode-env-key { color: #9cdcfe; }
-  .opencode-env-placeholder { color: #6b7280; font-style: italic; }
-  .opencode-env-btn {
-    position: absolute;
-    top: 0.4rem;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 0.3rem 0.55rem;
-    font-size: 0.8rem;
-    cursor: pointer;
-    opacity: 0.35;
-    transition: opacity 0.2s;
-  }
-  .opencode-env-btn:hover { opacity: 1; }
-  #opencode-copy-btn { right: 0.5rem; }
+  .oc-copy-btn:hover { opacity: 1; }
 </style>
-<div class="listingblock opencode-env-wrap">
-  <div class="opencode-env-block" id="opencode-env-block"><span class="opencode-env-key">OPENCODE_API_URL: </span><span id="opencode-url-display" class="opencode-env-placeholder">{maas_url}/v1</span>
-<span class="opencode-env-key">OPENCODE_API_KEY: </span><span id="opencode-key-display" class="opencode-env-placeholder">&lt;paste-your-api-key&gt;</span>
-<span class="opencode-env-key">OPENCODE_MODEL_NAME: </span>qwen3-235b</div>
-  <button class="opencode-env-btn" id="opencode-copy-btn" title="Copy" onclick="(function(){
-    var text = document.getElementById('opencode-env-block').innerText;
-    navigator.clipboard.writeText(text).then(function(){
-      var b = document.getElementById('opencode-copy-btn');
-      b.textContent = '✓'; setTimeout(function(){ b.textContent = '⎘'; }, 1500);
-    });
-  })()">⎘</button>
-</div>
+<table class="oc-env-table">
+  <tr><th>Key</th><th>Value</th></tr>
+  <tr>
+    <td>
+      <span class="oc-key">OPENCODE_API_URL</span>
+      <button class="oc-copy-btn" title="Copy key" onclick="navigator.clipboard.writeText('OPENCODE_API_URL').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+    <td>
+      <span class="oc-val" id="oc-url-val">{maas_url}/v1</span>
+      <button class="oc-copy-btn" title="Copy value" onclick="navigator.clipboard.writeText(document.getElementById('oc-url-val').textContent).then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span class="oc-key">OPENCODE_API_KEY</span>
+      <button class="oc-copy-btn" title="Copy key" onclick="navigator.clipboard.writeText('OPENCODE_API_KEY').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+    <td>
+      <span class="oc-placeholder" id="oc-key-val">&lt;paste your API key from above&gt;</span>
+      <button class="oc-copy-btn" id="oc-key-copy-btn" title="Copy value" onclick="navigator.clipboard.writeText(document.getElementById('oc-key-val').textContent).then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span class="oc-key">OPENCODE_MODEL_NAME</span>
+      <button class="oc-copy-btn" title="Copy key" onclick="navigator.clipboard.writeText('OPENCODE_MODEL_NAME').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+    <td>
+      <span class="oc-val">qwen3-235b</span>
+      <button class="oc-copy-btn" title="Copy value" onclick="navigator.clipboard.writeText('qwen3-235b').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+  </tr>
+</table>
 <script>
   (function() {
-    function syncOpencode() {
+    function syncOcKey() {
       var keyInput = document.getElementById('api-key-input');
-      var keyDisplay = document.getElementById('opencode-key-display');
-      var urlDisplay = document.getElementById('opencode-url-display');
-      // pre-fill URL from the maas-key-display sibling (already set from {maas_url} attribute)
+      var keyVal = document.getElementById('oc-key-val');
+      if (keyInput && keyVal) {
+        var k = keyInput.value.trim();
+        keyVal.textContent = k || '<paste your API key from above>';
+        keyVal.className = k ? 'oc-val' : 'oc-placeholder';
+      }
+      var urlVal = document.getElementById('oc-url-val');
       var maasEnvBlock = document.getElementById('maas-env-block');
-      if (urlDisplay && maasEnvBlock) {
+      if (urlVal && maasEnvBlock) {
         var lines = maasEnvBlock.innerText.split('\n');
         var urlLine = lines.find(function(l){ return l.indexOf('MAAS_URL=') !== -1; });
         if (urlLine) {
           var u = (urlLine.split('MAAS_URL=')[1] || '').trim();
-          urlDisplay.textContent = u ? u + '/v1' : '<paste-your-maas-url>';
-          urlDisplay.className = u ? 'opencode-env-key' : 'opencode-env-placeholder';
+          if (u) urlVal.textContent = u + '/v1';
         }
-      }
-      if (keyInput && keyDisplay) {
-        var k = keyInput.value.trim();
-        keyDisplay.textContent = k || '<paste-your-api-key>';
-        keyDisplay.className = k ? 'opencode-env-key' : 'opencode-env-placeholder';
       }
     }
     function attach() {
       var k = document.getElementById('api-key-input');
-      if (k) k.addEventListener('input', syncOpencode);
-      syncOpencode();
+      if (k) k.addEventListener('input', syncOcKey);
+      syncOcKey();
     }
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); }
     else { attach(); }
@@ -313,7 +324,7 @@ image::inference-workbench-codeserver-starting.png[Workbench fedaura-code-server
 +
 image::inference-workbench-terminal.png[Open up the terminal,link=self,window=blank,width=700]
 +
-. Run  *opencode* as the command, and send the prompt you like :)
+. Run  *opencode* as the command, ask it to create a Python function, or send the prompt you like :)
 +
 image::inference-workbench-terminal-opencode.png[OpenCode within a Workbench,link=self,window=blank,width=700]
 +
@@ -423,7 +434,7 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
   <div class="mgd-col backends">
     <div class="mgd-label">Backends</div>
     <div class="mgd-box self-hosted">
-      gpt-oss-120b<br>
+      qwen3-235b<br>
       <span style="font-size:0.65rem;color:#555">on-cluster · vLLM</span>
       <div><span class="mgd-tag green">data stays</span></div>
     </div>
@@ -439,7 +450,7 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
 
 == Exercise 9: Observe Your Usage
 
-. On OpenShift AI dashboard go to *Observe & monitor > Dashboard* and click on `gpt-oss-120b`. Select the *Usage* tab:
+. On OpenShift AI dashboard go to *Observe & monitor > Dashboard* and click on `qwen3-235b`. Select the *Usage* tab:
 +
 image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
 
@@ -454,7 +465,7 @@ Before we close this section, in the Playground, try asking something specific a
 What is Fed Aura Capital's minimum credit score requirement for a conventional loan?
 ----
 
-Observe the response. `gpt-oss-120b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
+Observe the response. `qwen3-235b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
 
 *Next steps:*
 

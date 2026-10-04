@@ -88,7 +88,7 @@ Here is what happened when you uploaded `mortgage-products.pdf` and asked your q
 
 == Exercise 3: The Global System Prompt
 
-The RAG response is factually correct. But compare it to what {assistant_name} said in the Overview when you clicked "Explore Products" — we asked you to remember that answer for exactly this moment. (If you need a reminder, xref:01-overview/03-explore-platform.adoc#_exercise_2_meet_lenora_and_the_agent_personas[go back and check it]. :)) The content is similar, but the tone, formatting, and persona are different. {assistant_name} in the live application is warm, concise, and speaks as a named mortgage assistant. The Playground response is informative but impersonal.
+The RAG response is factually correct. But compare it to what {assistant_name} said in the Overview when you clicked "Explore Products" — we asked you to remember that answer for exactly this moment. The content is similar, but the tone, formatting, and persona are different. {assistant_name} in the live application is warm, concise, and speaks as a named mortgage assistant. The Playground response is informative but impersonal.
 
 The difference is the **system prompt**. {assistant_name} in the {company_name} application uses a carefully crafted system prompt that defines her persona, tone, and behavioral boundaries. Your Playground has RAG enabled but no persona prompt.
 

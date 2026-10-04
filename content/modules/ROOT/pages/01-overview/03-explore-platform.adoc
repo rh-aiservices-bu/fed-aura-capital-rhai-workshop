@@ -26,7 +26,7 @@ TIP: Throughout this workshop, all key services are accessible as *tabs* in the 
 oc login --insecure-skip-tls-verify $(oc whoami --show-server) -u {user} -p {password}
 ----
 
-. Navigate to the *OCP Console* tab. Log in with the same credentials you just used: username `{user}`, password `{password}`:
+. Navigate to the *OCP Console* tab. If you haven't yet, log in with the same credentials you just used: username `{user}`, password `{password}`:
 +
 image::agentic-app-pre1.png[OpenShift SSO login page,link=self,window=blank,width=500]
 

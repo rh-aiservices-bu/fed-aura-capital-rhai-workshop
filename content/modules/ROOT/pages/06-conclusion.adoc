@@ -1,118 +1,70 @@
-= Conclusion
+= From Idea to Production
 :imagesdir: ../assets/images
 :navtitle: Conclusion
 :toc: macro
 :toclevels: 1
 
-Congratulations! You have worked through every layer of {company_name}'s production AI platform on Red Hat AI - from the model that generates the text to the sandbox that contains the agent.
+You joined {company_name} as a new engineer and watched the CTO's briefing. {assistant_name} had started as a chatbot connected to an external API: a promising way to make mortgage lending easier, but one that raised questions about data, accuracy, access, and accountability.
 
-== What you accomplished
+The workshop followed the team's response. Each phase supplied something the prototype needed to become a service the business could operate.
 
-You explored the four transformation pillars the CTO described in section 1.2, taking {company_name} from a prototype chatbot to a production-grade, observable, and secure AI system.
+== From a conversation to a business capability
 
-=== Pillar 1 - Inference: "From token consumer to token producer"
+.{assistant_name}'s journey: business problems drive capabilities; evidence supports release
+image::fed-aura-idea-to-production.svg[Lenora's journey showing the problem and outcome of each phase, a release review based on quality and security evidence, and an ongoing update, evaluate, review, release, and observe cycle,align=center,link=self,window=blank]
 
-* Explored the Model Catalog and read a model card's license, tags, and performance benchmarks (2.1)
-* Deployed Qwen3 0.6B on CPU with vLLM and tested it in the GenAI Playground (2.2)
-* Redeployed the same model with llm-d distributed inference across two replicas (2.3)
-* Consumed a shared GPU-hosted model through the MaaS gateway with a scoped API key and a rate-limited subscription tier, from both curl and the Playground, then reviewed per-key usage data (2.4)
+*First, take control of inference.* Every borrower question once depended on an external API. Self-hosted inference and MaaS gave the team control over where requests were served and how teams accessed the model.
 
-=== Pillar 2 - Data: "From generic to useful AI"
+*Then, give the assistant company knowledge.* A fluent answer could still quote the wrong policy. RAG supplied facts from private documents, while the versioned system prompt defined {assistant_name}'s behavior. Your repeated product question made the change visible: the answer became specific to {company_name}.
 
-* Shaped model behavior with system prompts in the GenAI Playground, and saved versions to the Prompt Registry (3.1)
-* Discovered where prompt-based context injection breaks down - context window limits, maintenance burden, staleness (3.1)
-* Enabled RAG, uploaded {company_name}'s product catalog, and verified answers were grounded in the document rather than training data (3.2)
-* Loaded the read-only global system prompt and combined it with RAG to reproduce {assistant_name}'s production behavior (3.2)
-* Learned how Docling converts charts, tables, and infographics into retrievable text, and how OGX and pgvector provide retrieval under the hood (3.2, 3.3)
+*Next, connect knowledge to action.* An underwriter needed an assessment of an actual application. Agents used MCP tools to retrieve its data and calculate risk inputs. Traces exposed the work behind the answer; evaluations gave the team a way to detect regressions when that work changed.
 
-=== Pillar 3 - Agentic: "From useful to productive AI"
+*Finally, strengthen the boundaries.* The CEO and a public visitor could ask the same question but were entitled to different information. Authorization and guardrails addressed access and interaction risks. The separate OpenShell exercise showed why a coding agent also needs limits on its runtime actions.
 
-* Watched {assistant_name} run a tool-backed risk assessment as the Loan Officer persona (4.1)
-* Traced a multi-step agent decision end-to-end in MLflow, from `input_shield` through `tool_auth` to each individual tool call (4.1)
-* Explored the MCP catalog and connected the Playground to the Risk MCP server (4.2)
-* Compared the same prompt with and without MCP tool access - the difference between an estimate and a calculation (4.2)
-* Ran a capability benchmark in EvalHub, and evaluated RAG quality and open-ended agent responses with RAGAS and llm-as-judge (4.3)
+These were the CTO's four phases of investment. Security, observability, and evaluation remain responsibilities throughout the lifecycle, including the next change.
 
-=== Pillar 4 - Safety: "From prototype to production-grade"
+== The whole platform, one more time
 
-* Observed persona-based access control changing what {assistant_name} reveals for the same question (5.1)
-* Tested NeMo Guardrails against prompt injection, fraudulent requests, and competitor mentions, and read the rail configuration that blocked them (5.2)
-* Reviewed Garak adversarial test results and interpreted the pass/fail evidence (5.2)
-* Connected to an OpenShell Agent Sandbox, attempted data exfiltration, then applied a deny-by-default policy that blocked it (5.3)
+At the beginning, this diagram was a map of unfamiliar components. Now you can connect each part to a question you asked, a tool you called, or a control you tested.
 
-[TIP]
-====
-Two sections were optional and may still be waiting for you: the *AutoRAG optimization pipeline* (3.3), which tests multiple RAG configurations and ranks them on a leaderboard, and *Predictive AI with AutoML* (4.4), which trains the scikit-learn model behind the Risk MCP's `uw_predict_loan_approval` tool and registers it in MLflow.
-====
+.The platform behind {assistant_name}: inference, knowledge, tools, observability, and security working together
+image::fed-aura-platform-architecture.svg[The Fed Aura Capital architecture showing people interacting with Lenora, persona-specific LangGraph agents, self-hosted models, MCP tools, RAG knowledge, MLflow observability, and security controls,align=center,link=self,window=blank]
 
-== {company_name}: before and after
+Imagine the Underwriter asking again:
 
-[cols="1,1,1",options="header"]
-|===
-| Dimension | Before | After
+[quote]
+____
+Run a risk assessment on application #196.
+____
 
-| Model hosting
-| External vendor, per-token billing
-| Self-hosted with vLLM on Red Hat AI, fixed infrastructure cost
+This time, you can explain what sits behind the chat window:
 
-| Data residency
-| Every request leaves the network
-| Inference stays in-cluster, full data sovereignty
+. *Identity and authorization establish access.* The authenticated persona determines which agent and business tools are available.
+. *The model and prompt guide the work.* The agent uses governed inference and its configured instructions to decide what to request next.
+. *Knowledge and tools supply evidence.* When policy context is needed, RAG retrieves relevant passages. Tools retrieve the application record and calculate the assessment inputs.
+. *Safety controls check the interaction.* Input and output shields apply their configured checks, while tool authorization constrains execution.
+. *Traces make the result inspectable.* MLflow records the steps so an engineer can investigate a wrong answer, a failed call, or unexpected latency.
 
-| Model access
-| Each team deploys its own copy
-| Single deployment shared through the MaaS gateway with subscription tiers and per-key usage metering
+OpenShell adds a runtime boundary for the coding agent you explored. Evaluation sits alongside these live interactions: it tests whether changes preserve the behavior the team expects before those changes are released.
 
-| Knowledge currency
-| Stale training data, hallucinated policy answers
-| RAG-grounded in current internal documents, updated by uploading a file
+The Underwriter sees an assessment to review. You can explain where its inputs came from, which tools ran, and which controls applied. That is the difference the platform makes.
 
-| Assistant behavior
-| Generic answers with disclaimers
-| Domain persona defined by a versioned global prompt, facts retrieved from company documents
+== Production keeps the story moving
 
-| Agent capabilities
-| Hedged estimates: "verify with your underwriting guidelines"
-| Tool-calculated results with a clear assessment against {company_name}'s own thresholds
+The next policy update starts the cycle again: update the knowledge source, evaluate answer quality, review access and safety checks, then release the change. Traces and usage data reveal what needs attention afterward.
 
-| Decision visibility
-| Black box - no record of what the agent did
-| Full MLflow traces: every tool call, LLM invocation, and decision path, with per-step latency
+The workshop demonstrated the building blocks and selected checks. A production release brings them together with validation for the organization's own workloads and policies, monitoring, and a clear owner for failures. The same discipline applies when a model, prompt, or tool changes.
 
-| Quality assurance
-| Manual spot-checking
-| Capability benchmarks, RAGAS scoring, and llm-as-judge evaluation, runnable as a pipeline
+== Your next chapter
 
-| Security posture
-| Standard containers, no sandboxing, CISO blocks deployment
-| Defense-in-depth: persona access control, guardrails at the inference boundary, adversarial test evidence, and sandboxed agents
+Choose a use case in your own organization and ask four questions:
 
-| Regulatory compliance
-| "We'll get back to you"
-| Structured, timestamped traces plus OCSF audit events, SIEM-ready
-|===
+* Who will use it, and what work should it help them complete?
+* Which private knowledge and live tools does it need?
+* What may each user and agent access or change?
+* Which evaluations and traces would show that it works?
 
-== Key takeaways
-
-1. *The platform is the product.* Individual AI capabilities are useful alone, but their value multiplies when integrated on one platform with shared observability and governance. A model endpoint is not an AI strategy.
-
-2. *It is not just the LLM.* Every answer {assistant_name} gives depends on retrieval, tool execution, identity, and policy enforcement working together. The model is one component in a pipeline.
-
-3. *Contrast drives understanding.* You asked the same question with no prompt, with a system prompt, with RAG, and with RAG plus the global prompt - and again with and without MCP tools. Seeing what breaks without each capability is what lets you justify investing in it.
-
-4. *Managed services need not mean the public cloud.* MaaS gave you API keys, stable endpoints, tiers, and usage dashboards while every token stayed inside the cluster - the trade-off regulated industries actually need.
-
-5. *Safety is not optional for production.* No single control is sufficient. Persona access controls who can ask, guardrails control what can be asked and answered, and sandboxes control what an agent can do once it is running.
-
-6. *Observability enables trust.* When a regulator asks "why did the AI recommend this?", a trace answers with timestamps, inputs, outputs, and every decision in between.
-
-== Next steps
-
-* *Start with inference*: deploy a model from the catalog, then publish it through MaaS so other teams consume it instead of redeploying it
-* *Ground in your data*: upload your own policy documents via the Knowledge tab and compare answers before and after
-* *Trace everything*: enable MLflow tracing early, so you have a trace corpus before you need it for an incident
-* *Evaluate before shipping*: wire an evaluation run into your prompt-change workflow, so a quality drop blocks the change the way a failing test blocks a merge
-* *Secure your agents*: start deny-by-default and open up only what the agent proves it needs
+Return to the CTO's original questions: where does the data go, whose knowledge informs the answer, what can the agent do, and how can the team investigate it? You now know where to look for each answer. That is what it means to support {assistant_name} beyond the prototype.
 
 == Resources
 
@@ -126,6 +78,6 @@ Two sections were optional and may still be waiting for you: the *AutoRAG optimi
 
 == Feedback
 
-We value your feedback! Please share your experience with this workshop to help us improve future iterations.
+Which part of {assistant_name}'s journey helped you connect the pieces? Which part would you like to explore further? Share your experience with the workshop team to help shape the next iteration.
 
 Thank you for participating in the {company_name} AI Workshop.

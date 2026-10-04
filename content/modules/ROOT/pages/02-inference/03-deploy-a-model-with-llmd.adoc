@@ -1,7 +1,8 @@
 = Deploy a Model with llm-d
 :imagesdir: ../assets/images
 :navtitle: Deploy a Model with llm-d
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
@@ -15,21 +16,21 @@ NOTE: In this exercise you are deploying to CPU again. The llm-d architecture an
 
 === Deploy the Model
 
-. In the *OpenShift AI Dashboard*, go to *AI Hub > Models* and select the *Other Models* tab. Again, find *Qwen3 0.6B* and click *Deploy*.
+. In the *OpenShift AI Dashboard*, go to *AI Hub > Models > Catalog* and select the *Other Models* tab. Again, find *Qwen3 0.6B* and click *Deploy*.
 
-. Select your project `wksp-{user}` and click *Next*.
+. Select your project `Workspace {user}` and click *Next*.
 
 . You will be prompted for the model location. Leave the defaults as-is and click *Next*.
 
 . On the deployment configuration screen, keep the name as-is. Under deployment options, select *LLM inference service with llm-d*.
 
-. For *Topology type* keeps `Single node`, and for *Topology configuration* select `Single node on CPU`.
+. For *Topology type* keeps `Single node`, and for *Topology configuration*, from the drop down menu, select `Single node on CPU`.
 
 . Then expand `> Customize resource requests and limits` and set the resource values as below:
 +
 image::inference-cpu-resource-limits.png[Resource requests and limits configuration for llm-d deployment,link=self,window=blank,width=700]
 
-. For *Routing* configuration select `CPU LLM-d scheduling-policy` routing config. It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
+. For *Routing* configuration, from the drop down menu, select `CPU LLM-d scheduling-policy` routing config. It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
 
 . For *Replica count* set the number of replicas to *2*. Click *Next*:
 +
@@ -41,6 +42,8 @@ NOTE: Two replicas means llm-d will distribute incoming requests across two vLLM
 +
 image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
 
+. Make sure you *unchecked* the *Token authentication* option.
+
 . Again, lets add `custom runtime arguments` and pass `--max-model-len=2048` to limit the maximum length of the model's context window to 2048 tokens. 
 
 . Then add `custom runtime environment variables` as `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB.
@@ -49,7 +52,18 @@ image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments a
 +
 Click **Next** and then *Deploy*.
 +
-. Wait for the deployment to show a green status indicator. This takes a minute or two while the model weights are pulled and loaded:
+. While waiting for the model to deploy, go to the *Terminal* tab and run the following command to list the pods created by the llm-d deployment:
++
+[source,bash]
+----
+oc get pods -n wksp-{user} -l app.kubernetes.io/part-of=llminferenceservice
+----
++
+You should see *2 replicas* of the same model, alongside a *router pod*. The router is responsible for deciding which replica is most suitable to handle each incoming request, based on factors like current load and cache state.
++
+image::inference-llmd-pods-terminal.png[Terminal showing llm-d pods with 2 replicas and a router,link=self,window=blank,width=700]
++
+. Let's go back to RHOAI Console and wait for the deployment to show a green status indicator. This takes a minute or two while the model weights are pulled and loaded:
 +
 image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready status with 2 replicas,link=self,window=blank,width=700]
 
@@ -57,9 +71,7 @@ image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready 
 
 Let's confirm the model is responding before we move on.
 
-. Go to *Gen AI Studio > AI asset endpoints*. Click *Try in playground* for the Qwen 0.6 model (ignore `gpt-oss-120b` for now). 
-+
-Remember to set *Max tokens* to `1024` and click *Configure*.
+. Go to *Gen AI Studio > AI asset endpoints*. Click *Try in playground* for the Qwen 0.6 model (ignore `qwen3-235b` for now). 
 +
 image::inference-try-in-playground.png[Try in Playground,link=self,window=blank,width=700]
 
@@ -253,14 +265,6 @@ The diagram below contrasts what happens when multiple requests arrive simultane
 
 Both replicas run the same Qwen3 0.6B vLLM engine — llm-d only changes how traffic is distributed across them.
 
-=== Clean up
-
-Delete the llm-d deployment again to free up resources before moving to the MaaS exercise.
-
-. In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
-. Click the three dots next to the Qwen3 0.6B deployment you just created and click *Delete*.
-. Confirm the deletion.
-
 === What's Next?
 
 You've now deployed the same model two ways: single-node vLLM and distributed llm-d with two replicas. In both cases you owned the deployment end-to-end — you decided the model, the resources, the replicas.
@@ -270,3 +274,11 @@ Now imagine every team at {company_name} doing the same thing. The borrower team
 This is the problem Models as a Service solves. Instead of every team running their own stack, a shared gateway exposes models as API endpoints — with authentication so only authorised applications can call them, rate limiting so one team can't starve another, and usage metering so you can see exactly who is using what. Teams get the same model access without the operational overhead, and the platform gets visibility across the whole organisation.
 
 That's what Exercise 4 covers.
+
+=== Clean up
+
+Again, delete the llm-d deployment again to free up resources before moving to the MaaS exercise.
+
+. In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
+. Click the three dots next to the Qwen3 0.6B deployment you just created and click *Delete*.
+. Confirm the deletion.

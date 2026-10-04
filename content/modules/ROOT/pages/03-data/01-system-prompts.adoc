@@ -39,13 +39,13 @@ You will ask this exact question several times throughout this section, each tim
 
 == Your Playground is ready
 
-In section 2.4, you created a GenAI Playground connected to the `gpt-oss-120b` MaaS endpoint. You will use that same Playground for the rest of this section.
+In section 2.4, you created a GenAI Playground connected to the `qwen3-235b` MaaS endpoint. You will use that same Playground for the rest of this section.
 
-TIP: If you skipped section 2.4, create a Playground now with the `gpt-oss-120b` endpoint before continuing.
+TIP: If you skipped section 2.4, create a Playground now with the `qwen3-235b` endpoint before continuing.
 
 . Open the GenAI Playground you created in section 2.4:
 +
-image::module5-genaiplaygroundclean.png[GenAI Playground connected to the gpt-oss-120b endpoint,link=self,window=blank,width=700]
+image::module5-genaiplaygroundclean.png[GenAI Playground connected to the qwen3-235b endpoint,link=self,window=blank,width=700]
 +
 Clear any previous conversation history so you start with a clean slate. Click **New Chat** in the upper right corner of the GenAI Playground.
 

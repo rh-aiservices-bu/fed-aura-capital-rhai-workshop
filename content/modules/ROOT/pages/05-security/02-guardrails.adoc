@@ -1,7 +1,8 @@
 = Guardrails & Adversarial Testing
 :navtitle: Guardrails & Adversarial Testing
 :imagesdir: ../assets/images
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
@@ -20,6 +21,15 @@ The individual rules are called *rails*, and they work in two directions. *Input
 In this section you take the security team's side of the table and try to break her: a prompt injection, harmful content, a business-policy violation. Then you read the traces to prove what the rails actually did, and review a Garak report - an automated attack suite that runs hundreds of these attempts so nobody has to do it by hand.
 
 Estimated time: *10 minutes*
+
+*In this section:*
+
+* <<Exercise 1: Guardrails in the Playground>>
+* <<Exercise 2: Prompt Injection>>
+* <<Exercise 3: Harmful Content>>
+* <<Exercise 4: Competitor Mentions and Guardrail Configuration>>
+* <<Exercise 5: Check the Traces>>
+* <<Exercise 6: Garak Adversarial Test Results>>
 
 == Exercise 1: Guardrails in the Playground
 

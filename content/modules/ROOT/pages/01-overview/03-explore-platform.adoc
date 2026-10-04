@@ -26,7 +26,7 @@ TIP: Throughout this workshop, all key services are accessible as *tabs* in the 
 oc login --insecure-skip-tls-verify $(oc whoami --show-server) -u {user} -p {password}
 ----
 
-. Navigate to the *OCP Console* tab. Log in with the same credentials you just used: username `{user}`, password `{password}`:
+. Navigate to the *OCP Console* tab. If you haven't yet, log in with the same credentials you just used: username `{user}`, password `{password}`:
 +
 image::agentic-app-pre1.png[OpenShift SSO login page,link=self,window=blank,width=500]
 
@@ -39,7 +39,7 @@ If you do not see pods, make sure you select your project:
 image::select-project.png[]
 image::agentic-app0.png[OpenShift Console Pods view showing mortgage-ai components running,link=self,window=blank,width=700]
 
-. Check the API service health endpoint:
+. Go back to terminal and check the API service health endpoint:
 +
 [source,console,role=execute,subs=attributes+]
 ----
@@ -120,7 +120,7 @@ NOTE: Because the application uses generative AI, responses are non-deterministi
 === Try the Borrower experience (Sarah Mitchell)
 
 [start=4]
-. From the application landing page, click **Sign In**:
+. Close the chat bot and from the application landing page, click **Sign In**:
 +
 image::sign-in.png[]
 

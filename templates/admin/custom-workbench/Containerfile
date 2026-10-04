@@ -61,7 +61,8 @@ RUN git clone --depth 1 --branch v3.14.0 https://github.com/mlflow/mlflow.git /t
 ####################################
 
 COPY openshell-init.sh /etc/profile.d/openshell-init.sh
-RUN chmod 0644 /etc/profile.d/openshell-init.sh
+COPY opencode-config.sh /etc/profile.d/opencode-config.sh
+RUN chmod 0644 /etc/profile.d/openshell-init.sh /etc/profile.d/opencode-config.sh
 
 ##############################
 # Pre-configure VS Code & bash #

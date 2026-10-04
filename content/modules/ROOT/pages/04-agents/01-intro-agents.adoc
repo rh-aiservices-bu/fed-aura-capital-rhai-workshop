@@ -15,27 +15,27 @@ Estimated time: *25 minutes*
 
 By the end of this section, you will be able to:
 
-* Observe {assistant_name} making tool calls as the Loan Officer persona
+* Observe {assistant_name} making tool calls as the Underwriter persona
 * Trace a multi-step agent decision end-to-end in MLflow
 * Understand MCP and explore the MCP catalog
 * Use the Risk MCP server to get precise mortgage risk calculations
 * Compare Playground responses with and without MCP tools
 * Evaluate agent quality with EvalHub, RAGAS, and MLflow llm-as-judge
 
-== Exercise 1: Experience {company_name} as a Loan Officer
+== Exercise 1: Experience {company_name} as a Underwriter
 
-You have already seen {assistant_name} as a Borrower and a CEO. Now step into the Loan Officer persona — the role closest to where the AI's precision matters most. Loan officers assess risk, review applications, and make recommendations. When they ask {assistant_name} a question, they need exact numbers, not estimates.
+You have already seen {assistant_name} as a Borrower and a CEO. Now step into the Underwriter persona — the role closest to where the AI's precision matters most. Loan officers assess risk, review applications, and make recommendations. When they ask {assistant_name} a question, they need exact numbers, not estimates.
 
-. Navigate to the *{company_name} App* tab. Click *Sign In* and select the *Loan Officer* persona:
+. Navigate to the *{company_name} App* tab. Click *Sign In* and select the *Underwriter* persona:
 +
-// TODO: screenshot of Loan Officer persona login (agents-loan-officer-login.png)
-image::agents-loan-officer-login.png[Sign in dialog with Loan Officer persona selected,link=self,window=blank,width=700]
+// TODO: screenshot of Underwriter persona login (agents-underwriter-login.png)
+image::agents-underwriter-login.png[Sign in dialog with Underwriter persona selected,link=self,window=blank,width=700]
 
 . In the chat panel, ask:
 +
 [source,text]
 ----
-Run a risk assessment on application #3730
+Run a risk assessment on application #196
 ----
 
 . Observe the response. {assistant_name} returns a structured risk assessment with precise numbers — DTI ratio, LTV, credit score, approval recommendation, basically things a loan officer needs to know:
@@ -62,17 +62,15 @@ The response looked right. But what tools ran in order to get that response? Wha
 
 . Navigate to *OpenShift AI Dashboard > Develop & Train > Experiments*:
 +
-// TODO: screenshot of Experiments navigation (agents-mlflow-experiments-nav.png)
-image::agents-mlflow-experiments-nav.png[OpenShift AI Dashboard showing the Develop and Train Experiments menu,link=self,window=blank,width=700]
+image::agents-mlflow-experiments-nav.png[OpenShift AI Dashboard showing MLflow experiments,link=self,window=blank,width=700]
 
-. Find the experiment tagged *GenAI* for the mortgage-ai project and click on *Traces*. You should see a list of recent agent interactions, including the risk assessment you just triggered.
+. Find the experiment called *mortgage-ai* for the mortgage-ai project and click on *Traces*. You should see a list of recent agent interactions, including the risk assessment you just triggered.
++
+image::agents-mlflow-experiments-traces.png[[MLflow trace list showing recent agent interactions,link=self,window=blank,width=700]
 
 . Locate the most recent trace for your request and click it:
 +
-// TODO: screenshot of trace list with the risk assessment trace highlighted (agents-trace-list.png)
-image::agents-trace-list.png[MLflow trace list showing recent agent interactions,link=self,window=blank,width=700]
-
-. Walk through the trace tree from top to bottom. You will see the full decision path:
+. Switch to *Details & Timeline* tab. Walk through the trace tree from top to bottom. You will see the full decision path:
 +
 ----
 input_shield
@@ -87,12 +85,10 @@ input_shield
                           └── generate_risk_recommendation
 ----
 +
-// TODO: screenshot of full trace tree (agents-trace-tree.png)
 image::agents-trace-tree.png[MLflow trace showing the full agent decision path from input_shield to tool calls,link=self,window=blank,width=700]
 
-. Click on the `calculate_dti` step. Inspect the inputs — the gross monthly income and total monthly debts from the application — and the output: `dti_value=29.6`. Every argument passed to the tool and every value it returned is recorded:
+. Scroll down and click on the `calculate_dti` step. Inspect the inputs — the gross monthly income and total monthly debts from the application — and the output: `dti_value=29.6`. Every argument passed to the tool and every value it returned is recorded:
 +
-// TODO: screenshot of calculate_dti step detail (agents-trace-calculate-dti.png)
 image::agents-trace-calculate-dti.png[calculate_dti tool step showing inputs and output dti_value in the trace,link=self,window=blank,width=700]
 
 . Look at the total latency for the trace. Each step is timestamped — you can see exactly where time was spent: the LLM call, the tool auth check, each individual tool execution.

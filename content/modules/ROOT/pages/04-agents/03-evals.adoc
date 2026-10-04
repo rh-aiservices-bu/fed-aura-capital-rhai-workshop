@@ -1,7 +1,8 @@
 = Exercise 6: Continuous Evaluation
 :navtitle: Evaluations and Quality
 :imagesdir: ../assets/images
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
@@ -22,17 +23,100 @@ By the end of this section, you will be able to:
 
 EvalHub is the centralized evaluation interface for the platform. It lets you run standardized benchmarks against any model endpoint and compare results across versions.
 
-. Navigate to *OpenShift AI Dashboard > Develop & train > Evaluations*. You will land on the EvalHub interface showing existing evaluation runs for the mortgage-ai project:
+. Navigate to *OpenShift AI Dashboard > Develop & train > Evaluations*. And click *Start evaluation run*
 +
 // TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
-image::evals-evalhub-main.png[EvalHub interface showing existing evaluation runs for the mortgage-ai project,link=self,window=blank,width=700]
-Select the `gpt-oss-120b` model endpoint as the target:
+image::evals-evalhub-main.png[EvalHub interface to start a new evaluation run,link=self,window=blank,width=700]
 
-. For the dataset, select *Basic Science QnA*  by clicking *Start benchmark*.
-
-. Wait for the run to complete, then review the results — overall accuracy score and the per-question breakdown:
+. Here you will see a list of available datasets for different categories of evaluation.For the dataset, select *Basic Science QnA*  by clicking *Select benchmark*.
 +
-// TODO: screenshot of evaluation results (evals-evalhub-results.png)
+image::evals-evalhub-science.png[Evaluate the model against basic science questions,link=self,window=blank,width=700]
++
+. Fill in the evaluation run form:
++
+--
+* *Run name*: `Basic Science QnA`
+* *MLflow Experiment*: Create new, call it `EvalHub`
+* *Source*: `Model` — we are evaluating how capable the model is on the given topic, not a full application
+* *Model*: Select *Other (External endpoint)*
+** *Model name*: `qwen3-235b`
+** *Endpoint URL*: `{maas_url}/v1`
+--
++
+. The model is behind an API key, so we need to create a Kubernetes Secret that EvalHub can reference. Switch to the *Terminal* tab and run:
++
+[subs=attributes+]
+++++
+<style>
+  .evalhub-secret-wrap { position: relative; margin: 0.5rem 0; }
+  .evalhub-secret-block {
+    background: #1e1e1e; border-radius: 6px;
+    padding: 0.75rem 3.5rem 0.75rem 1rem;
+    font-family: monospace; font-size: 0.82rem; color: #d4d4d4; white-space: pre;
+  }
+  .evalhub-copy-btn {
+    position: absolute; top: 0.4rem; right: 0.5rem;
+    background: #28a745; color: white; border: none; border-radius: 4px;
+    padding: 0.3rem 0.55rem; font-size: 0.8rem; cursor: pointer;
+    opacity: 0.4; transition: opacity 0.2s;
+  }
+  .evalhub-copy-btn:hover { opacity: 1; }
+  .evalhub-placeholder { color: #6b7280; font-style: italic; }
+</style>
+<div class="listingblock evalhub-secret-wrap">
+  <div class="evalhub-secret-block" id="evalhub-secret-block">oc apply -n wksp-{user} -f - &lt;&lt;EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: evalhub-secret
+  namespace: wksp-{user}
+type: Opaque
+stringData:
+  api-key: <span class="evalhub-placeholder" id="evalhub-key-val">&lt;paste-your-api-key&gt;</span>
+EOF</div>
+  <button class="evalhub-copy-btn" title="Copy" onclick="(function(){
+    var text = document.getElementById('evalhub-secret-block').innerText;
+    navigator.clipboard.writeText(text).then(function(){
+      var b = document.getElementById('evalhub-copy-btn');
+      b.textContent = '✓'; setTimeout(function(){ b.textContent = '⎘'; }, 1200);
+    });
+  })()" id="evalhub-copy-btn">⎘</button>
+</div>
+<script>
+  (function() {
+    function syncEvalhubKey() {
+      var keyInput = document.getElementById('api-key-input');
+      var keyVal = document.getElementById('evalhub-key-val');
+      if (keyInput && keyVal) {
+        var k = keyInput.value.trim();
+        keyVal.textContent = k || '<paste-your-api-key>';
+        keyVal.className = k ? '' : 'evalhub-placeholder';
+      }
+    }
+    function attach() {
+      var k = document.getElementById('api-key-input');
+      if (k) k.addEventListener('input', syncEvalhubKey);
+      syncEvalhubKey();
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); }
+    else { attach(); }
+  })();
+</script>
+++++
++
+TIP: If you no longer have your API key, you can always go back to the *API Keys* tab and create a new one.
++
+. Switch back to *EvalHub* and complete the remaining fields:
++
+--
+* *API Key Secret*: `evalhub-secret`
+* *Benchmark parameters*: `{"tokenizer": "Qwen/Qwen3-235B-A22B"}`
+--
++
+image::evals-evalhub-start.png
+image::evals-evalhub-start-2.png[Start evaluation,link=self,window=blank,width=700]
+. Click *Start evaluation run*. Wait for the run to complete, then review the results — overall accuracy score and the per-question breakdown:
++
 image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy score and per-question breakdown,link=self,window=blank,width=700]
 
 NOTE: Basic Science QnA measures general model capability, not mortgage-specific quality. They are useful baselines — a sudden drop in the basic science accuracy after a model update is a signal that something changed in the model's core capabilities. Domain-specific evaluations are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
@@ -47,10 +131,8 @@ RAGAS is a framework that evaluates three things:
 
 . Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*.
 
-<<<<<<< Updated upstream
-. Open the notebook `evaluate_ragas.ipynb`. It is already available in your workbench and pre-configured to connect to the RAG pipeline you set up in section 3.2:
-=======
 . Let's clone this repository to get the evaluation notebooks. In the terminal, run:
++
 [source,bash]
 ----
 git clone https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop.git
@@ -59,10 +141,9 @@ git clone https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop.git
 TIP: Or you can ask OpenCode to clone the repo for you 🤭
 +
 . Go to folder `fed-aura-capital-rhai-workshop/notebooks` and open the notebook `evaluate_ragas.ipynb`:
->>>>>>> Stashed changes
 +
 // TODO: screenshot of evaluate_ragas.ipynb open in Workbench (evals-ragas-notebook.png)
-image::evals-ragas-notebook.png[Jupyter notebook evaluate_ragas.ipynb open in the Workbench,link=self,window=blank,width=700]
+image::evals-ragas-notebook.png[The notebook evaluate_ragas.ipynb open in the Workbench,link=self,window=blank,width=700]
 
 . Run all cells. The notebook:
 .. Sends a test set of mortgage questions through the RAG pipeline
@@ -151,7 +232,7 @@ Reference: https://rhpds.github.io/agentops-in-prod-showroom/modules/08-module-0
 
 === What You Accomplished
 
-* Ran a model capability evaluation in EvalHub against `gpt-oss-120b` using ArcEasy or Science QnA
+* Ran a model capability evaluation in EvalHub against `qwen3-235b` using ArcEasy or Science QnA
 * Evaluated RAG pipeline quality with RAGAS — measuring faithfulness, answer relevancy, and context precision across a test set of mortgage questions
 * Used an LLM as judge to evaluate {assistant_name}'s open-ended agent responses, with results logged to MLflow
 * (Optional) Imported and ran a four-stage automated evaluation pipeline and reviewed results in MLflow

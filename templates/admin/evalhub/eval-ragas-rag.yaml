@@ -13,6 +13,6 @@ benchmarks:
       max_workers: "2"
     test_data_ref:
       s3:
-        bucket: "eval-data"
+        bucket: "ragas-eval-data"
         key: "ragas"
         secret_ref: "${S3_CREDENTIALS_SECRET}"

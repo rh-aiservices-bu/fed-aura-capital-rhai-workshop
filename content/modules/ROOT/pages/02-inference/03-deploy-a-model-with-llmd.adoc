@@ -71,7 +71,7 @@ image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready 
 
 Let's confirm the model is responding before we move on.
 
-. Go to *Gen AI Studio > AI asset endpoints*. Click *Try in playground* for the Qwen 0.6 model (ignore `qwen3-235b` for now). 
+. Go to *Gen AI Studio > AI asset endpoints*. Click *Try in playground* for the Qwen 0.6 model (ignore `qwen3-235b-a22b` for now). 
 +
 image::inference-try-in-playground.png[Try in Playground,link=self,window=blank,width=700]
 

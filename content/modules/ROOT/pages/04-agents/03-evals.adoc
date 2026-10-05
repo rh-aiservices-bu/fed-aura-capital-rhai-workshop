@@ -41,7 +41,7 @@ image::evals-ifeval-select.png[Search for ifeval and select the IFEval benchmark
 * *MLflow Experiment*: Create new, call it `EvalHub`
 * *Source*: `Model` — we are evaluating how capable the model is on the given topic, not a full application
 * *Model*: Select *Other (External endpoint)*
-** *Model name*: `qwen3-235b`
+** *Model name*: `qwen3-235b-a22b`
 ** *Endpoint URL*: `https://maas.{openshift_cluster_ingress_domain}/v1`
 --
 +
@@ -170,7 +170,7 @@ image::evals-ragas-notebook.png[The notebook evaluate_ragas.ipynb open in the Wo
 ----
 EVALHUB_BASE_URL = "https://evalhub-redhat-ods-applications.{openshift_cluster_ingress_domain}"
 MODEL_URL = "https://maas.{openshift_cluster_ingress_domain}"
-MODEL_NAME = "qwen3-235b"
+MODEL_NAME = "qwen3-235b-a22b"
 
 USERNAME = "{user}"
 PASSWORD = "{password}"
@@ -216,7 +216,7 @@ image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in th
 <div class="listingblock" style="position:relative;">
   <pre class="highlight" id="llm-config-block" style="background:#1e1e1e;color:#d4d4d4;padding:0.75rem 3.5rem 0.75rem 1rem;border-radius:6px;font-size:0.85rem;">LLM_BASE_URL = "https://maas.{openshift_cluster_ingress_domain}/v1"
 LLM_API_KEY = "<span id="llm-cfg-key" style="color:#6b7280;font-style:italic">&lt;paste-your-api-key&gt;</span>"
-LLM_MODEL = "qwen3-235b"</pre>
+LLM_MODEL = "qwen3-235b-a22b"</pre>
   <button style="position:absolute;top:0.4rem;right:0.5rem;background:#28a745;color:white;border:none;border-radius:4px;padding:0.3rem 0.55rem;font-size:0.8rem;cursor:pointer;opacity:0.4;transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" onclick="(function(){
     var text = document.getElementById('llm-config-block').innerText;
     navigator.clipboard.writeText(text).then(function(){
@@ -355,7 +355,7 @@ TIP: Notice the *Create schedule* option when creating a run. In production, thi
 
 === What You Accomplished
 
-* Ran an IFEval benchmark in EvalHub against `qwen3-235b` to measure instruction-following capability
+* Ran an IFEval benchmark in EvalHub against `qwen3-235b-a22b` to measure instruction-following capability
 * Evaluated RAG pipeline quality with RAGAS — measuring faithfulness, answer relevancy, and context precision across a test set of mortgage questions
 * Used an LLM as judge to evaluate {assistant_name}'s open-ended agent responses — with prompt registry, evaluation datasets, and results logged to MLflow
 * (Optional) Imported and ran a four-stage automated evaluation pipeline and reviewed traces and scorer results in MLflow

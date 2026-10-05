@@ -43,7 +43,7 @@ When you made an API call in the previous exercise, the gateway evaluated your r
 . Your OIDC token arrived with your user identity and group membership.
 . The gateway looked up which `MaaSSubscriptions` include your user or groups.
 . It evaluated the subscription priority to determine your effective quota.
-. It checked `MaaSAuthPolicy` to confirm you are authorized for the `/v1/chat/completions` endpoint on `qwen3-235b`.
+. It checked `MaaSAuthPolicy` to confirm you are authorized for the `/v1/chat/completions` endpoint on `qwen3-235b-a22b`.
 . Your request was routed to the model. Usage was recorded against your key.
 
 This all happened in milliseconds, invisibly. The reason it works reliably at scale is that the platform team defined it once as Kubernetes resources — version-controlled, auditable, and repeatable.

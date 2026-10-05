@@ -459,7 +459,7 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
 +
 image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
 
-. You should see the requests from your curl call and Playground session — token counts, request latency, and any rate-limit events. This is the data {company_name}'s platform team uses to track adoption and manage capacity across teams.
+. You should see the token consumption from your curl call and Playground session. This is the data {company_name}'s platform team can also use to track adoption and manage capacity across teams.
 
 === A question for {assistant_name}
 

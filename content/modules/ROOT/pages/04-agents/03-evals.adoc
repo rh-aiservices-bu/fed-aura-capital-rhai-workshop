@@ -109,19 +109,35 @@ EOF</div>
 +
 TIP: If you no longer have your API key, you can always go back to the *API Keys* tab and create a new one.
 +
+TIP: If you get an error, please log in to the OpenShift cluster again with the following command and then re-run the secret creation command:
+[source,console,role=execute,subs=attributes+]
+----
+oc login --insecure-skip-tls-verify $(oc whoami --show-server) -u {user} -p {password}
+----
+
 . Switch back to *EvalHub* and complete the remaining fields:
 +
 --
 * *API Key Secret*: `evalhub-secret`
 * *Benchmark parameters*: `{"tokenizer": "Qwen/Qwen3-235B-A22B","backend": "chat", "num_examples": 50}`
 --
-+
+
 . Click *Start evaluation run*. Wait for the run to complete. It may take a few minutes to finish.
-+
-. When it is completed, you can click the nme *IFEval* to see the full evaluation report.
+
+. When it is completed, you can click the name *IFEval* to see the full evaluation report.
 +
 image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy score and per-question breakdown,link=self,window=blank,width=700]
-
++
+Here is what the results mean:
++
+--
+* **Evaluation score (96%)** — the overall pass/fail score. The benchmark threshold is set to 0.6 (60%), so anything above that is a *Pass*. This model scored well above the bar.
+* **prompt_level_strict_acc (0.94)** — the fraction of prompts where the model followed _every_ instruction exactly. Strict means no partial credit — if a prompt asked for a numbered list in uppercase and the model did one but not the other, it fails that prompt.
+* **prompt_level_loose_acc (0.92)** — same as above but with more lenient matching. Minor formatting deviations are tolerated.
+* **inst_level_strict_acc (0.96)** — accuracy at the individual _instruction_ level rather than the whole prompt. A prompt may contain multiple instructions (e.g., "write in French" + "use bullet points"); this metric scores each one independently.
+* **stderr values** — the standard error across the test set, giving you a sense of how stable the score is.
+--
++
 NOTE: IFEval measures instruction-following capability, not mortgage-specific quality. It is a useful baseline — if a model can't follow explicit formatting constraints, it will also struggle with tool call schemas and system prompt rules in production. A sudden drop in IFEval scores after a model update is a signal that something changed in the model's core compliance behavior. Domain-specific evaluations are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
 
 
@@ -133,27 +149,48 @@ RAGAS is a framework that evaluates three things:
 * **Answer relevancy** — does the answer actually address the question asked?
 * **Context precision** — did the retrieval step surface the right document chunks, or did it retrieve irrelevant content?
 
-. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*.
+. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*. If you haven't created a workbench yet, follow the steps in xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Exercise 7] to set one up.
 
-. Let's clone this repository to get the evaluation notebooks. In the terminal, run:
+. Let's clone this repository to get the evaluation notebooks. Open up a terminal by clicking the *hamburger menu* (☰) at the top-left corner, then selecting *Terminal > New Terminal*. In the terminal, run:
 +
 [source,bash]
 ----
 git clone https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop.git
 ----
 +
-TIP: Or you can ask OpenCode to clone the repo for you 🤭
+(or you can ask OpenCode that you set up in the Module 2.4 to clone the repo for you 🤭)
 +
-. Go to folder `fed-aura-capital-rhai-workshop/notebooks` and open the notebook `evaluate_ragas.ipynb`:
+. Go to folder `fed-aura-capital-rhai-workshop/notebooks` and open the notebook `04-evaluate_ragas.ipynb`:
 +
-// TODO: screenshot of evaluate_ragas.ipynb open in Workbench (evals-ragas-notebook.png)
 image::evals-ragas-notebook.png[The notebook evaluate_ragas.ipynb open in the Workbench,link=self,window=blank,width=700]
 
-. Run all cells. The notebook:
+. The notebook needs a few configuration values to connect to EvalHub and the judge model. Find the first code cell (right below *Configuration*) and paste the following values:
++
+[source,python,subs=attributes+]
+----
+EVALHUB_BASE_URL = "https://evalhub-redhat-ods-applications.{openshift_cluster_ingress_domain}"
+MODEL_URL = "https://maas.{openshift_cluster_ingress_domain}"
+MODEL_NAME = "qwen3-235b"
+
+USERNAME = "{user}"
+PASSWORD = "{password}"
+----
++
+TIP: The `evalhub-secret` is the same Kubernetes Secret you created in Exercise 6 with your API key. If you skipped that step, go back and create it first.
++
+. Run the cells. The notebook:
 .. Sends a test set of mortgage questions through the RAG pipeline
 .. Collects the retrieved context and the model's answers
 .. Passes everything to RAGAS for scoring
-
++
+When you run the first code cell, it will ask you to choose a kernel. Select the first option. That means it will run the code within this workbench locally.
++
+image::evals-select-kernel.png[Select kernel,link=self,window=blank,width=700]
++
+Then it will ask you to choose which Python environment to use. Go with the `Virtual Env` one at the end of the list.
++
+image::evals-select-python-env.png[Select Python environment,link=self,window=blank,width=700]
++
 . Review the output metrics. Pay attention to:
 +
 * *Faithfulness* — if this is low, the model is adding information that was not in the retrieved documents
@@ -161,11 +198,6 @@ image::evals-ragas-notebook.png[The notebook evaluate_ragas.ipynb open in the Wo
 * *Context precision* — if this is low, the retrieval step is pulling in the wrong document chunks
 
 TIP: If faithfulness is low but context precision is high, the model has the right documents but is ignoring them — it's answering from its own training data instead of what you gave it. If context precision is low, the system is pulling in the wrong documents when it searches, so the answer has nothing good to work with. Both cases point to different things to fix: the first is a model behavior issue, the second is a search quality issue.
-
-References:
-
-* EvalHub RAGAS adapter: https://eval-hub.github.io/adapters/ragas/[eval-hub.github.io/adapters/ragas,window=blank]
-* Notebook source: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/blob/dev/templates/admin/evalhub/evaluate_ragas.ipynb[evaluate_ragas.ipynb on GitHub,window=blank]
 
 == Exercise 8: MLflow llm-as-judge
 
@@ -175,70 +207,40 @@ That is where llm-as-judge comes in. Instead of scoring against a ground truth, 
 
 . Open `evaluate_agent.ipynb` from the `notebooks/` folder:
 +
-// TODO: screenshot of evaluate_agent.ipynb open in Workbench (evals-agent-notebook.png)
 image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in the Workbench,link=self,window=blank,width=700]
 
-. The notebook needs the MaaS endpoint and API key to call the model. Find the empty configuration cell at the top and paste the following values:
+. The notebook needs the MaaS endpoint and API key to call the model. Find the first code cell (right below *Configuration*) and paste the following values:
 +
 [subs=attributes+]
 ++++
-<style>
-  .llm-env-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.85rem; margin: 0.5rem 0; }
-  .llm-env-table th { background: #2d2d2d; color: #ccc; text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #444; font-weight: 600; }
-  .llm-env-table td { background: #1e1e1e; color: #d4d4d4; padding: 0.5rem 0.75rem; border: 1px solid #333; }
-  .llm-env-table .oc-key { color: #9cdcfe; font-weight: 600; }
-  .llm-env-table .oc-val { color: #ce9178; }
-  .llm-env-table .oc-placeholder { color: #6b7280; font-style: italic; }
-  .llm-copy-btn {
-    background: #28a745; color: white; border: none; border-radius: 3px;
-    padding: 0.15rem 0.4rem; font-size: 0.75rem; cursor: pointer;
-    opacity: 0.4; transition: opacity 0.2s; margin-left: 0.5rem; vertical-align: middle;
-  }
-  .llm-copy-btn:hover { opacity: 1; }
-</style>
-<table class="llm-env-table">
-  <tr><th colspan="2">Paste these three lines into the empty cell</th></tr>
-  <tr>
-    <td><span class="oc-key">os.environ["LLM_BASE_URL"]</span> = </td>
-    <td>
-      <span class="oc-val">"https://maas.{openshift_cluster_ingress_domain}/v1"</span>
-      <button class="llm-copy-btn" title="Copy line" onclick="navigator.clipboard.writeText('os.environ[&quot;LLM_BASE_URL&quot;] = &quot;https://maas.{openshift_cluster_ingress_domain}&quot;').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
-    </td>
-  </tr>
-  <tr>
-    <td><span class="oc-key">os.environ["LLM_API_KEY"]</span> = </td>
-    <td>
-      <span class="oc-placeholder" id="llm-key-val">"&lt;paste-your-api-key&gt;"</span>
-      <button class="llm-copy-btn" id="llm-key-copy-btn" title="Copy line" onclick="navigator.clipboard.writeText('os.environ[&quot;LLM_API_KEY&quot;] = &quot;' + (document.getElementById('llm-key-raw').textContent || '') + '&quot;').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
-      <span id="llm-key-raw" style="display:none"></span>
-    </td>
-  </tr>
-  <tr>
-    <td><span class="oc-key">os.environ["LLM_MODEL"]</span> = </td>
-    <td>
-      <span class="oc-val">"qwen3-235b"</span>
-      <button class="llm-copy-btn" title="Copy line" onclick="navigator.clipboard.writeText('os.environ[&quot;LLM_MODEL&quot;] = &quot;qwen3-235b&quot;').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
-    </td>
-  </tr>
-</table>
+<div class="listingblock" style="position:relative;">
+  <pre class="highlight" id="llm-config-block" style="background:#1e1e1e;color:#d4d4d4;padding:0.75rem 3.5rem 0.75rem 1rem;border-radius:6px;font-size:0.85rem;">LLM_BASE_URL = "https://maas.{openshift_cluster_ingress_domain}/v1"
+LLM_API_KEY = "<span id="llm-cfg-key" style="color:#6b7280;font-style:italic">&lt;paste-your-api-key&gt;</span>"
+LLM_MODEL = "qwen3-235b"</pre>
+  <button style="position:absolute;top:0.4rem;right:0.5rem;background:#28a745;color:white;border:none;border-radius:4px;padding:0.3rem 0.55rem;font-size:0.8rem;cursor:pointer;opacity:0.4;transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'" onclick="(function(){
+    var text = document.getElementById('llm-config-block').innerText;
+    navigator.clipboard.writeText(text).then(function(){
+      event.target.textContent='✓';setTimeout(function(){event.target.textContent='⎘'},1200);
+    });
+  })()" title="Copy">⎘</button>
+</div>
 <script>
   (function() {
-    function syncLlmKey() {
-      var keyVal = document.getElementById('llm-key-val');
-      var keyRaw = document.getElementById('llm-key-raw');
-      if (!keyVal) return;
+    function syncKey() {
+      var el = document.getElementById('llm-cfg-key');
+      if (!el) return;
       var k = '';
-      var keyInput = document.getElementById('api-key-input');
-      if (keyInput) k = keyInput.value.trim();
+      var inp = document.getElementById('api-key-input');
+      if (inp) k = inp.value.trim();
       if (!k) { try { k = localStorage.getItem('workshop-api-key') || ''; } catch(e) {} }
-      keyVal.textContent = k ? '"' + k + '"' : '"<paste-your-api-key>"';
-      keyVal.className = k ? 'oc-val' : 'oc-placeholder';
-      if (keyRaw) keyRaw.textContent = k;
+      el.textContent = k || '<paste-your-api-key>';
+      el.style.color = k ? '#ce9178' : '#6b7280';
+      el.style.fontStyle = k ? 'normal' : 'italic';
     }
     function attach() {
-      var k = document.getElementById('api-key-input');
-      if (k) k.addEventListener('input', syncLlmKey);
-      syncLlmKey();
+      var inp = document.getElementById('api-key-input');
+      if (inp) inp.addEventListener('input', syncKey);
+      syncKey();
     }
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); }
     else { attach(); }
@@ -248,74 +250,122 @@ image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in th
 +
 TIP: If you no longer have your API key, go back to the *API Keys* tab and create a new one.
 +
-. The notebook runs a set of loan assessment queries through {assistant_name}'s agent and collects the responses. Run the first section of cells to generate the responses.
-
-. The second section configures the judge model and scoring criteria — correctness, groundedness, refusal appropriateness. Run these cells to start the evaluation.
-
-. Results are logged to MLflow automatically. Once the notebook finishes, navigate to *OpenShift AI Dashboard > Develop & Train > Experiments* and find the new evaluation run. Review the per-question scores:
+. Run the cells in order. The notebook walks through several stages:
 +
-// TODO: screenshot of llm-as-judge results in MLflow (evals-llm-judge-results.png)
-image::evals-llm-judge-results.png[MLflow experiment showing llm-as-judge evaluation scores per question,link=self,window=blank,width=700]
+--
+.. *Register a system prompt* — the agent's system prompt is registered in MLflow's Prompt Registry as a versioned artifact. This lets you track quality across prompt iterations and answer "which prompt version caused this regression?"
+.. *Create an evaluation dataset* — six mortgage-related test cases are created on the MLflow server, each with an input question, expected keywords, expected tool calls, and forbidden content
+.. *Simple evaluation* — three deterministic scorers run first (no LLM calls):
+*** `contains_expected` — does the response contain the expected keyword?
+*** `has_numeric_result` — does the response include dollar amounts or percentages?
+*** `response_length` — is the response at least 50 characters?
+.. *LLM-as-a-Judge evaluation* — a second LLM scores each response on:
+*** `ToolCallCorrectness` — did the agent call the right tools?
+*** `RelevanceToQuery` — is the response relevant to the question?
+*** `Safety` — is the response safe and appropriate?
+*** `Guidelines` — does the response follow mortgage assistant guidelines (helpful, no false promises, professional language)?
+--
+
+. Results are logged to MLflow automatically. Once the notebook finishes, navigate to *OpenShift AI Dashboard > Develop & train > Experiments* and find the `mortgage-ai-eval` experiment.
++
+image::evals-llm-judge-experiment.png[Experiments page showing mortgage-ai-eval experiment,link=self,window=blank,width=700]
+
+. Click the experiment name, then select *Evaluation runs* in the left sidebar. You will see your evaluation run with the individual traces — each trace corresponds to one test question sent to the agent.
++
+image::evals-llm-judge-results.png[Evaluation runs view showing traces for each test question,link=self,window=blank,width=700]
+
+. Click *Traces* in the left sidebar to see the per-trace assessments. Click *Columns* and enable *All Assessments* to see the scorer results for each trace:
++
+image::evals-mlflow-columns-dropdown.png[Columns dropdown showing All Assessments option,link=self,window=blank,width=350]
++
+image::evals-mlflow-traces-assessments.png[Traces view with assessment columns showing scorer results per trace,link=self,window=blank,width=700]
++
+The assessment columns show True/False or Pass/Fail for each scorer on each trace. You can quickly spot which test cases passed or failed each check.
+
+. Click on any trace to see the full detail — the input question, the agent's response, and the individual assessment scores in the right panel:
++
+image::evals-mlflow-trace-detail.png[Trace detail showing inputs outputs and Assessments sidebar with Feedback and Expectations,link=self,window=blank,width=500]
++
+The *Feedback* section shows scorer results (`contains_expected: True`, `response_length: 1`), while the *Expectations* section shows what the dataset expected (e.g., `expected_answer: 30-year`, `expected_tool_calls: product_info`).
+
+. You can also navigate to *Prompts* in the left sidebar to see the registered system prompt and all traces linked to it. Every evaluation trace is automatically linked to the prompt version that produced it — when you update the system prompt and register a new version, future evaluations will link to that new version, letting you compare quality across prompt iterations side by side.
 
 NOTE: llm-as-judge is not infallible — the judge model has its own biases and limitations. It is most useful for catching obvious regressions (a response that stopped following the persona, a tool call that produced a wrong calculation) rather than for fine-grained quality comparison.
 
-Reference: https://github.com/rh-ai-quickstart/multi-agent-loan-origination/blob/main/evaluations/evaluate_agent.ipynb[evaluate_agent.ipynb on GitHub,window=blank]
-
 == Exercise 9 (Optional): Run an Evaluation Pipeline
 
-The notebook-based evaluations above are great for exploration. For production, you want evaluation running automatically as a scheduled pipeline — not something a person has to trigger manually.
+The notebook-based evaluations above are great for exploration. For production, you want evaluation running automatically as a scheduled pipeline — not something a person has to trigger manually. This is the same evaluation you ran in Exercise 8, but packaged as a pipeline that can run without a notebook, on a schedule, in its own container.
 
 WARNING: This exercise requires a few extra minutes. Skip it if you are short on time and continue to the Section Summary.
 
-. Navigate to *OpenShift AI Dashboard > Pipelines* and click *Import Pipeline*.
+The pipeline packages the simple evaluation into four automated steps:
 
-. Upload the evaluation pipeline YAML from your workshop materials. The pipeline is pre-built and ready to import.
+* *setup-mlflow-op* — configures the MLflow tracking URI, workspace, and experiment
+* *create-dataset-op* — creates the evaluation dataset on the MLflow server (the same 6 test cases from Exercise 8)
+* *run-simple-eval-op* — runs the three deterministic scorers (`contains_expected`, `has_numeric_result`, `response_length`)
+* *report-results-op* — prints the evaluation summary and logs results
 
-. Click *Create Run* and set the following parameters:
+. First, download the pipeline definition file to your local machine: https://raw.githubusercontent.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/main/collateral/eval-pipeline.yaml[eval-pipeline.yaml,window=blank].
+
+. Navigate to *OpenShift AI Dashboard > Develop & train > Pipelines > Pipeline definitions*. Click *Import pipeline*.
 +
-[cols="1,2",options="header"]
-|===
-| Parameter | Value
+image::evals-pipeline-definitions.png[Pipeline definitions page with Import pipeline button highlighted,link=self,window=blank,width=700]
 
-| `agent_name`
-| `public-assistant`
-
-| `dataset_name`
-| `public_assistant_eval_simple`
-|===
-
-. Start the run and watch the pipeline stages execute in order:
+. In the import dialog, select *Upload a file* and upload the `eval-pipeline.yaml` file you downloaded. The pipeline name will auto-populate as `agent-simple-evaluation-pipeline`. Click *Import pipeline*.
 +
-----
-setup-mlflow-op
-  └── create-dataset-op
-        └── run-eval-op
-              └── report-results-op
-----
+image::evals-pipeline-import.png[Import pipeline dialog showing eval-pipeline.yaml uploaded,link=self,window=blank,width=700]
+
+. Once imported, click *Actions > Create run*.
 +
-// TODO: screenshot of pipeline run stages (evals-pipeline-stages.png)
-image::evals-pipeline-stages.png[OpenShift AI Pipelines view showing the four evaluation pipeline stages executing,link=self,window=blank,width=700]
+image::evals-pipeline-create-run.png[Actions dropdown with Create run highlighted,link=self,window=blank,width=700]
 
-. When the pipeline completes, go to *MLflow > Experiments* and find the evaluation run it logged. Review the results.
+. Fill in the run form:
++
+--
+* *Name*: `eval-run`
+* *MLflow integration*: Select an experiment for *MLflow experiment*
+* *Parameters*:
+** *mlflow_tracking_uri*: `https://mlflow.redhat-ods-applications.svc.cluster.local:8443/mlflow`
+** *mlflow_workspace*: `wksp-{user}`
+** Leave the rest as defaults
+--
++
+image::evals-pipeline-parameters.png[Create run form showing mlflow_tracking_uri and mlflow_workspace parameters,link=self,window=blank,width=700]
++
+Click *Create run*. Each step runs in its own container. Authentication to MLflow uses the pod's Kubernetes service account token — no manual token management required.
 
-TIP: In production, this pipeline would be scheduled to run on every commit to the prompt registry. A drop in evaluation score blocks the deployment — the same way a failing unit test blocks a code merge.
+. Watch the pipeline stages execute in order. All four steps should complete with green checkmarks:
++
+image::evals-pipeline-stages.png[Pipeline run showing all four stages completed successfully,link=self,window=blank,width=700]
+
+. When the pipeline completes, navigate to *OpenShift AI Dashboard > Develop & train > Experiments > Evaluation runs* and find the new evaluation run. You can see the individual traces and scorer results for each test question.
++
+image::evals-pipeline-mlflow-results.png[MLflow experiment showing evaluation run with traces and scores,link=self,window=blank,width=700]
++
+Click on any trace to see the full detail — the input question, the agent's response, and the individual assessment scores on the right panel. For example, clicking the "What loan products do you offer?" trace shows that `contains_expected` passed (the response includes "30-year"), `response_length` scored 1 (adequate length), and the expectations panel shows what the pipeline was checking for.
++
+image::evals-pipeline-trace-detail.png[Trace detail showing input question and assessment scores,link=self,window=blank,width=700]
++
+TIP: If the assessment columns are not visible, click *Columns* and enable *All Assessments* and *All Expectations*.
+
+TIP: Notice the *Create schedule* option when creating a run. In production, this pipeline would be scheduled to run periodically (e.g., every 6 hours) or triggered on every commit to the prompt registry. A drop in evaluation score blocks the deployment — the same way a failing unit test blocks a code merge.
 
 
 == Section Summary
 
 === What You Accomplished
 
-* Ran a model capability evaluation in EvalHub against `qwen3-235b` using ArcEasy or Science QnA
+* Ran an IFEval benchmark in EvalHub against `qwen3-235b` to measure instruction-following capability
 * Evaluated RAG pipeline quality with RAGAS — measuring faithfulness, answer relevancy, and context precision across a test set of mortgage questions
-* Used an LLM as judge to evaluate {assistant_name}'s open-ended agent responses, with results logged to MLflow
-* (Optional) Imported and ran a four-stage automated evaluation pipeline and reviewed results in MLflow
+* Used an LLM as judge to evaluate {assistant_name}'s open-ended agent responses — with prompt registry, evaluation datasets, and results logged to MLflow
+* (Optional) Imported and ran a four-stage automated evaluation pipeline and reviewed traces and scorer results in MLflow
 
 === Key Takeaways
 
-* Benchmarks like Basic Science QnA measure baseline model capability — they catch model-level regressions but do not measure domain-specific quality
+* Benchmarks like IFEval measure baseline model capability — they catch model-level regressions (e.g., a model that stops following formatting instructions) but do not measure domain-specific quality
 * RAGAS decomposes RAG quality into components (faithfulness, relevancy, precision) so you can diagnose exactly what is going wrong and where
 * llm-as-judge enables evaluation of open-ended responses where there is no single correct answer — useful for catching persona regressions and reasoning failures
-* Automated evaluation pipelines remove the human from the quality gate — quality is measured continuously, not just when someone remembers to check
+* Automated evaluation pipelines remove the human from the quality gate — quality is measured continuously and can be scheduled or triggered on every change
 
 === What's Next?
 

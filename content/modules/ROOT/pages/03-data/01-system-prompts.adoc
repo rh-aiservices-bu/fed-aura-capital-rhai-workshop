@@ -39,15 +39,13 @@ You will ask this exact question several times throughout this section, each tim
 
 == Your Playground is ready
 
-In section 2.4, you created a GenAI Playground connected to the `gpt-oss-120b` MaaS endpoint. You will use that same Playground for the rest of this section.
+In section 2.4, you created a GenAI Playground connected to the `qwen3-235b` MaaS endpoint. You will use that same Playground for the rest of this section.
 
-NOTE: The CPU deployments you created in sections 2.2 and 2.3 were deleted at the end of those exercises to free up cluster resources. The `gpt-oss-120b` MaaS endpoint is a shared, always-running model - it is the one you will use from here on, and it is also the model that powers {assistant_name} in the live application.
-
-TIP: If you skipped section 2.4, create a Playground now with the `gpt-oss-120b` endpoint before continuing.
+TIP: If you skipped section 2.4, create a Playground now with the `qwen3-235b` endpoint before continuing.
 
 . Open the GenAI Playground you created in section 2.4:
 +
-image::module5-genaiplaygroundclean.png[GenAI Playground connected to the gpt-oss-120b endpoint,link=self,window=blank,width=700]
+image::module5-genaiplaygroundclean.png[GenAI Playground connected to the qwen3-235b endpoint,link=self,window=blank,width=700]
 +
 Clear any previous conversation history so you start with a clean slate. Click **New Chat** in the upper right corner of the GenAI Playground.
 
@@ -80,8 +78,7 @@ Before getting into mortgage details, let's prove that system prompts work with 
 +
 [source,text]
 ----
-You are a pirate. Respond to everything in pirate speak. Use nautical metaphors
-and say "Arrr" frequently.
+You are a pirate. Respond to everything in pirate speak. Use nautical metaphors and say "Arrr" frequently.
 ----
 +
 image::module5-pirate-prompt-settings.png[Pirate system prompt in the Playground Settings Prompt tab,link=self,window=blank,width=500]
@@ -141,14 +138,13 @@ image::module5-domain-prompt-response.png[Domain prompt response showing mortgag
 
 === Why this approach breaks down
 
-What you just did is called **context injection** - manually adding information into the prompt so the model can use it. The model did not _learn_ this data; you handed it a cheat sheet. But the cheat sheet has to fit: models have a **maximum context window**, and performance degrades as prompts get longer.
+What you just did is called **context injection** — pasting information directly into the prompt so the model can use it. The model itself never changes, it is frozen; it only knows what was in its training data, plus whatever you put in the prompt right now. We can try to add everything about {company_name} this way, but there's a hard limit: models have a **maximum context window**, and performance degrades as prompts get longer.
 
 IMPORTANT: Prompt engineering is valuable for defining persona and behavior, but it is not the right tool for injecting large, changing knowledge bases. Here is why:
 
-* **Context window limits**: Five product descriptions fit. An entire underwriting manual, compliance guide, and rate sheet library does not.
+* **Scale**: {company_name} has policy documents, compliance manuals, rate sheets, product guides, and regulatory filings. Five product descriptions fit in a prompt — an entire document library does not.
 * **Maintenance burden**: When rates change or new products launch, someone must update every system prompt manually. There is no single source of truth.
 * **Staleness**: The prompt is static text baked into the configuration. It does not know when information becomes outdated.
-* **Scale**: {company_name} has policy documents, compliance manuals, rate sheets, product guides, and regulatory filings. You cannot paste all of them into a prompt.
 
 When you saved the pirate prompt earlier, you used the **Prompt Registry** - a platform feature for versioning and tracking prompts. You can compare versions, roll back changes, and share prompts across teams. That solves the versioning problem. But it does not solve the knowledge problem. Even a perfectly versioned prompt cannot hold an entire document library.
 

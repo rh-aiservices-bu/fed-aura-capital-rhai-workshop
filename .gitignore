@@ -225,3 +225,5 @@ node_modules/
 
 # Antora build output
 www/
+package.json
+package-lock.json

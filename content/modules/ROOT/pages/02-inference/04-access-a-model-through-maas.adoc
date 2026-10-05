@@ -1,54 +1,103 @@
 = Models as a Service
 :imagesdir: ../assets/images
 :navtitle: Models as a Service
-:toc:
+:toc: macro
+:toclevels: 1
 :toc-placement: preamble
 :icons: font
 
 == Exercise 4: Models as a Service
 
-You've been observing a model `gpt-oss-120b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, of course {assistant_name} hasn't been using the model you deployed, because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. So, the model you deployed is not the one that {assistant_name} is using. The model that {assistant_name} is using is `gpt-oss-120b`, which is a much larger model and requires GPU to run.
+You've been observing a model `qwen3-235b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, hate to break it to you but {assistant_name} hasn't been using the little model you deployed. Because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. The model that {assistant_name} is using is `qwen3-235b`, which is a much larger model and requires GPU to run.
 
-But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. MaaS is a way to expose models as endpoints that can be consumed by different applications and users.
+But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. With MaaS, an admin can expose models as endpoints that can be consumed by different applications and users.
 
-And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `gpt-oss-120b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
+And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `qwen3-235b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
 
 MaaS provides a consistent and governed way to access models, which means {company_name} can manage the model deployments centrally while still providing access to the models for different teams and applications.
 
 === Explore AI Asset Endpoints
 
-. Navigate to *Gen AI Studio > AI Asset Endpoints*. You will see the list of model endpoints available to you:
+. Navigate to *Gen AI Studio > AI Asset Endpoints*. Observe that `qwen3-235b` is listed as an endpoint.
 +
-image::maas-asset-endpoints.png[AI Asset Endpoints list showing gpt-oss-120b and other available endpoints,link=self,window=blank,width=700]
+image::inference-maas-asset-endpoints.png[AI Asset Endpoints list showing available endpoints,link=self,window=blank,width=700]
 
-. Click on `gpt-oss-120b` to view its details — the endpoint URL, the underlying model, and the subscription tiers configured for it.
-
-. On the endpoint detail page, click *Try in Playground* to confirm the endpoint is live and responding before you generate a key:
+. Click on *View* to view its details — the endpoint URL, the underlying model, and the subscription configured for it.
 +
-image::maas-try-in-playground.png[GenAI Playground opened from the gpt-oss-120b endpoint detail page,link=self,window=blank,width=700]
+image::inference-maas-endpoint-details.png[AI Asset Endpoint details,link=self,window=blank,width=700]
+
+. On the endpoint detail page, click *Try in Playground* to confirm the endpoint is live and responding. The Playground creates a temporary API key on your behalf and connects to the endpoint so you can test it quickly. (Try refreshing the page if the Playground is not showing up.)
+
+. Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B. This is a 235-billion parameter model running on GPU, much bigger and more powerful.
++
+image::inference-maas-try-in-playground.png[GenAI Playground opened from the qwen3-235b endpoint detail page,link=self,window=blank,width=700]
 
 == Exercise 5: Generate an API Key
 
 To consume a MaaS endpoint from code or a tool, you need a scoped API key. Let's generate one now.
 
-. On the `gpt-oss-120b` endpoint detail page, click *Generate API Key*.
+. Go to *API Keys* page, and click *Create API Key*.
 
-. Select a subscription tier:
+. Give the key a name, for example `my-key`. You can add a description if you wish.
+
+. Select a subscription available to you. The subscription defines the model you have access to and the rate limits for the key. Observe that you have 10,000 tokens per hour as the rate limit for `qwen3-235b`. 
+
+. Leave the Expiration as 30 days. Click *Create API Key*.
+
+. Save the generated key somewhere safe. You will need it to call the endpoint from code or a tool. And you'll only get to see once.
 +
-[cols="1,2",options="header"]
-|===
-|Tier |Rate limit
+--
+Paste it here so you can refer to it during the exercises — it stays in your browser only, nothing is sent anywhere:
 
-|*Free Tier*
-|100 tokens / minute
+++++
+<div class="key-notepad">
+<style>
+  .key-notepad { margin: 0.75rem 0 0.25rem; }
+  .key-notepad-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 560px;
+  }
+  .key-notepad input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-family: monospace;
+    font-size: 0.82rem;
+    background: #0f1117;
+    border: 1px solid #3b82f6;
+    border-radius: 6px;
+    color: #93c5fd;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .key-notepad input::placeholder { color: #6b7280; }
+  .key-notepad input:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+  .key-notepad-toggle {
+    background: none;
+    border: 1px solid #3b82f6;
+    border-radius: 6px;
+    color: #93c5fd;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .key-notepad-toggle:hover { background: #1e3a5f; }
+  .key-notepad-note { font-size: 0.68rem; color: #555; margin-top: 0.35rem; font-style: italic; }
+</style>
+<div class="key-notepad-wrap">
+  <input type="password" id="api-key-input" placeholder="Paste your API key here…" autocomplete="off" spellcheck="false" />
+  <button class="key-notepad-toggle" onclick="(function(){var i=document.getElementById('api-key-input');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'Show':'Hide';}).call(this)">Show</button>
+  <button class="key-notepad-toggle" style="background:#8b0000;" onclick="(function(){var i=document.getElementById('api-key-input');i.value='';try{localStorage.removeItem('workshop-api-key');}catch(e){}i.dispatchEvent(new Event('input'));}).call(this)">Clear</button>
+</div>
+<div class="key-notepad-note">Your key is saved in your browser's local storage so it carries across pages. Click Clear to remove it.</div>
+</div>
+++++
+--
 
-|*Premium Tier*
-|10,000 tokens / minute
-|===
-
-. Select *Free Tier* and click *Generate*. Copy the key — you will use it in the next two exercises:
 +
-image::maas-api-key.png[API key generation dialog showing tier selection and generated key,link=self,window=blank,width=700]
+image::inference-maas-api-key.png[API key generation dialog showing tier selection and generated key,link=self,window=blank,width=700]
 +
 NOTE: Each user generates their own key. The MaaS gateway tracks usage per key, which is how the platform enforces rate limits and produces the per-user usage data.
 
@@ -56,13 +105,92 @@ NOTE: Each user generates their own key. The MaaS gateway tracks usage per key, 
 
 With your key in hand, let's call the model directly from the terminal.
 
-. Navigate to the *Terminal* tab. Set your API key and endpoint URL as environment variables (replace the placeholders with the values from the endpoint detail page):
+. Navigate to the *Terminal* tab. Set your API key and endpoint URL as environment variables. Use the key you saved in the notepad above and the endpoint URL from the endpoint detail page:
 +
-[source,console,role=execute,subs=attributes+]
-----
-export MAAS_API_KEY=<your-api-key>
-export MAAS_URL=<endpoint-url>
-----
+[subs=attributes+]
+++++
+<style>
+  .maas-env-wrap {
+    position: relative;
+    margin: 0.5rem 0;
+  }
+  .maas-env-block {
+    background: #1e1e1e;
+    border-radius: 6px;
+    padding: 0.75rem 3.5rem 0.75rem 1rem;
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: #d4d4d4;
+    white-space: pre;
+  }
+  .maas-env-key { color: #9cdcfe; }
+  .maas-env-placeholder { color: #6b7280; font-style: italic; }
+  .maas-env-btn {
+    position: absolute;
+    top: 0.4rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.3rem 0.55rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0.35;
+    transition: opacity 0.2s;
+  }
+  .maas-env-btn:hover { opacity: 1; }
+  #maas-copy-btn { right: 3rem; }
+  #maas-send-btn { right: 0.5rem; }
+</style>
+<div class="listingblock maas-env-wrap">
+  <div class="maas-env-block" id="maas-env-block"><span class="maas-env-key">export MAAS_API_KEY=</span><span id="maas-key-display" class="maas-env-placeholder">&lt;paste-your-api-key&gt;</span>
+<span class="maas-env-key">export MAAS_URL=</span>https://maas.{openshift_cluster_ingress_domain}</div>
+  <button class="maas-env-btn" id="maas-copy-btn" title="Copy" onclick="(function(){
+    var text = document.getElementById('maas-env-block').innerText;
+    navigator.clipboard.writeText(text).then(function(){
+      var b = document.getElementById('maas-copy-btn');
+      b.textContent = '✓'; setTimeout(function(){ b.textContent = '⎘'; }, 1500);
+    });
+  })()">⎘</button>
+  <button class="maas-env-btn" id="maas-send-btn" title="Send to terminal" onclick="(function(){
+    var text = document.getElementById('maas-env-block').innerText.trim();
+    var frames = window.parent ? window.parent.document.querySelectorAll('iframe') : [];
+    var frame = null;
+    for (var i=0;i<frames.length;i++){if((frames[i].src||'').indexOf('/terminal')!==-1){frame=frames[i];break;}}
+    if(!frame){alert('Terminal tab not found.');return;}
+    try{frame.contentWindow.postMessage({type:'paste',data:text+'\n'},'*');}catch(e){alert('Could not send to terminal.');}
+    var b = document.getElementById('maas-send-btn');
+    b.textContent = '✓'; setTimeout(function(){ b.textContent = '▶'; }, 1500);
+  })()">▶</button>
+</div>
+<script>
+  (function() {
+    function syncKey() {
+      var input = document.getElementById('api-key-input');
+      var display = document.getElementById('maas-key-display');
+      if (!input || !display) return;
+      var val = input.value.trim();
+      if (val) {
+        display.textContent = val;
+        display.className = 'maas-env-key';
+        try { localStorage.setItem('workshop-api-key', val); } catch(e) {}
+      } else {
+        display.innerHTML = '&lt;paste-your-api-key&gt;';
+        display.className = 'maas-env-placeholder';
+      }
+    }
+    function initKey() {
+      var input = document.getElementById('api-key-input');
+      if (!input) return;
+      input.addEventListener('input', syncKey);
+      try { var saved = localStorage.getItem('workshop-api-key'); if (saved && !input.value) { input.value = saved; syncKey(); } } catch(e) {}
+    }
+    var input = document.getElementById('api-key-input');
+    if (input) { initKey(); }
+    else { document.addEventListener('DOMContentLoaded', initKey); }
+  })();
+</script>
+++++
 
 . Send a completion request:
 +
@@ -72,51 +200,140 @@ curl -sk $MAAS_URL/v1/chat/completions \
   -H "Authorization: Bearer $MAAS_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-oss-120b",
+    "model": "qwen3-235b",
     "messages": [{"role": "user", "content": "What is Models as a Service?"}],
     "max_tokens": 256
   }' | jq -r '.choices[0].message.content'
 ----
 +
-You should see a response from `gpt-oss-120b`. The API is OpenAI-compatible — any application that already talks to OpenAI can point at this endpoint instead, with no code changes beyond swapping the base URL and key.
+You should see a response from `qwen3-235b`. The API is OpenAI-compatible — any application that already talks to OpenAI can point at this endpoint instead, with no code changes beyond swapping the base URL and key.
 
-== Exercise 7: Consume the MaaS Endpoint with Playground
+== Exercise 7: (Optional) Use OpenCode with MaaS as Your Coding Assistant
 
-Let's connect the Playground to the MaaS endpoint so you can interact with `gpt-oss-120b` through a UI.
+Let's explore another use case apart from {assistant_name}: using MaaS as a coding assistant.
 
-. Go to *Gen AI Studio > Playground* and click *Create Playground*.
+Most AI coding assistants default to cloud-hosted models — sending your code to an external provider. In a regulated environment like financial services, that's often not acceptable. But because MaaS exposes an OpenAI-compatible API, you are not locked into any particular tool or model: any coding assistant that supports a custom endpoint works. You can swap the model behind it — a smaller, faster model for autocomplete, a larger one for complex reasoning — without changing your tooling.
 
-. In the model selector, choose the `gpt-oss-120b` MaaS endpoint. Paste your API key when prompted and click *Create*:
+This exercise uses *OpenCode*, an open-source AI coding assistant built into the workbench, connected to the {company_name} MaaS endpoint — coding assistance powered by a self-hosted model, with no code leaving the cluster.
+
+By pointing OpenCode at MaaS, you ensure that your code and prompts stay within your data center — they are never sent to a third-party model provider. But a capable coding agent can do more than just generate code: it can access files, call APIs, and interact with endpoints. Keeping the model on-premises is one half of the story. In the xref:05-security/03-openshell.adoc[OpenShell Agent Sandboxing] section, you will see the other half: how to constrain _what the agent can do_ — blocking network access to external endpoints, preventing data uploads, and ensuring the agent cannot take actions it is not supposed to.
+
+. Navigate to *OpenShift AI Dashboard > Data Science Projects > wksp-{user}*. Click *Create workbench* and fill in the form:
 +
-image::maas-playground-model-select.png[Playground model selector showing the gpt-oss-120b MaaS endpoint,link=self,window=blank,width=700]
-
-. Send a prompt of your choice and confirm you get a response. Notice the quality of the response compared to what you saw from Qwen3 0.6B — this is a 20-billion parameter model running on GPU.
-
-== Exercise 8: (Optional) Test with Continue in a Workbench
-
-If you want to experience MaaS the way a developer building an application would, this optional exercise walks you through connecting to the endpoint from a VSCode workbench using the `openai` Python SDK.
-
-. Navigate to *OpenShift AI Dashboard > Data Science Projects > {user_project}*. Click *Create workbench* and fill in the form:
+image::inference-workbench-create-codeserver.png[Create workbench in your project,link=self,window=blank,width=700]
 +
 --
-* *Name*: `fedaura-vscode`
+* *Name*: `fedaura-code-server`
 * *Image selection*: `FedAura Capital - Custom Code Server` (includes OpenCode, OpenShell CLI, Python 3.12, and Code Server)
-* *Hardware profile*: `CPU Profile`
+* *Hardware profile*: `default-profile`
 --
 +
-image::workbench-create-vscode.png[Create workbench form showing the FedAura Capital Custom Code Server image selected with CPU Profile,link=self,window=blank,width=700]
-
-. Wait for the workbench to start. You will see it in the Workbenches list with status *Starting* and then *Running*:
+image::inference-workbench-create-codeserver-2.png[FedAura Capital Custom Code Server image selected with CPU Profile,link=self,window=blank,width=700]
 +
-image::workbench-vscode-starting.png[Workbenches list showing fedaura-vscode starting with PVC attached,link=self,window=blank,width=700]
-
-. Once it is running, click the workbench name to open the VSCode environment.
-
-. Open the notebook `maas-test.ipynb`. Replace the placeholder `api_key` and `base_url` values with your key and endpoint URL, then run all cells:
+. Scroll down and enter your API key, model name, and endpoint URL as environment variables. These will be available to you in the workbench, so you'd be using your own key:
++ *Environment variables* > *Secret* > *Key / value*
 +
-image::maas-workbench-notebook.png[Jupyter notebook showing openai SDK calls to the MaaS endpoint,link=self,window=blank,width=700]
+Click *Add variable* three times to create three rows, then fill in each row with the key and value from the table below:
 +
-TIP: The `openai` Python SDK works here without modification because the MaaS gateway is OpenAI API-compatible. This is the same pattern {assistant_name}'s agent code uses to reach `gpt-oss-120b`.
+[subs=attributes+]
+++++
+<style>
+  .oc-env-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.85rem; margin: 0.5rem 0; }
+  .oc-env-table th { background: #2d2d2d; color: #ccc; text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #444; font-weight: 600; }
+  .oc-env-table td { background: #1e1e1e; color: #d4d4d4; padding: 0.5rem 0.75rem; border: 1px solid #333; position: relative; }
+  .oc-env-table .oc-key { color: #9cdcfe; font-weight: 600; }
+  .oc-env-table .oc-val { color: #ce9178; }
+  .oc-env-table .oc-placeholder { color: #6b7280; font-style: italic; }
+  .oc-copy-btn {
+    background: #28a745; color: white; border: none; border-radius: 3px;
+    padding: 0.15rem 0.4rem; font-size: 0.75rem; cursor: pointer;
+    opacity: 0.4; transition: opacity 0.2s; margin-left: 0.5rem; vertical-align: middle;
+  }
+  .oc-copy-btn:hover { opacity: 1; }
+</style>
+<table class="oc-env-table">
+  <tr><th>Key</th><th>Value</th></tr>
+  <tr>
+    <td>
+      <span class="oc-key">OPENCODE_API_URL</span>
+      <button class="oc-copy-btn" title="Copy key" onclick="navigator.clipboard.writeText('OPENCODE_API_URL').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+    <td>
+      <span class="oc-val" id="oc-url-val">https://maas.{openshift_cluster_ingress_domain}/v1</span>
+      <button class="oc-copy-btn" title="Copy value" onclick="navigator.clipboard.writeText(document.getElementById('oc-url-val').textContent).then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span class="oc-key">OPENCODE_API_KEY</span>
+      <button class="oc-copy-btn" title="Copy key" onclick="navigator.clipboard.writeText('OPENCODE_API_KEY').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+    <td>
+      <span class="oc-placeholder" id="oc-key-val">&lt;paste your API key from above&gt;</span>
+      <button class="oc-copy-btn" id="oc-key-copy-btn" title="Copy value" onclick="navigator.clipboard.writeText(document.getElementById('oc-key-val').textContent).then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span class="oc-key">OPENCODE_MODEL_NAME</span>
+      <button class="oc-copy-btn" title="Copy key" onclick="navigator.clipboard.writeText('OPENCODE_MODEL_NAME').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+    <td>
+      <span class="oc-val">qwen3-235b</span>
+      <button class="oc-copy-btn" title="Copy value" onclick="navigator.clipboard.writeText('qwen3-235b').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
+    </td>
+  </tr>
+</table>
+<script>
+  (function() {
+    function syncOcKey() {
+      var keyInput = document.getElementById('api-key-input');
+      var keyVal = document.getElementById('oc-key-val');
+      if (keyInput && keyVal) {
+        var k = keyInput.value.trim();
+        keyVal.textContent = k || '<paste your API key from above>';
+        keyVal.className = k ? 'oc-val' : 'oc-placeholder';
+      }
+      var urlVal = document.getElementById('oc-url-val');
+      var maasEnvBlock = document.getElementById('maas-env-block');
+      if (urlVal && maasEnvBlock) {
+        var lines = maasEnvBlock.innerText.split('\n');
+        var urlLine = lines.find(function(l){ return l.indexOf('MAAS_URL=') !== -1; });
+        if (urlLine) {
+          var u = (urlLine.split('MAAS_URL=')[1] || '').trim();
+          if (u) urlVal.textContent = u + '/v1';
+        }
+      }
+    }
+    function attach() {
+      var k = document.getElementById('api-key-input');
+      if (k) k.addEventListener('input', syncOcKey);
+      syncOcKey();
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); }
+    else { attach(); }
+  })();
+</script>
+++++
+
++
+image::inference-workbench-create-codeserver-3.png[Add OpenCode environment variables,link=self,window=blank,width=700]
++
+. Hit *Create workbench*. You will see the workbench in the list with status *Starting* and then *Running*. Wait for the workbench to start.
++
+. Once it is running, click the workbench name to open the Code Server environment.
++
+image::inference-workbench-codeserver-starting.png[Workbench fedaura-code-server running,link=self,window=blank,width=700]
++
+. Open the terminal and run *opencode* as the command, and observe that the OpenCode coding assistant is now connected to the MaaS endpoint. You can send prompts to the model and get responses here. :)
++
+image::inference-workbench-terminal.png[Open up the terminal,link=self,window=blank,width=700]
++
+. Run  *opencode* as the command, ask it to create a Python function, or send the prompt you like :)
++
+image::inference-workbench-terminal-opencode.png[OpenCode within a Workbench,link=self,window=blank,width=700]
++
+
 
 === On-premises vs cloud inference
 
@@ -126,46 +343,150 @@ MaaS gives you the developer experience of a cloud API — stable endpoints, API
 
 But self-hosted models are not the only thing MaaS can expose. The same gateway can also front external providers like OpenAI, Anthropic, or Gemini. From a user's perspective, nothing changes: you still browse the AI Asset Endpoints list, generate an API key, and call the endpoint the same way. The gateway handles the routing — whether the request goes to a locally deployed model or to an external API is transparent to the consumer. This means teams can use a mix of self-hosted and cloud models without managing separate credentials, SDKs, or rate-limiting policies for each one.
 
+++++
+<div class="maas-gateway-diagram">
+<style>
+  .maas-gateway-diagram {
+    font-family: "Red Hat Display", "Red Hat Text", sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.75rem;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    color: #1a1a1a;
+    margin: 1.5rem 0;
+  }
+  .mgd-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .mgd-col.consumers { align-items: flex-end; flex: 1; }
+  .mgd-col.backends  { align-items: flex-start; flex: 1; }
+  .mgd-box {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.78rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .mgd-box.consumer { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; min-width: 110px; }
+  .mgd-box.gateway  {
+    background: #f5f3ff;
+    border-color: #7c3aed;
+    color: #5b21b6;
+    padding: 0.75rem 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 130px;
+    text-align: center;
+  }
+  .mgd-box.self-hosted { background: #f0fdf4; border-color: #22c55e; color: #15803d; min-width: 130px; }
+  .mgd-box.external    { background: #faf5ff; border-color: #a78bfa; color: #6d28d9; min-width: 130px; }
+  .mgd-arrows-left  { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; justify-content: center; color: #9ca3af; font-size: 0.85rem; }
+  .mgd-arrows-right { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; justify-content: center; color: #9ca3af; font-size: 0.85rem; }
+  .mgd-label {
+    font-size: 0.62rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+    margin-bottom: 0.2rem;
+  }
+  .mgd-tag {
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    margin-top: 3px;
+    display: inline-block;
+  }
+  .mgd-tag.green { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+  .mgd-tag.purple { background: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd; }
+</style>
+
+  <!-- Consumers -->
+  <div class="mgd-col consumers">
+    <div class="mgd-label">Consumers</div>
+    <div class="mgd-box consumer">App Team A</div>
+    <div class="mgd-box consumer">App Team B</div>
+    <div class="mgd-box consumer">Data Scientist</div>
+  </div>
+
+  <!-- Arrows in -->
+  <div class="mgd-arrows-left">
+    <div>→</div>
+    <div>→</div>
+    <div>→</div>
+  </div>
+
+  <!-- Gateway -->
+  <div class="mgd-col">
+    <div class="mgd-label">Single endpoint</div>
+    <div class="mgd-box gateway">MaaS Gateway<br><span style="font-size:0.65rem;font-weight:400;color:#7c3aed">API key · rate limit · routing</span></div>
+  </div>
+
+  <!-- Arrows out -->
+  <div class="mgd-arrows-right">
+    <div>→</div>
+    <div>→</div>
+  </div>
+
+  <!-- Backends -->
+  <div class="mgd-col backends">
+    <div class="mgd-label">Backends</div>
+    <div class="mgd-box self-hosted">
+      qwen3-235b<br>
+      <span style="font-size:0.65rem;color:#555">on-cluster · vLLM</span>
+      <div><span class="mgd-tag green">data stays</span></div>
+    </div>
+    <div class="mgd-box external">
+      OpenAI / Anthropic<br>
+      <span style="font-size:0.65rem;color:#777">external API</span>
+      <div><span class="mgd-tag purple">data leaves</span></div>
+    </div>
+  </div>
+
+</div>
+++++
+
 == Exercise 9: Observe Your Usage
 
-. Go back to *Gen AI Studio > AI Asset Endpoints* and click on `gpt-oss-120b`. Select the *Usage* tab:
+. On OpenShift AI dashboard go to *Observe & monitor > Dashboard* and click on `qwen3-235b`. Select the *Usage* tab:
 +
-image::maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
+image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
 
-. You should see the requests from your curl call and Playground session — token counts, request latency, and any rate-limit events. This is the data {company_name}'s platform team uses to track adoption and manage capacity across teams.
+. You should see the token consumption from your curl call and Playground session. This is the data {company_name}'s platform team can also use to track adoption and manage capacity across teams.
 
 === A question for {assistant_name}
 
-Before we close this section, try asking {assistant_name} something specific about {company_name}.
+Before we close this section, in the Playground, try asking something specific about {company_name}.
 
-. Go to the *{company_name} App* tab and sign in as the Borrower persona (Sarah Mitchell).
-
-. Ask:
-+
 [source,text]
 ----
 What is Fed Aura Capital's minimum credit score requirement for a conventional loan?
 ----
 
-. Observe the response. `gpt-oss-120b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
-
-This is the gap the next section addresses. Connecting the model to private knowledge through RAG is what turns a capable LLM into an assistant that can accurately answer domain-specific questions.
-
-== Section Summary
-
-*What you accomplished:*
-
-* Explored the AI Asset Endpoints list and understood the role MaaS plays between consumers and model deployments
-* Generated a scoped API key with a rate-limited subscription tier
-* Called the `gpt-oss-120b` endpoint with curl, the Playground, and (optionally) a Jupyter notebook
-* Observed per-key usage data in the usage dashboard
-
-*Key takeaways:*
-
-* MaaS decouples consumers from infrastructure — teams get a stable OpenAI-compatible API without managing model deployments
-* Subscription tiers enforce fair use without blocking access; the platform team can see exactly who is using what
-* Self-hosted inference with MaaS gives you managed-API ergonomics with full data residency — the right trade-off for regulated industries like financial services
+Observe the response. `qwen3-235b` is a powerful general-purpose model, but it has no knowledge of {company_name}'s specific policies. Without access to the company's knowledge base, it can only give a generic answer — or make one up.
 
 *Next steps:*
 
-The model can generate fluent text, but it doesn't know anything about {company_name}'s specific policies or customer data. In the next section, you will connect it to that knowledge using RAG — and watch {assistant_name} go from guessing to answering accurately.
+The model can generate fluent text, but it doesn't know anything about {company_name}'s specific policies or customer data. In the next section, you will connect it to that knowledge using RAG (Retrieval-Augmented Generation) — and watch {assistant_name} go from guessing to answering accurately.
+
+== Section Summary
+
+You started with a model in a catalog and ended with a production-grade inference platform. Here is what that progression looked like:
+
+* *Model Catalog* — models don't just appear in production. They go through a governed library with metadata about origin, license, and validation status before anyone can deploy them.
+* *Single-node vLLM* — deploying a model is straightforward, but a single replica under concurrent load becomes a bottleneck with no intelligent routing.
+* *llm-d* — adding replicas only helps if requests are routed smartly. llm-d tracks replica load and distributes work to minimize wait time across the pool. The API and the user experience stay identical — the improvement is entirely under the hood.
+* *Models as a Service* — even well-distributed inference creates chaos if every team manages their own stack. MaaS puts a shared gateway in front: one endpoint, scoped API keys, rate limits, and usage visibility per consumer.
+
+*Key takeaway:*
+
+Each layer solved a real problem the previous one left open. The result is not just a running model, it is a platform that scales, governs access, and gives the platform team observability over who uses what.
+
+NOTE: Want to understand how MaaS is configured under the hood — the Kubernetes custom resources, subscription model, and auth policy chain? See the optional xref:02-inference/05-maas-configuration.adoc[2.5 MaaS Configuration] page.

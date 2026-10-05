@@ -1,5 +1,0 @@
-# OdhDashboardConfig is a singleton owned by the RHOAI operator; this chart only
-# reconciles the feature flags the workshop needs. Rendered as-is.
-notebookController:
-  notebookNamespace: rhods-notebooks
-  pvcSize: 20Gi

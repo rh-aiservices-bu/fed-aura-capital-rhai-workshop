@@ -1,6 +1,0 @@
-apiVersion: v2
-name: workspace
-description: Per-user workshop namespace and injected LLM credentials
-type: application
-version: 0.1.0
-appVersion: "1.0.0"

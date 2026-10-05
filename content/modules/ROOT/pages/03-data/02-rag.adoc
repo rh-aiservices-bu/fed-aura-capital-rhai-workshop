@@ -25,11 +25,15 @@ By the end of this section, you will be able to:
 +
 image::module5-playground-with-prompt.png[Playground showing the lenora-mortgage-prompt loaded - click Reset to clear it,link=self,window=blank,width=700]
 
+. Now download the {company_name} mortgage product definitions — this is the document you will upload as the knowledge source. It contains product names, eligibility criteria, rate details, and policy rules that the model has no knowledge of from training.
++
+https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/raw/main/collateral/mortgage-products.pdf[Download mortgage-products.pdf,window=blank]
+
 . Open **Settings** and select the **Knowledge** tab. Toggle **Knowledge** on and select **Use uploaded documents**:
 +
 image::module5-rag-knowledge-tab.png[Knowledge tab with Use uploaded documents selected and Upload button,link=self,window=blank,width=400]
 
-. Click **Upload** and select the {company_name} mortgage products document (`mortgage-products.pdf`). The upload dialog shows the embedding settings - leave the defaults (chunk length 800, overlap 400) and click **Upload**:
+. Click **Upload** and select the file you just downloaded (`mortgage-products.pdf`). The upload dialog shows the embedding settings - leave the defaults (chunk length 800, overlap 400) and click **Upload**:
 +
 image::module5-rag-upload-settings.png[Upload files dialog showing mortgage-products.pdf with chunk settings,link=self,window=blank,width=400]
 
@@ -84,13 +88,13 @@ Here is what happened when you uploaded `mortgage-products.pdf` and asked your q
 
 == Exercise 3: The Global System Prompt
 
-The RAG response is factually correct. But compare it to what {assistant_name} said in the Overview when you clicked "Explore Products." The content is similar, but the tone, formatting, and persona are different. {assistant_name} in the live application is warm, concise, and speaks as a named mortgage assistant. The Playground response is informative but impersonal.
+The RAG response is factually correct. But compare it to what {assistant_name} said in the Overview when you clicked "Explore Products" — we asked you to remember that answer for exactly this moment. The content is similar, but the tone, formatting, and persona are different. {assistant_name} in the live application is warm, concise, and speaks as a named mortgage assistant. The Playground response is informative but impersonal.
 
 The difference is the **system prompt**. {assistant_name} in the {company_name} application uses a carefully crafted system prompt that defines her persona, tone, and behavioral boundaries. Your Playground has RAG enabled but no persona prompt.
 
 === Load the platform prompt
 
-In a production platform, you do not want every engineer writing their own system prompt from scratch. The platform admins have already deployed a **global prompt** for {assistant_name} into the cluster. Global prompts live in a dedicated `global-prompts` namespace labeled with `opendatahub.io/global-mlflow-workspace: mlflow`, which makes them available through the Prompt Registry across all projects. You do not need to configure anything - just load it.
+In a production platform, development teams building on top of {assistant_name} need to work from the same baseline — otherwise each team ends up with a slightly different version of her persona. Beyond that, the Prompt Registry can also ship **global prompts** for common use cases: generic kickstarters that any team can load and adapt rather than writing from scratch. The platform admins can maintain these so teams spend less time on boilerplate and more time on what makes their use case specific. You do not need to configure anything — just load it.
 
 [start=12]
 . With RAG still enabled, go to the **Prompt** tab. You should see the default prompt:
@@ -119,7 +123,7 @@ image::module5-global-prompt-rag-response.png[Response with global prompt and RA
 [%collapsible]
 .How global prompts work on the platform (click to expand)
 ====
-The platform admins deployed the global prompt as a Kubernetes resource in the `global-prompts` namespace:
+The platform admins deployed the global prompt in the `global-prompts` namespace. The `opendatahub.io/global-mlflow-workspace: mlflow` label on the namespace tells the Prompt Registry to make all prompts in that namespace available globally. Any project in the cluster can load these prompts, but only admins can modify them. This is how the platform enforces consistent behavior across teams without requiring each engineer to copy-paste prompts manually.
 
 [source,yaml]
 ----
@@ -129,15 +133,6 @@ metadata:
   name: global-prompts
   labels:
     opendatahub.io/global-mlflow-workspace: mlflow
----
-apiVersion: mlflow.org/v1
-kind: Prompt
-metadata:
-  name: fed-aura-capital-system-prompt
-  namespace: global-prompts
-----
-
-The `opendatahub.io/global-mlflow-workspace: mlflow` label on the namespace tells the Prompt Registry to make all prompts in that namespace available globally. Any project in the cluster can load these prompts, but only admins can modify them. This is how the platform enforces consistent behavior across teams without requiring each engineer to copy-paste prompts manually.
 ====
 
 TIP: RAG provides the facts. The system prompt provides the personality. Production AI assistants need both. The GenAI Playground lets you iterate on each independently.

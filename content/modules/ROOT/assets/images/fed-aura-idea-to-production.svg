@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="1080" viewBox="0 0 860 1080" role="img" aria-labelledby="title desc">
+<title id="title">Lenora: from idea to production</title>
+<desc id="desc">Four phases connect a business problem to an outcome: inference control, company knowledge, tools and evidence, and security boundaries. Quality and security evidence support a release review. Operation continues through update, evaluate, review, release, and observe. Security, observability, and evaluation span the lifecycle.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#536270"/></marker></defs>
+<style>text{font-family:"Red Hat Text",Arial,sans-serif;fill:#151515}.title{font-size:28px;font-weight:700}.heading{font-size:23px;font-weight:700}.body{font-size:20px}.small{font-size:18px;fill:#536270}.arrow{fill:none;stroke:#536270;stroke-width:2;marker-end:url(#arrow)}</style>
+<rect width="860" height="1080" rx="16" fill="#f7f7f7"/>
+<text x="430" y="42" text-anchor="middle" class="title">Lenora: from idea to production</text>
+<rect x="40" y="65" width="780" height="73" rx="12" fill="#fff" stroke="#b8bbbe"/>
+<text x="430" y="95" text-anchor="middle" class="heading">The idea: make mortgage lending easier</text>
+<text x="430" y="123" text-anchor="middle" class="small">A chatbot proves the idea. The platform makes it operable.</text>
+<path d="M430 138 V155" class="arrow"/><rect x="40" y="161" width="780" height="130" rx="12" fill="#fff" stroke="#0066cc" stroke-width="2"/>
+<circle cx="73" cy="189" r="18" fill="#0066cc"/><text x="73" y="196" text-anchor="middle" style="fill:#fff;font-size:20px;font-weight:700">1</text>
+<text x="105" y="196" class="heading">Control inference</text>
+<text x="65" y="225" class="small">Problem: External API dependency</text>
+<text x="65" y="252" class="body">Outcome: Self-hosted, governed model access</text>
+<text x="65" y="278" class="small">vLLM · llm-d · MaaS</text>
+<path d="M430 292 V309" class="arrow"/><rect x="40" y="315" width="780" height="130" rx="12" fill="#fff" stroke="#6753ac" stroke-width="2"/>
+<circle cx="73" cy="343" r="18" fill="#6753ac"/><text x="73" y="350" text-anchor="middle" style="fill:#fff;font-size:20px;font-weight:700">2</text>
+<text x="105" y="350" class="heading">Add company knowledge</text>
+<text x="65" y="379" class="small">Problem: Generic or unsupported policy answers</text>
+<text x="65" y="406" class="body">Outcome: Answers grounded in company documents</text>
+<text x="65" y="432" class="small">System prompts · RAG</text>
+<path d="M430 446 V463" class="arrow"/><rect x="40" y="469" width="780" height="130" rx="12" fill="#fff" stroke="#008080" stroke-width="2"/>
+<circle cx="73" cy="497" r="18" fill="#008080"/><text x="73" y="504" text-anchor="middle" style="fill:#fff;font-size:20px;font-weight:700">3</text>
+<text x="105" y="504" class="heading">Connect tools and evidence</text>
+<text x="65" y="533" class="small">Problem: Estimates with no visible decision path</text>
+<text x="65" y="560" class="body">Outcome: Calculations you can trace and evaluate</text>
+<text x="65" y="586" class="small">Agents · MCP · MLflow · Evaluations</text>
+<path d="M430 600 V617" class="arrow"/><rect x="40" y="623" width="780" height="130" rx="12" fill="#fff" stroke="#c9190b" stroke-width="2"/>
+<circle cx="73" cy="651" r="18" fill="#c9190b"/><text x="73" y="658" text-anchor="middle" style="fill:#fff;font-size:20px;font-weight:700">4</text>
+<text x="105" y="658" class="heading">Strengthen security boundaries</text>
+<text x="65" y="687" class="small">Problem: Sensitive data and actions need limits</text>
+<text x="65" y="714" class="body">Outcome: Role-scoped access and enforced policies</text>
+<text x="65" y="740" class="small">Authorization · Guardrails · Sandboxing</text>
+<path d="M430 753 V771" class="arrow"/>
+<rect x="40" y="777" width="780" height="80" rx="12" fill="#fff" stroke="#536270" stroke-dasharray="6 4"/>
+<text x="430" y="808" text-anchor="middle" class="heading">Release review: does the evidence support it?</text>
+<text x="430" y="838" text-anchor="middle" class="small">Quality + security checks · Monitoring · Owners for failures</text>
+<path d="M430 857 V875" class="arrow"/>
+<rect x="40" y="881" width="780" height="117" rx="12" fill="#e9f4ec" stroke="#3e8635" stroke-width="2"/>
+<text x="430" y="913" text-anchor="middle" class="heading">Production: operate and improve</text>
+<text x="430" y="947" text-anchor="middle" class="body">Update → Evaluate → Review → Release → Observe</text>
+<path d="M745 957 V974 H115 V956" class="arrow"/>
+<text x="430" y="991" text-anchor="middle" style="font-size:16px;fill:#536270">Observations inform the next update</text>
+<text x="430" y="1034" text-anchor="middle" class="small">Across every phase: security, observability, and evaluation</text>
+<text x="430" y="1062" text-anchor="middle" style="font-size:16px;fill:#536270">Phases show the workshop story; controls evolve throughout the lifecycle.</text>
+</svg>

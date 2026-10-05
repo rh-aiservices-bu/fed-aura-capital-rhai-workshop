@@ -144,7 +144,7 @@ With your key in hand, let's call the model directly from the terminal.
 </style>
 <div class="listingblock maas-env-wrap">
   <div class="maas-env-block" id="maas-env-block"><span class="maas-env-key">export MAAS_API_KEY=</span><span id="maas-key-display" class="maas-env-placeholder">&lt;paste-your-api-key&gt;</span>
-<span class="maas-env-key">export MAAS_URL=</span>{maas_url}</div>
+<span class="maas-env-key">export MAAS_URL=</span>https://maas.{openshift_cluster_ingress_domain}</div>
   <button class="maas-env-btn" id="maas-copy-btn" title="Copy" onclick="(function(){
     var text = document.getElementById('maas-env-block').innerText;
     navigator.clipboard.writeText(text).then(function(){
@@ -259,7 +259,7 @@ Click *Add variable* three times to create three rows, then fill in each row wit
       <button class="oc-copy-btn" title="Copy key" onclick="navigator.clipboard.writeText('OPENCODE_API_URL').then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
     </td>
     <td>
-      <span class="oc-val" id="oc-url-val">{maas_url}/v1</span>
+      <span class="oc-val" id="oc-url-val">https://maas.{openshift_cluster_ingress_domain}/v1</span>
       <button class="oc-copy-btn" title="Copy value" onclick="navigator.clipboard.writeText(document.getElementById('oc-url-val').textContent).then(function(){var b=event.target;b.textContent='✓';setTimeout(function(){b.textContent='⎘'},1200)})">⎘</button>
     </td>
   </tr>

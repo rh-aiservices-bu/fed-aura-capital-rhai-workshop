@@ -305,7 +305,7 @@ The pipeline packages the simple evaluation into four automated steps:
 * *run-simple-eval-op* — runs the three deterministic scorers (`contains_expected`, `has_numeric_result`, `response_length`)
 * *report-results-op* — prints the evaluation summary and logs results
 
-. First, download the pipeline definition file to your local machine: https://raw.githubusercontent.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/main/collateral/eval-pipeline.yaml[eval-pipeline.yaml,window=blank].
+. First, right-click and *Save As* the https://raw.githubusercontent.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/main/collateral/eval-pipeline.yaml[pipeline definition file,window=blank] to your local machine.
 
 . Navigate to *OpenShift AI Dashboard > Develop & train > Pipelines > Pipeline definitions*. Click *Import pipeline*.
 +

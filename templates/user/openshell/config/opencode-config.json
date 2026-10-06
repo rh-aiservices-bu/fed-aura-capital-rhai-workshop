@@ -40,7 +40,7 @@
           "limit": { "context": 131072, "output": 8192 },
           "cost": { "input": 0, "output": 0 }
         },
-        "qwen3-235b": {
+        "qwen3-235b-a22b": {
           "name": "Qwen3 235B",
           "tool_call": true,
           "reasoning": true,

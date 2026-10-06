@@ -62,7 +62,7 @@ GenAI Playground is here to test the model you just deployed, alongside other ca
 +
 image::inference-playground.png[Create Playground with Qwen3 0.6B,link=self,window=blank,width=700]
 
-. And select the model you just deployed. (Please don't worry about `qwen3-235b` yet, keep it unchecked.) Set *Max tokens* to `1024` and click *Create*:
+. And select the model you just deployed. (Please don't worry about `qwen3-235b-a22b` yet, keep it unchecked.) Set *Max tokens* to `1024` and click *Create*:
 +
 image::inference-playground-create.png[Select Qwen3 0.6B and set Max tokens to 1024,link=self,window=blank,width=700]
 

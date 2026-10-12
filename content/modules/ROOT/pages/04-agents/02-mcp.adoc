@@ -67,7 +67,7 @@ I have a client earning $8,000/month with $2,400 in monthly debts. What's their 
 ----
 
 . Observe the response. The model calculates DTI from the numbers you gave (30%) but hedges: "this is generally considered acceptable, but you should verify with your specific underwriting guidelines." It is doing arithmetic from the prompt — there is no tool call, no lookup against {company_name}'s actual thresholds, and no certainty.
-+
+
 === With MCP
 
 . Under *Settings > MCP*, connect to the *Risk Server MCP* by clicking the lock icon 🔒 under *Auth* and click *Save*. Then check the box to enable the Risk Server MCP for this Playground.:

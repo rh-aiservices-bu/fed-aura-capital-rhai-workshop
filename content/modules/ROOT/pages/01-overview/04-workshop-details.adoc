@@ -1,4 +1,4 @@
-= Workshop details
+= Workshop Details
 :imagesdir: ../assets/images
 :navtitle: Workshop Details
 :toc: macro
@@ -81,7 +81,7 @@ TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depen
 | llm-d
 | A distributed inference engine that scales LLM serving across multiple replicas with features like prefix caching and smart routing. Available as a deployment resource option in RHOAI.
 
-| MaaS (Model as a Service)
+| MaaS (Models as a Service)
 | A capability in RHOAI that publishes a deployed model through a managed gateway API with subscription tiers, usage metering, and API key authentication. Multiple consumers share a single model deployment.
 
 | MCP (Model Context Protocol)

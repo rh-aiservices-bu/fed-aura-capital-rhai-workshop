@@ -73,7 +73,7 @@ Expected output:
 
 === Network and security context
 
-NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and minio, but not pods in other namespaces. In section 5.3 (OpenShell Agent Sandboxing), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
+NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and MinIO, but not pods in other namespaces. In section 5.3 (OpenShell Agent Sandboxing), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
 
 [%collapsible]
 .View the NetworkPolicies in your namespace (click to expand)
@@ -139,19 +139,9 @@ What is the minimum down payment for an FHA loan?
 Observe the response. {assistant_name} answers with policy-grounded information from {company_name}'s internal documents - this is RAG (Retrieval-Augmented Generation) in action. She is not guessing; she is retrieving from the company's knowledge base.
 // TODO: capture screenshot of borrower FHA answer (explore-borrower-fha.png)
 
-. Now ask a question that triggers a tool call:
-+
-[source,text]
-----
-Can you estimate how much house I can afford on a $120,000 salary?
-----
-+
-Notice the response includes precise numbers from the affordability calculator, not generic estimates with disclaimers. This is the difference between a chatbot (estimating) and an agent (calling a real tool and returning calculated results).
-// TODO: capture screenshot of borrower affordability calculation (explore-borrower-affordability.png)
-
 === Try the CEO experience (David Park)
 
-[start=8]
+[start=7]
 . Sign out of the Borrower persona. Click **Sign In** again, and this time select the **CEO** persona:
 +
 image::ceo-sign-in.png[]
@@ -175,7 +165,7 @@ image::agentic-app6.png[CEO Assistant responding with portfolio health overview,
 
 Before we move on, let's generate a richer session with multiple conversation exchanges (called "turns" in AI terminology - each turn is one question from you and one response from the agent). This will give us more data to explore when we get to tracing in section 4.1.
 
-[start=11]
+[start=10]
 . In the same chat, ask a follow-up question:
 +
 [source,text]
@@ -255,7 +245,7 @@ You should see 5 core pods running. Here is what each one does:
 .{company_name} AI platform architecture
 image::fed-aura-platform-architecture.svg[Diagram showing {assistant_name} connected to persona agents, self-hosted models, MCP tools, a RAG vector database, MLflow observability, and platform security layers,align=center]
 +
-The platform is built around a set of cooperating components. At the center is {assistant_name} - a set of persona-specific agents orchestrated with LangGraph and powered by self-hosted models served through vLLM. Each agent has access to domain knowledge via RAG, can call real tools via MCP, and is observable through MLflow tracing. All inference goes through the MaaS gateway, which enforces access control and usage metering. NeMo Guardrails filter inputs and outputs at the boundary. OpenShell sandboxes agent execution with deny-by-default policies.
+The platform is built around a set of cooperating components. At the center is {assistant_name}, a set of persona-specific agents orchestrated with LangGraph and powered by self-hosted models served through vLLM. Each agent has access to domain knowledge via RAG, can call real tools via MCP, and is observable through MLflow tracing. All inference goes through the MaaS gateway, which enforces access control and usage metering. NeMo Guardrails filter inputs and outputs at the boundary. OpenShell sandboxes agent execution with deny-by-default policies.
 
 **Mapping pods to architecture:**
 

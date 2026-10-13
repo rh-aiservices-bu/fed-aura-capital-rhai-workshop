@@ -195,7 +195,7 @@ The `tool_auth` and `tools` spans are simply *not there*. The public agent was n
 | Refusal, no internal data
 |===
 
-Notice that the guardrail spans ran on *both* requests. Persona scoping is a separate layer: it decides which tools the agent is allowed to see in the first place, before any guardrail has to make a judgement call about the output.
+Notice that the guardrail spans ran on *both* requests. Persona scoping is a separate layer: it decides which tools the agent is allowed to see in the first place, before any guardrail has to make a judgment call about the output.
 
 NOTE: Exact latencies, application counts, and pull-through rates depend on your cluster's data and will not match the screenshots. What should match is the shape - tool spans present for the CEO, absent for the public request.
 

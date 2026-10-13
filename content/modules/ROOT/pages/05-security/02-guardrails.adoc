@@ -7,7 +7,7 @@
 
 Even authenticated users need boundaries.
 
-In the previous section the public visitor never got near the pipeline numbers, because {assistant_name} was never handed the tools to fetch them. Access control answers *who is allowed to ask*. It says nothing about what a legitimate, signed-in user might talk her into.
+In the previous section, the public visitor never got near the pipeline numbers, because {assistant_name} was never handed the tools to fetch them. Access control answers *who is allowed to ask*. It says nothing about what a legitimate, signed-in user might talk her into.
 
 That is the harder problem. A borrower with a perfectly valid session can still ask {assistant_name} to ignore her instructions, to approve a loan she should decline, to badmouth a competitor, or to repeat back the personal details of the last customer she spoke to. A login stops none of that.
 
@@ -53,7 +53,7 @@ What are the current FHA loan limits?
 +
 image::security-guardrails-fha-answer.png[Playground answering the FHA loan limits question with guardrails enabled and one source retrieved,link=self,window=blank,width=700]
 +
-Nothing was blocked. The input rail read the question, the output rail read the answer, and both let it through. Put the same content to the rails directly - through the checks endpoint in exercise 4 - and every configured rail comes back `"status": "success"`. That is the property to hold onto for the rest of this section: *guardrails should be unnoticeable for legitimate use*. If they fire on questions like this one, they are misconfigured.
+Nothing was blocked. The input rail read the question, the output rail read the answer, and both let it through. Send the same content to the rails directly - through the checks endpoint in exercise 4 - and every configured rail comes back `"status": "success"`. That is the property to hold onto for the rest of this section: *guardrails should be unnoticeable for legitimate use*. If they fire on questions like this one, they are misconfigured.
 +
 NOTE: Expect this to take *20-30 seconds*, noticeably longer than an unguarded chat. A single turn now does considerably more work: the input rail is evaluated, the knowledge base is searched, the answer is generated, and the output rail is evaluated before you see anything. Safety and grounding both cost latency - which is why the rails are scoped to what actually needs them. The badges above the response show the elapsed time and time to first token.
 
@@ -99,7 +99,7 @@ image::security-app-injection-refused.png[The Fed Aura Capital assistant refusin
 +
 image::security-app-injection-variant-refused.png[The Fed Aura Capital assistant refusing the shorter instruction-override variation,link=self,window=blank,width=400]
 
-IMPORTANT: A refusal on its own does not tell you *which layer* refused. Modern instruction-tuned models decline overtly malicious prompts on their own, so a conversational "I can't comply with that, but I can help with..." is most likely the model's own alignment rather than a rail. That distinction matters enormously in a regulated business: model behaviour changes when you swap or upgrade a model, whereas a rail is configuration you control and can evidence. Click *View trace* under the response and keep it to hand - exercise 5 uses the trace to tell the two apart definitively.
+IMPORTANT: A refusal on its own does not tell you *which layer* refused. Modern instruction-tuned models decline overtly malicious prompts on their own, so a conversational "I can't comply with that, but I can help with..." is most likely the model's own alignment rather than a rail. That distinction matters enormously in a regulated business: model behavior changes when you swap or upgrade a model, whereas a rail is configuration you control and can evidence. Click *View trace* under the response and keep it to hand - exercise 5 uses the trace to tell the two apart definitively.
 
 When a rail *is* the thing that fires, the guardrails service reports it explicitly. Checking content directly against the rails returns the rail-by-rail verdict:
 
@@ -267,7 +267,7 @@ This is the audit trail. When compliance asks you to prove the assistant cannot 
 
 == Exercise 6: Garak Adversarial Test Results
 
-Guardrails protect at runtime. But how do you know the model is robust _before_ deployment? Garak is an open source adversarial scanner for LLMs, and Red Hat pairs it with the Chatterbox Labs technology it acquired to turn a scan into a compliance artifact. The flow is: define a policy, generate synthetic attack prompts via SDG Hub, attack the model via Garak, and produce a report through EvalHub showing where the model breaks.
+Guardrails protect at runtime. But how do you know the model is robust _before_ deployment? Garak is an open-source adversarial scanner for LLMs, and Red Hat pairs it with the Chatterbox Labs technology it acquired to turn a scan into a compliance artifact. The flow is: define a policy, generate synthetic attack prompts via SDG Hub, attack the model via Garak, and produce a report through EvalHub showing where the model breaks.
 
 The interactive demo below is a *pre-recorded walkthrough from a different model*, not {assistant_name} or anything you deployed in this workshop. Read it for the shape of the report and the workflow around it - the categories, the pass and fail evidence, how findings are presented - rather than for the specific numbers:
 

@@ -55,7 +55,7 @@ image::module5-rag-response.png[RAG-grounded response showing mortgage product c
 What are the underwriting requirements for a Jumbo Loan? Include the reserve requirements and DTI limits.
 ----
 +
-The model should return that Jumbo Loans require a minimum credit score of 700, a maximum back-end DTI of 38%, and at least 12 months of reserves covering the proposed housing payment. It may also mention that jumbo loans require a senior underwriter and a second review, and that loan amounts exceeding $1.5 million need a second comparable analysis. These are specific {company_name} underwriting standards from the document - not general knowledge a model would have from training data.
+The model should return that jumbo loans require a minimum credit score of 700, a maximum back-end DTI of 38%, and at least 12 months of reserves covering the proposed housing payment. It may also mention that jumbo loans require a senior underwriter and a second review, and that loan amounts exceeding $1.5 million need a second comparable analysis. These are specific {company_name} underwriting standards from the document - not general knowledge a model would have from training data.
 +
 image::module5-rag-jumbo-verification.png[RAG response showing Jumbo Loan underwriting checklist with credit score and reserve requirements,link=self,window=blank,width=700]
 

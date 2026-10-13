@@ -24,7 +24,7 @@ By the end of this section, you will be able to:
 
 == Exercise 1: Experience {company_name} as a Loan Officer
 
-You have already seen {assistant_name} as a Borrower and a CEO. Now step into the Loan Officer persona — the role closest to where the AI's precision matters most. Loan officers assess risk, review applications, and make recommendations. When they ask {assistant_name} a question, they need exact numbers, not estimates.
+You have already seen {assistant_name} as a Borrower and a CEO. Now step into the Loan Officer persona, the role closest to where the AI's precision matters most. Loan officers assess risk, review applications, and make recommendations. When they ask {assistant_name} a question, they need exact numbers, not estimates.
 
 . Navigate to the *{company_name} App* tab. Click *Sign In* and select the *Loan Officer* persona:
 +
@@ -38,7 +38,7 @@ image::agents-loan-officer-login.png[Sign in dialog with Loan Officer persona se
 Run a risk assessment on application #3730
 ----
 
-. Observe the response. {assistant_name} returns a structured risk assessment with precise numbers — DTI ratio, LTV, credit score, approval recommendation, and any conditions that apply:
+. Observe the response. {assistant_name} returns a structured risk assessment with precise numbers: DTI ratio, LTV, credit score, approval recommendation, and any conditions that apply:
 +
 // TODO: screenshot of risk assessment response (agents-risk-assessment-response.png)
 image::agents-risk-assessment-response.png[{assistant_name}'s risk assessment response with precise figures for application 3730,link=self,window=blank,width=700]
@@ -52,7 +52,7 @@ This is not a chatbot estimating from general knowledge. {assistant_name} called
 What conditions apply?
 ----
 +
-{assistant_name} responds with the conditions from the assessment she just ran — she did not re-call the tools. The context from the previous tool call is carried forward in the conversation.
+{assistant_name} responds with the conditions from the assessment she just ran. She did not re-call the tools. The context from the previous tool call is carried forward in the conversation.
 
 NOTE: The exact values in the response may differ depending on the cluster state, but the structure will be consistent: tool-backed precision, conditions listed by category, and a clear recommendation.
 
@@ -90,17 +90,17 @@ input_shield
 // TODO: screenshot of full trace tree (agents-trace-tree.png)
 image::agents-trace-tree.png[MLflow trace showing the full agent decision path from input_shield to tool calls,link=self,window=blank,width=700]
 
-. Click on the `calculate_dti` step. Inspect the inputs — the gross monthly income and total monthly debts from the application — and the output: `dti_value=29.6`. Every argument passed to the tool and every value it returned is recorded:
+. Click on the `calculate_dti` step. Inspect the inputs (the gross monthly income and total monthly debts from the application) and the output: `dti_value=29.6`. Every argument passed to the tool and every value it returned is recorded:
 +
 // TODO: screenshot of calculate_dti step detail (agents-trace-calculate-dti.png)
 image::agents-trace-calculate-dti.png[calculate_dti tool step showing inputs and output dti_value in the trace,link=self,window=blank,width=700]
 
-. Look at the total latency for the trace. Each step is timestamped — you can see exactly where time was spent: the LLM call, the tool auth check, each individual tool execution.
+. Look at the total latency for the trace. Each step is timestamped, so you can see exactly where time was spent: the LLM call, the tool auth check, each individual tool execution.
 
-TIP: When something goes wrong in production — a wrong recommendation, a slow response, a failed tool call — this is where you go first. The trace is a full audit log of every decision the agent made.
+TIP: When something goes wrong in production (a wrong recommendation, a slow response, a failed tool call), this is where you go first. The trace is a full audit log of every decision the agent made.
 
 === What's Next?
 
 You observed {assistant_name} calling tools and traced every step of her decision. But where do those tools come from? How does the platform know which tools {assistant_name} is allowed to call? And how can you give any model access to the same tools through the Playground?
 
-That is what MCP — the Model Context Protocol — provides. In the next exercise, you will explore the MCP catalog and use the Risk Server directly.
+That is what MCP (the Model Context Protocol) provides. In the next exercise, you will explore the MCP catalog and use the Risk Server directly.

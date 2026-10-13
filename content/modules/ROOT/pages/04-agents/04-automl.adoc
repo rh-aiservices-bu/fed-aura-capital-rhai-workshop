@@ -5,15 +5,15 @@
 :toc-placement: preamble
 :icons: font
 
-WARNING: This is an advanced optional section. It requires additional time and is intended for participants who want to understand how the Risk MCP's predictive model was trained. The main section exercises are complete — this section is self-contained and can be done independently.
+WARNING: This is an advanced optional section. It requires additional time and is intended for participants who want to understand how the Risk MCP's predictive model was trained. The main section exercises are complete. This section is self-contained and can be done independently.
 
 == Where Does the Prediction Come From?
 
-In Exercise 4, you watched {assistant_name} call `uw_predict_loan_approval` through the Risk MCP server. The response was not a rule — it was a machine learning prediction. But where does that prediction come from?
+In Exercise 4, you watched {assistant_name} call `uw_predict_loan_approval` through the Risk MCP server. The response was not a rule; it was a machine learning prediction. But where does that prediction come from?
 
 Behind the `uw_predict_loan_approval` tool is a scikit-learn classification model trained on historical loan application data. The model learned which combinations of DTI ratio, LTV, credit score, and asset sufficiency correlate with loan outcomes, and it applies that learning to new applications at inference time.
 
-Training that model by hand — selecting algorithms, tuning hyperparameters, tracking experiments — would take days. AutoML automates the entire process. It runs multiple algorithm configurations in parallel, compares the results, and surfaces the best-performing model — all logged to MLflow so every run is reproducible and auditable.
+Training that model by hand (selecting algorithms, tuning hyperparameters, tracking experiments) would take days. AutoML automates the entire process. It runs multiple algorithm configurations in parallel, compares the results, and surfaces the best-performing model, all logged to MLflow so every run is reproducible and auditable.
 
 This is how {company_name} connects classical machine learning to generative AI: the LLM orchestrates and decides what to ask, the ML model predicts, and AutoML keeps that model accurate as new loan data comes in.
 
@@ -45,12 +45,12 @@ image::automl-notebook-open.png[automl_training.ipynb open in the Workbench show
 // TODO: screenshot of notebook cells executing with MLflow logging output (automl-notebook-running.png)
 image::automl-notebook-running.png[Notebook output showing MLflow run logging as AutoML training progresses,link=self,window=blank,width=700]
 
-. Once training completes, navigate to *OpenShift AI Dashboard > Develop & Train > Experiments* and find the experiment named `automl-loan-approval`. You will see multiple runs — one per algorithm configuration — with their accuracy, precision, and recall scores:
+. Once training completes, navigate to *OpenShift AI Dashboard > Develop & Train > Experiments* and find the experiment named `automl-loan-approval`. You will see multiple runs, one per algorithm configuration, with their accuracy, precision, and recall scores:
 +
 // TODO: screenshot of automl-loan-approval experiment in MLflow (automl-mlflow-experiment.png)
 image::automl-mlflow-experiment.png[MLflow automl-loan-approval experiment showing multiple algorithm runs with metrics,link=self,window=blank,width=700]
 
-. Click on the run marked as best (or the one with the highest accuracy). Review the parameters — algorithm, hyperparameters — and the metrics. MLflow captures the full lineage: what data went in, what configuration was used, what results came out:
+. Click on the run marked as best (or the one with the highest accuracy). Review the parameters (algorithm, hyperparameters) and the metrics. MLflow captures the full lineage: what data went in, what configuration was used, what results came out:
 +
 // TODO: screenshot of best run detail in MLflow (automl-mlflow-best-run.png)
 image::automl-mlflow-best-run.png[MLflow best run detail showing algorithm configuration and accuracy metrics,link=self,window=blank,width=700]
@@ -62,7 +62,7 @@ image::automl-model-registry.png[MLflow Model Registry showing the loan-approval
 
 . The Risk MCP server is already configured to load the latest version of `loan-approval-classifier` from the Model Registry at startup. Your newly trained model is now what {assistant_name} calls when she runs `uw_predict_loan_approval` on a new application.
 
-TIP: In production, this training pipeline would run on a schedule — weekly or monthly — as new loan outcome data arrives. AutoML ensures the model stays calibrated without requiring a data scientist to manually tune it each time.
+TIP: In production, this training pipeline would run on a schedule (weekly or monthly) as new loan outcome data arrives. AutoML ensures the model stays calibrated without requiring a data scientist to manually tune it each time.
 
 Reference: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/tree/dev/templates/user/automl[AutoML collateral on GitHub,window=blank]
 
@@ -76,7 +76,7 @@ Reference: https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/tr
 
 === Key Takeaways
 
-* AutoML reduces the time from raw data to deployed model — algorithm selection, hyperparameter tuning, and experiment tracking are automated rather than manual
-* MLflow provides full lineage for every run: data, configuration, metrics, and the resulting model artifact are all linked and auditable
-* The connection between AutoML and the MCP server is the Model Registry — the MCP server loads whatever version is marked latest, so retraining and redeploying the model requires no changes to the agent code
-* Classical ML and generative AI are complementary: the LLM handles language, reasoning, and orchestration; the ML model handles structured prediction tasks that require statistical pattern recognition
+* AutoML reduces the time from raw data to deployed model: algorithm selection, hyperparameter tuning, and experiment tracking are automated rather than manual.
+* MLflow provides full lineage for every run: data, configuration, metrics, and the resulting model artifact are all linked and auditable.
+* The connection between AutoML and the MCP server is the Model Registry. The MCP server loads whatever version is marked latest, so retraining and redeploying the model requires no changes to the agent code.
+* Classical ML and generative AI are complementary: the LLM handles language, reasoning, and orchestration; the ML model handles structured prediction tasks that require statistical pattern recognition.

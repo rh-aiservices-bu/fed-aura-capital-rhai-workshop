@@ -15,7 +15,13 @@ kind: NemoGuardrails
 metadata:
   name: nemo-guardrails
   annotations:
-    security.opendatahub.io/enable-auth: 'false'
+    # Must stay 'true'. With 'false' the operator exposes the nemo-guardrails Service as
+    # plain HTTP on port 80 and omits the kube-rbac-proxy sidecar, but the GenAI Playground
+    # BFF always posts to https://nemo-guardrails.<ns>.svc.cluster.local:443/v1/guardrail/checks
+    # with the user token. Nothing listens on 443, so every check hangs until the BFF client
+    # timeout and the Playground reports "[guardrail_service_unavailable]".
+    # The mortgage-ai API is unaffected either way: it talks to nemo-guardrails-internal:8000.
+    security.opendatahub.io/enable-auth: 'true'
   labels:
     {{- include "mortgage-ai.nemo-guardrails.labels" . | nindent 4 }}
 spec:

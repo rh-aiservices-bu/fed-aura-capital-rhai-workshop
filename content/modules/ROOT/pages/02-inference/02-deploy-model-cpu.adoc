@@ -3,7 +3,6 @@
 :navtitle: Deploy a Model on CPU
 :toc: macro
 :toclevels: 1
-:toc-placement: preamble
 :icons: font
 
 == Exercise 2: Deploy a Model on CPU
@@ -16,7 +15,7 @@ image::inference-cpu-deploy-button.png[Model card for Qwen3 0.6B with the Deploy
 
 . Select your project `Workspace {user}` and click *Next*.
 
-. You will be prompted for where the model lives. This information is already populated cause the catalog has the information — don't change anything, just click *Next*.
+. You will be prompted for where the model lives. This information is already populated because the catalog has the information. Don't change anything, just click *Next*.
 
 . On the deployment configuration screen, keep the name as-is. 
 
@@ -30,7 +29,7 @@ image::inference-cpu-resource-limits.png[Resource requests and limits configurat
 +
 image::inference-cpu-accelerator-config.png[Accelerator configuration showing vLLM CPU x86 selected with 1 replica,link=self,window=blank,width=700]
 
-. On the final screen, select *Add as AI asset endpoint*. Don't worry about the MaaS option yet — we'll get to that in Exercise 4.
+. On the final screen, select *Add as AI asset endpoint* and under *Use case* enter `chat`. Don't worry about the MaaS option yet, we'll get to that in Exercise 4.
 +
 image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
 
@@ -42,7 +41,7 @@ Let's pass `--max-model-len=2048` to limit the maximum length of the model's con
 +
 . We can also add `custom runtime environment variables` if we want to pass any additional environment variables to the vLLM runtime. 
 +
-Let's add `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB. Setting this to 8GB gives the model enough cache space to handle requests efficiently.
+Click *Add variable* and let's add `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB. Setting this to 8GB gives the model enough cache space to handle requests efficiently.
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
 + 
@@ -66,7 +65,7 @@ image::inference-playground.png[Create Playground with Qwen3 0.6B,link=self,wind
 +
 image::inference-playground-create.png[Select Qwen3 0.6B and set Max tokens to 1024,link=self,window=blank,width=700]
 
-. When the Playground is ready, send a prompt of your choice — for example:
+. When the Playground is ready, send a prompt of your choice. For example:
 +
 [source,text]
 ----
@@ -82,11 +81,11 @@ You should see a response from the model, hopefully with the correct answer "Par
 You are a helpful assistant and you talk like Gen Z.
 ----
 +
-Send the same question again `What is the capital of France?`. You should get a noticeably different response — same facts, very different vibe 😎
+Send the same question again `What is the capital of France?`. You should get a noticeably different response: same facts, very different vibe 😎
 +
 image::inference-playground-system-prompt.png[GenAI Playground showing the system prompt field and a Gen Z style response,link=self,window=blank,width=700]
 +
-NOTE: The Instructions field is how you pass a system prompt to the model — instructions that shape its persona, tone, and behavior before the user says anything. This is the simplest form of prompt engineering, and it works on any model regardless of how it was deployed.
+NOTE: The Instructions field is how you pass a system prompt to the model. These instructions shape its persona, tone, and behavior before the user says anything. This is the simplest form of prompt engineering, and it works on any model regardless of how it was deployed.
 
 === What's Next?
 

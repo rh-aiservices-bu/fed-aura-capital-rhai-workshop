@@ -7,10 +7,25 @@ metadata:
     {{- include "mortgage-ai.nemo-guardrails.labels" . | nindent 4 }}
 data:
   config.yaml: |
+    # The rails below are all local actions (regex and PII detection), so none of them
+    # needs the LLM. Without passthrough, NeMo still runs its default dialog step
+    # (generate_user_intent) after the input rails, and that step calls the model with
+    # a hardcoded stop= argument (actions/llm/utils.py). The MaaS model is Bedrock-hosted
+    # and rejects stopSequences, so the call returns 400, the rail raises, and the
+    # Playground reports "[guardrail_service_unavailable]". Passthrough skips intent
+    # generation and runs only the input/output rails, which is all this config declares.
+    passthrough: True
     models:
       - type: main
         engine: openai
         model: {{ .Values.nemoGuardrails.llm.modelName | default .Values.secrets.LLM_MODEL | quote }}
+        # Without this, NeMo does not pick up the OPENAI_API_KEY the CR injects from
+        # nemo-guardrails-api-key and sends a runtime-provided value instead, which the
+        # MaaS litellm rejects: "[401] Authentication Error, LiteLLM Virtual Key expected.
+        # Received=runtime-provided, expected to start with 'sk-'". Every rail then fails
+        # with an internal error, which the Playground surfaces as
+        # "[guardrail_service_unavailable] guardrail service unavailable".
+        api_key_env_var: OPENAI_API_KEY
         parameters:
           {{- if .Values.nemoGuardrails.proxy.enabled }}
           base_url: "http://nemo-guardrails-proxy:8081/v1"
@@ -40,8 +55,19 @@ data:
               - "\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}"            # Phone number
               # Security keywords
               - "\\b(password|hack|exploit|vulnerability|secret|api[_-]?key|token)\\b"
+              # Prompt injection (section 5.2 exercise 5). Scoped so ordinary phrasing
+              # like "forget about the 30-year option" or "approve my application"
+              # does not trip: the first rule needs "instructions" nearby, and the
+              # approve rule needs "every"/"all".
+              - "\\b(ignore|disregard|forget)\\b[^.]{0,30}\\b(previous|prior|above|all|your)\\b[^.]{0,25}\\binstructions?\\b"
+              - "\\byou are now\\b"
+              - "\\b(unrestricted|jailbreak|developer mode)\\b"
+              - "\\bapprove\\s+(every|all)\\b"
               # Inappropriate content
               - "\\b(violence|illegal|harmful)\\b"
+              # Document fraud (section 5.2 exercise 6). "forge" alone is too broad,
+              # so it must sit next to a document or income noun.
+              - "\\b(forge|forging|falsify|fabricate|fake)\\b[^.]{0,30}\\b(document|income|statement|pay\\s?stub|w-?2|tax)"
               # Competitor names
               - "\\b(chatgpt|openai|claude|anthropic)\\b"
               - "\\b(green\\s*aura|black\\s*aura|rob\\s*aura)\\b"

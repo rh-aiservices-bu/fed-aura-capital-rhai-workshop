@@ -73,7 +73,7 @@ Expected output:
 
 === Network and security context
 
-NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and minio, but not pods in other namespaces. In section 5.3 (OpenShell Agent Sandboxing), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
+NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and MinIO, but not pods in other namespaces. In section 5.3 (OpenShell Agent Sandboxing), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
 
 [%collapsible]
 .View the NetworkPolicies in your namespace (click to expand)
@@ -206,7 +206,7 @@ The platform captured all of it automatically. You will trace every step in sect
 
 == Exercise 3: Understand the architecture in context
 
-From the outside, the conversation looks simple: you typed a question and {assistant_name} answered. That's exactly how it should feel to  borrower or loan officer. But you're not a borrower anymore. You're the engineer who has to keep this running. Let's connect what you observed to the architecture.
+From the outside, the conversation looks simple: you typed a question and {assistant_name} answered. That's exactly how it should feel to a borrower or loan officer. But you're not a borrower anymore. You're the engineer who has to keep this running. Let's connect what you observed to the architecture.
 
 . Review the architecture diagram below. It shows every component involved when {assistant_name} answers a question:
 +
@@ -214,7 +214,7 @@ From the outside, the conversation looks simple: you typed a question and {assis
 .{company_name} AI platform architecture
 image::fed-aura-platform-architecture.svg[Diagram showing {assistant_name} connected to persona agents, self-hosted models, MCP tools, a RAG vector database, MLflow observability, and platform security layers,align=center]
 +
-The platform is built around a set of cooperating components. At the center is {assistant_name} — a set of persona-specific agents orchestrated with LangGraph and powered by self-hosted models served through vLLM. Each agent has access to domain knowledge via RAG, can call real tools via MCP, and is observable through MLflow tracing. All inference goes through the MaaS gateway, which enforces access control and usage metering. NeMo Guardrails filter inputs and outputs at the boundary. OpenShell sandboxes agent execution with deny-by-default policies.
+The platform is built around a set of cooperating components. At the center is {assistant_name}, a set of persona-specific agents orchestrated with LangGraph and powered by self-hosted models served through vLLM. Each agent has access to domain knowledge via RAG, can call real tools via MCP, and is observable through MLflow tracing. All inference goes through the MaaS gateway, which enforces access control and usage metering. NeMo Guardrails filter inputs and outputs at the boundary. OpenShell sandboxes agent execution with deny-by-default policies.
 
 . Return to the **Terminal** tab. List all running pods and match them to what you just saw in the diagram:
 +

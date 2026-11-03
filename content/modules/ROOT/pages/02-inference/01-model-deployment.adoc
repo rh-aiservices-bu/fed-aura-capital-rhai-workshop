@@ -4,18 +4,18 @@
 :toc: macro
 :toclevels: 1
 
-{assistant_name} depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other section in this workshop.
+{assistant_name} depends on language models for every conversation, reasoning step, and tool decision. That's why we are starting from the model. First, we'll get the experience of model serving, look into what kind of options we have for self-hosted inference, and then look into governance and access control for the model. The model is the intelligence layer of the platform, and it is the foundation for every other section in this workshop.
 
 .Section 2 focus: self-hosted model inference
 image::fed-aura-platform-architecture-models-focus.svg[The {company_name} platform architecture with the self-hosted models layer highlighted,align=center]
 
-You will browse the Red Hat OpenShift AI Model Catalog, deploy models, scale inference with llm-d, and learn about Models as a Service concept.
+You will browse the Red Hat OpenShift AI Model Catalog, deploy models, scale inference with llm-d, and learn about the Models as a Service concept.
 
 Estimated time: *25 minutes*
 
 == Learning Objectives
 
-By the end of this section you will be able to:
+By the end of this section, you will be able to:
 
 * Navigate the RHOAI Model Catalog and identify validated models
 * Deploy an LLM on CPU and use Gen AI Playground to interact with the model
@@ -32,14 +32,14 @@ image::inference-model-catalog-overview.png[Model Catalog showing available mode
 
 . Look at the tags on the model cards. There are two types of certified models:
 +
-* *Red Hat AI models* — fully supported by Red Hat with legal indemnification included
-* *Validated Models* — third-party models verified by Red Hat to ensure reliable performance and compatibility on OpenShift AI
+* *Red Hat AI models* - fully supported by Red Hat with legal indemnification included
+* *Validated Models* - third-party models verified by Red Hat to ensure reliable performance and compatibility on OpenShift AI
 
 . Click on any model to open its model card. Notice what information is available:
 +
-** *Description and tags* — what the model is for, its size, and its architecture
-** *License and documentation* — the terms under which you can use and distribute the model
-** *Performance insights* — Red Hat benchmarks this model on different hardware across common use cases such as chatbot, code generation, and document summarization, so you can compare expected throughput and latency before committing to a deployment
+** *Description and tags* - what the model is for, its size, and its architecture
+** *License and documentation* - the terms under which you can use and distribute the model
+** *Performance insights* - Red Hat benchmarks this model on different hardware across common use cases such as chatbot, code generation, and document summarization, so you can compare expected throughput and latency before committing to a deployment
 ** *Safety and security insights* - Red Hat tests models for known vulnerabilities, adversarial robustness, and safety issues
 +
 image::inference-model-card-detail.png[Model card showing description, license, and performance benchmarks,link=self,window=blank,width=700]
@@ -57,7 +57,7 @@ image::inference-model-catalog-other-tab.png[Other Models tab showing organizati
 
 Before moving on, take a moment to understand what you just saw:
 
-* The Model Catalog is not just a list of downloads — it is a governed library where each model carries metadata about its origin, license, hardware requirements, and Red Hat validation status
+* The Model Catalog is not just a list of downloads. It is a governed library where each model carries metadata about its origin, license, hardware requirements, and Red Hat validation status
 * When {company_name}'s platform team adds a new model, it appears in *Other Models*
 
 == What's Next?

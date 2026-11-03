@@ -57,7 +57,11 @@ The {company_name} app assigns different capabilities depending on who logs in. 
 
 You will need two tabs from section 1.4 for this page: the *{company_name} App* and the *OpenShift AI Dashboard*, with your workshop project selected.
 
-. Navigate to the *{company_name} App* tab. Click *Sign In* and select the *CEO* persona (David Park):
+. Navigate to the *{company_name} App* tab. You are still signed in as the Underwriter from section 4.1, so click *Sign Out* first:
++
+image::security-sign-out.png[Application header showing the Underwriter persona and the Sign Out button,link=self,window=blank,width=290]
+
+. Click *Sign In* and select the *CEO* persona (David Park):
 +
 image::ceo-sign-in.png[Sign in dialog with the CEO persona selected,link=self,window=blank,width=700]
 
@@ -127,7 +131,11 @@ Their *Execution time* differs by several seconds as well - the CEO request is n
 +
 NOTE: If you retried a step earlier you may have more than two matching traces. Take the most recent pair.
 
-. Open the CEO request - the one with the `user:` session. Select the *Details & Timeline* tab and read the trace breakdown:
+. Open the CEO request - the one with the `user:` session. The *Summary* tab lists the request inputs, including `user_email`, so you can confirm you opened the CEO trace and not the public one:
++
+image::security-trace-ceo-summary.png[Trace summary showing the user_id and user_email inputs for the CEO request,link=self,window=blank,width=600]
+
+. Select the *Details & Timeline* tab and read the trace breakdown:
 +
 image::security-trace-ceo-tools.png[CEO trace breakdown showing input_shield, agent, tool_auth, tools with ceo_pipeline_summary, and output_shield,link=self,window=blank,width=700]
 +
@@ -193,7 +201,7 @@ The `tool_auth` and `tools` spans are simply *not there*. The public agent was n
 | Refusal, no internal data
 |===
 
-Notice that the guardrail spans ran on *both* requests. Persona scoping is a separate layer: it decides which tools the agent is allowed to see in the first place, before any guardrail has to make a judgement call about the output.
+Notice that the guardrail spans ran on *both* requests. Persona scoping is a separate layer: it decides which tools the agent is allowed to see in the first place, before any guardrail has to make a judgment call about the output.
 
 NOTE: Exact latencies, application counts, and pull-through rates depend on your cluster's data and will not match the screenshots. What should match is the shape - tool spans present for the CEO, absent for the public request.
 

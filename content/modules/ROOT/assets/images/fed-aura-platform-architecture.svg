@@ -23,7 +23,7 @@
   </defs>
 
   <rect width="1400" height="850" fill="#f7f7f7"/>
-  <text x="700" y="45" class="title" text-anchor="middle">Fed Aura Capital — Lenora AI Platform</text>
+  <text x="700" y="45" class="title" text-anchor="middle">Fed Aura Capital - Lenora AI Platform</text>
 
   <!-- Security layer: this group can be highlighted as a single workshop focus. -->
   <g id="security-layer">

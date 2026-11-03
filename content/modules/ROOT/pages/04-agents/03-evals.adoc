@@ -1,14 +1,13 @@
-= Exercise 6: Continuous Evaluation
+= Continuous Evaluation
 :navtitle: Evaluations and Quality
 :imagesdir: ../assets/images
 :toc: macro
 :toclevels: 1
-:toc-placement: preamble
 :icons: font
 
-You built {assistant_name}, tested her, and everything looked good. But the model is just one variable. The documents behind RAG will change as policies update. New tools will be added to the MCP catalog. Someone will tweak the system prompt. Any of those changes — without a model update — can shift her behavior in ways that are hard to spot until something goes wrong in production.
+You built {assistant_name}, tested her, and everything looked good. But the model is just one variable. The documents behind RAG will change as policies update. New tools will be added to the MCP catalog. Someone will tweak the system prompt. Any of those changes, without a model update, can shift her behavior in ways that are hard to spot until something goes wrong in production.
 
-Continuous evaluation is how you stay ahead of that — automated pipelines that measure quality on every change, before it reaches production.
+Continuous evaluation is how you stay ahead of that: automated pipelines that measure quality on every change, before it reaches production.
 
 == Learning Objectives
 
@@ -19,7 +18,7 @@ By the end of this section, you will be able to:
 * Run an llm-as-judge evaluation in MLflow
 * (Optional) Import and run an automated evaluation pipeline and review results in MLflow
 
-== Exercise 6: Evaluate the Model with EvalHub
+== Exercise 5: Evaluate the Model with EvalHub
 
 EvalHub is the centralized evaluation interface for the platform. It lets you run standardized benchmarks against any model endpoint and compare results across versions.
 
@@ -28,18 +27,22 @@ EvalHub is the centralized evaluation interface for the platform. It lets you ru
 // TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
 image::evals-evalhub-main.png[EvalHub interface to start a new evaluation run,link=self,window=blank,width=700]
 
+. For the evaluation type, select *Benchmark*. A benchmark runs a single test, while a benchmark suite runs a predefined group of them:
++
+image::evals-select-evaluation-type.png[Select evaluation type page with the Benchmark option highlighted,link=self,window=blank,width=700]
+
 . You will see a list of available benchmarks. Use the *Name* filter and search for `ifeval` to find *Instruction Following Evaluation (IFEval)*. Click *Select benchmark*.
 +
-IFEval tests whether a model can follow explicit formatting instructions — things like "respond in exactly 3 sentences," "include the keyword X," "output valid JSON," or "write in all caps." This matters directly for {assistant_name}: we built a detailed system prompt that enforces corporate language, formatting rules, and strict tool-use behavior. If the underlying model can't reliably follow structured instructions, {assistant_name} will break those rules — responding in markdown when told not to, skipping tool calls, or ignoring persona constraints.
-+
 image::evals-ifeval-select.png[Search for ifeval and select the IFEval benchmark,link=self,window=blank,width=700]
++
+IFEval tests whether a model can follow explicit formatting instructions, things like "respond in exactly 3 sentences," "include the keyword X," "output valid JSON," or "write in all caps." This matters directly for {assistant_name}: we built a detailed system prompt that enforces corporate language, formatting rules, and strict tool-use behavior. If the underlying model can't reliably follow structured instructions, {assistant_name} will break those rules: responding in markdown when told not to, skipping tool calls, or ignoring persona constraints.
 +
 . Fill in the evaluation run form:
 +
 --
 * *Run name*: `IFEval`
 * *MLflow Experiment*: Create new, call it `EvalHub`
-* *Source*: `Model` — we are evaluating how capable the model is on the given topic, not a full application
+* *Source*: `Model` - we are evaluating how capable the model is on the given topic, not a full application
 * *Model*: Select *Other (External endpoint)*
 ** *Model name*: `qwen3-235b-a22b`
 ** *Endpoint URL*: `https://maas.{openshift_cluster_ingress_domain}/v1`
@@ -47,26 +50,9 @@ image::evals-ifeval-select.png[Search for ifeval and select the IFEval benchmark
 +
 . The model is behind an API key, so we need to create a Kubernetes Secret that EvalHub can reference. Switch to the *Terminal* tab and run:
 +
-[subs=attributes+]
-++++
-<style>
-  .evalhub-secret-wrap { position: relative; margin: 0.5rem 0; }
-  .evalhub-secret-block {
-    background: #1e1e1e; border-radius: 6px;
-    padding: 0.75rem 3.5rem 0.75rem 1rem;
-    font-family: monospace; font-size: 0.82rem; color: #d4d4d4; white-space: pre;
-  }
-  .evalhub-copy-btn {
-    position: absolute; top: 0.4rem; right: 0.5rem;
-    background: #28a745; color: white; border: none; border-radius: 4px;
-    padding: 0.3rem 0.55rem; font-size: 0.8rem; cursor: pointer;
-    opacity: 0.4; transition: opacity 0.2s;
-  }
-  .evalhub-copy-btn:hover { opacity: 1; }
-  .evalhub-placeholder { color: #6b7280; font-style: italic; }
-</style>
-<div class="listingblock evalhub-secret-wrap">
-  <div class="evalhub-secret-block" id="evalhub-secret-block">oc apply -n wksp-{user} -f - &lt;&lt;EOF
+[source,console,role=execute,subs=attributes+]
+----
+oc apply -n wksp-{user} -f - <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
@@ -74,53 +60,35 @@ metadata:
   namespace: wksp-{user}
 type: Opaque
 stringData:
-  api-key: <span class="evalhub-placeholder" id="evalhub-key-val">&lt;paste-your-api-key&gt;</span>
-EOF</div>
-  <button class="evalhub-copy-btn" title="Copy" onclick="(function(){
-    var text = document.getElementById('evalhub-secret-block').innerText;
-    navigator.clipboard.writeText(text).then(function(){
-      var b = document.getElementById('evalhub-copy-btn');
-      b.textContent = '✓'; setTimeout(function(){ b.textContent = '⎘'; }, 1200);
-    });
-  })()" id="evalhub-copy-btn">⎘</button>
-</div>
-<script>
-  (function() {
-    function syncEvalhubKey() {
-      var keyVal = document.getElementById('evalhub-key-val');
-      if (!keyVal) return;
-      var k = '';
-      var keyInput = document.getElementById('api-key-input');
-      if (keyInput) k = keyInput.value.trim();
-      if (!k) { try { k = localStorage.getItem('workshop-api-key') || ''; } catch(e) {} }
-      keyVal.textContent = k || '<paste-your-api-key>';
-      keyVal.className = k ? '' : 'evalhub-placeholder';
-    }
-    function attach() {
-      var k = document.getElementById('api-key-input');
-      if (k) k.addEventListener('input', syncEvalhubKey);
-      syncEvalhubKey();
-    }
-    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); }
-    else { attach(); }
-  })();
-</script>
-++++
+  api-key: <paste-your-api-key>
+EOF
+----
++
+IMPORTANT: Replace `<paste-your-api-key>` with your API key before you press Enter. If you run the command with the placeholder still there, the Secret is created with that text and *Validate connection* fails a few steps later.
 +
 TIP: If you no longer have your API key, you can always go back to the *API Keys* tab and create a new one.
 +
 TIP: If you get an error, please log in to the OpenShift cluster again with the following command and then re-run the secret creation command:
++
 [source,console,role=execute,subs=attributes+]
 ----
 oc login --insecure-skip-tls-verify $(oc whoami --show-server) -u {user} -p {password}
 ----
 
-. Switch back to *EvalHub* and complete the remaining fields:
+. Switch back to *EvalHub* and set the *API Key Secret* to `evalhub-secret`, the Secret you just created.
+
+. With the secret selected, click *Validate connection*. This checks that EvalHub can reach the endpoint with that key, so you catch a wrong secret or a bad key now rather than after a failed run. Wait for *Connection established successfully* before continuing:
 +
---
-* *API Key Secret*: `evalhub-secret`
-* *Benchmark parameters*: `{"tokenizer": "Qwen/Qwen3-235B-A22B","backend": "chat", "num_examples": 50}`
---
+image::evals-validate-connection.png[Validate connection button showing Connection established successfully,link=self,window=blank,width=400]
+
+. Tick *Benchmark parameters* and paste this JSON into the text area below it. It names the tokenizer to score against, runs the benchmark in chat mode, and caps the run at 50 prompts so it finishes in a few minutes:
++
+[source,json]
+----
+{"tokenizer": "Qwen/Qwen3-235B-A22B","backend": "chat", "num_examples": 50}
+----
++
+image::evals-benchmark-parameters.png[Benchmark parameters enabled with the JSON pasted into the text area,link=self,window=blank,width=700]
 
 . Click *Start evaluation run*. Wait for the run to complete. It may take a few minutes to finish.
 
@@ -131,23 +99,23 @@ image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy sco
 Here is what the results mean:
 +
 --
-* **Evaluation score (96%)** — the overall pass/fail score. The benchmark threshold is set to 0.6 (60%), so anything above that is a *Pass*. This model scored well above the bar.
-* **prompt_level_strict_acc (0.94)** — the fraction of prompts where the model followed _every_ instruction exactly. Strict means no partial credit — if a prompt asked for a numbered list in uppercase and the model did one but not the other, it fails that prompt.
-* **prompt_level_loose_acc (0.92)** — same as above but with more lenient matching. Minor formatting deviations are tolerated.
-* **inst_level_strict_acc (0.96)** — accuracy at the individual _instruction_ level rather than the whole prompt. A prompt may contain multiple instructions (e.g., "write in French" + "use bullet points"); this metric scores each one independently.
-* **stderr values** — the standard error across the test set, giving you a sense of how stable the score is.
+* **Evaluation score (96%)** - the overall pass/fail score. The benchmark threshold is set to 0.6 (60%), so anything above that is a *Pass*. This model scored well above the bar.
+* **prompt_level_strict_acc (0.94)** - the fraction of prompts where the model followed _every_ instruction exactly. Strict means no partial credit: if a prompt asked for a numbered list in uppercase and the model did one but not the other, it fails that prompt.
+* **prompt_level_loose_acc (0.92)** - same as above but with more lenient matching. Minor formatting deviations are tolerated.
+* **inst_level_strict_acc (0.96)** - accuracy at the individual _instruction_ level rather than the whole prompt. A prompt may contain multiple instructions (e.g., "write in French" + "use bullet points"); this metric scores each one independently.
+* **stderr values** - the standard error across the test set, giving you a sense of how stable the score is.
 --
 +
-NOTE: IFEval measures instruction-following capability, not mortgage-specific quality. It is a useful baseline — if a model can't follow explicit formatting constraints, it will also struggle with tool call schemas and system prompt rules in production. A sudden drop in IFEval scores after a model update is a signal that something changed in the model's core compliance behavior. Domain-specific evaluations are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
+NOTE: IFEval measures instruction-following capability, not mortgage-specific quality. It is a useful baseline: if a model can't follow explicit formatting constraints, it will also struggle with tool call schemas and system prompt rules in production. A sudden drop in IFEval scores after a model update is a signal that something changed in the model's core compliance behavior. Domain-specific evaluations are what tell you whether {assistant_name} is answering {company_name}'s questions correctly.
 
 
-== Exercise 7: Evaluate RAG Quality with RAGAS
+== Exercise 6: Evaluate RAG Quality with RAGAS
 
 RAGAS is a framework that evaluates three things:
 
-* **Faithfulness** — does the answer accurately reflect what was in the retrieved context, or did the model add or change information?
-* **Answer relevancy** — does the answer actually address the question asked?
-* **Context precision** — did the retrieval step surface the right document chunks, or did it retrieve irrelevant content?
+* **Faithfulness** - does the answer accurately reflect what was in the retrieved context, or did the model add or change information?
+* **Answer relevancy** - does the answer actually address the question asked?
+* **Context precision** - did the retrieval step surface the right document chunks, or did it retrieve irrelevant content?
 
 . Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*. If you haven't created a workbench yet, follow the steps in xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Exercise 7] to set one up.
 
@@ -176,7 +144,7 @@ USERNAME = "{user}"
 PASSWORD = "{password}"
 ----
 +
-TIP: The `evalhub-secret` is the same Kubernetes Secret you created in Exercise 6 with your API key. If you skipped that step, go back and create it first.
+TIP: The `evalhub-secret` is the same Kubernetes Secret you created in Exercise 5 with your API key. If you skipped that step, go back and create it first.
 +
 . Run the cells. The notebook:
 .. Sends a test set of mortgage questions through the RAG pipeline
@@ -193,15 +161,15 @@ image::evals-select-python-env.png[Select Python environment,link=self,window=bl
 +
 . Review the output metrics. Pay attention to:
 +
-* *Faithfulness* — if this is low, the model is adding information that was not in the retrieved documents
-* *Answer relevancy* — if this is low, the model is answering a question it made up rather than the one asked
-* *Context precision* — if this is low, the retrieval step is pulling in the wrong document chunks
+* *Faithfulness* - if this is low, the model is adding information that was not in the retrieved documents
+* *Answer relevancy* - if this is low, the model is answering a question it made up rather than the one asked
+* *Context precision* - if this is low, the retrieval step is pulling in the wrong document chunks
 
-TIP: If faithfulness is low but context precision is high, the model has the right documents but is ignoring them — it's answering from its own training data instead of what you gave it. If context precision is low, the system is pulling in the wrong documents when it searches, so the answer has nothing good to work with. Both cases point to different things to fix: the first is a model behavior issue, the second is a search quality issue.
+TIP: If faithfulness is low but context precision is high, the model has the right documents but is ignoring them: it's answering from its own training data instead of what you gave it. If context precision is low, the system is pulling in the wrong documents when it searches, so the answer has nothing good to work with. Both cases point to different things to fix: the first is a model behavior issue, the second is a search quality issue.
 
-== Exercise 8: MLflow llm-as-judge
+== Exercise 7: MLflow llm-as-judge
 
-RAGAS requires a test set with known source documents. But what about open-ended agent evaluations — where you don't have a single correct answer to compare against?
+RAGAS requires a test set with known source documents. But what about open-ended agent evaluations, where you don't have a single correct answer to compare against?
 
 That is where llm-as-judge comes in. Instead of scoring against a ground truth, you use a second LLM to evaluate the quality of the first LLM's responses. The judge model reads the question, the context the agent had available, and the agent's answer, then scores dimensions like correctness, helpfulness, and groundedness.
 
@@ -253,24 +221,24 @@ TIP: If you no longer have your API key, go back to the *API Keys* tab and creat
 . Run the cells in order. The notebook walks through several stages:
 +
 --
-.. *Register a system prompt* — the agent's system prompt is registered in MLflow's Prompt Registry as a versioned artifact. This lets you track quality across prompt iterations and answer "which prompt version caused this regression?"
-.. *Create an evaluation dataset* — six mortgage-related test cases are created on the MLflow server, each with an input question, expected keywords, expected tool calls, and forbidden content
-.. *Simple evaluation* — three deterministic scorers run first (no LLM calls):
-*** `contains_expected` — does the response contain the expected keyword?
-*** `has_numeric_result` — does the response include dollar amounts or percentages?
-*** `response_length` — is the response at least 50 characters?
-.. *LLM-as-a-Judge evaluation* — a second LLM scores each response on:
-*** `ToolCallCorrectness` — did the agent call the right tools?
-*** `RelevanceToQuery` — is the response relevant to the question?
-*** `Safety` — is the response safe and appropriate?
-*** `Guidelines` — does the response follow mortgage assistant guidelines (helpful, no false promises, professional language)?
+.. *Register a system prompt* - the agent's system prompt is registered in MLflow's Prompt Registry as a versioned artifact. This lets you track quality across prompt iterations and answer "which prompt version caused this regression?"
+.. *Create an evaluation dataset* - six mortgage-related test cases are created on the MLflow server, each with an input question, expected keywords, expected tool calls, and forbidden content
+.. *Simple evaluation* - three deterministic scorers run first (no LLM calls):
+*** `contains_expected` - does the response contain the expected keyword?
+*** `has_numeric_result` - does the response include dollar amounts or percentages?
+*** `response_length` - is the response at least 50 characters?
+.. *LLM-as-a-Judge evaluation* - a second LLM scores each response on:
+*** `ToolCallCorrectness` - did the agent call the right tools?
+*** `RelevanceToQuery` - is the response relevant to the question?
+*** `Safety` - is the response safe and appropriate?
+*** `Guidelines` - does the response follow mortgage assistant guidelines (helpful, no false promises, professional language)?
 --
 
 . Results are logged to MLflow automatically. Once the notebook finishes, navigate to *OpenShift AI Dashboard > Develop & train > Experiments* and find the `mortgage-ai-eval` experiment.
 +
 image::evals-llm-judge-experiment.png[Experiments page showing mortgage-ai-eval experiment,link=self,window=blank,width=700]
 
-. Click the experiment name, then select *Evaluation runs* in the left sidebar. You will see your evaluation run with the individual traces — each trace corresponds to one test question sent to the agent.
+. Click the experiment name, then select *Evaluation runs* in the left sidebar. You will see your evaluation run with the individual traces. Each trace corresponds to one test question sent to the agent.
 +
 image::evals-llm-judge-results.png[Evaluation runs view showing traces for each test question,link=self,window=blank,width=700]
 
@@ -282,28 +250,28 @@ image::evals-mlflow-traces-assessments.png[Traces view with assessment columns s
 +
 The assessment columns show True/False or Pass/Fail for each scorer on each trace. You can quickly spot which test cases passed or failed each check.
 
-. Click on any trace to see the full detail — the input question, the agent's response, and the individual assessment scores in the right panel:
+. Click on any trace to see the full detail, including the input question, the agent's response, and the individual assessment scores in the right panel:
 +
 image::evals-mlflow-trace-detail.png[Trace detail showing inputs outputs and Assessments sidebar with Feedback and Expectations,link=self,window=blank,width=500]
 +
 The *Feedback* section shows scorer results (`contains_expected: True`, `response_length: 1`), while the *Expectations* section shows what the dataset expected (e.g., `expected_answer: 30-year`, `expected_tool_calls: product_info`).
 
-. You can also navigate to *Prompts* in the left sidebar to see the registered system prompt and all traces linked to it. Every evaluation trace is automatically linked to the prompt version that produced it — when you update the system prompt and register a new version, future evaluations will link to that new version, letting you compare quality across prompt iterations side by side.
+. You can also navigate to *Prompts* in the left sidebar to see the registered system prompt and all traces linked to it. Every evaluation trace is automatically linked to the prompt version that produced it. When you update the system prompt and register a new version, future evaluations will link to that new version, letting you compare quality across prompt iterations side by side.
 
-NOTE: llm-as-judge is not infallible — the judge model has its own biases and limitations. It is most useful for catching obvious regressions (a response that stopped following the persona, a tool call that produced a wrong calculation) rather than for fine-grained quality comparison.
+NOTE: llm-as-judge is not infallible. The judge model has its own biases and limitations. It is most useful for catching obvious regressions (a response that stopped following the persona, a tool call that produced a wrong calculation) rather than for fine-grained quality comparison.
 
-== Exercise 9 (Optional): Run an Evaluation Pipeline
+== Exercise 8 (Optional): Run an Evaluation Pipeline
 
-The notebook-based evaluations above are great for exploration. For production, you want evaluation running automatically as a scheduled pipeline — not something a person has to trigger manually. This is the same evaluation you ran in Exercise 8, but packaged as a pipeline that can run without a notebook, on a schedule, in its own container.
+The notebook-based evaluations above are great for exploration. For production, you want evaluation running automatically as a scheduled pipeline, not something a person has to trigger manually. This is the same evaluation you ran in Exercise 7, but packaged as a pipeline that can run without a notebook, on a schedule, in its own container.
 
 WARNING: This exercise requires a few extra minutes. Skip it if you are short on time and continue to the Section Summary.
 
 The pipeline packages the simple evaluation into four automated steps:
 
-* *setup-mlflow-op* — configures the MLflow tracking URI, workspace, and experiment
-* *create-dataset-op* — creates the evaluation dataset on the MLflow server (the same 6 test cases from Exercise 8)
-* *run-simple-eval-op* — runs the three deterministic scorers (`contains_expected`, `has_numeric_result`, `response_length`)
-* *report-results-op* — prints the evaluation summary and logs results
+* *setup-mlflow-op* - configures the MLflow tracking URI, workspace, and experiment
+* *create-dataset-op* - creates the evaluation dataset on the MLflow server (the same 6 test cases from Exercise 7)
+* *run-simple-eval-op* - runs the three deterministic scorers (`contains_expected`, `has_numeric_result`, `response_length`)
+* *report-results-op* - prints the evaluation summary and logs results
 
 . First, right-click and *Save As* the https://raw.githubusercontent.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/main/collateral/eval-pipeline.yaml[pipeline definition file,window=blank] to your local machine.
 
@@ -332,7 +300,7 @@ image::evals-pipeline-create-run.png[Actions dropdown with Create run highlighte
 +
 image::evals-pipeline-parameters.png[Create run form showing mlflow_tracking_uri and mlflow_workspace parameters,link=self,window=blank,width=700]
 +
-Click *Create run*. Each step runs in its own container. Authentication to MLflow uses the pod's Kubernetes service account token — no manual token management required.
+Click *Create run*. Each step runs in its own container. Authentication to MLflow uses the pod's Kubernetes service account token, so no manual token management is required.
 
 . Watch the pipeline stages execute in order. All four steps should complete with green checkmarks:
 +
@@ -342,13 +310,13 @@ image::evals-pipeline-stages.png[Pipeline run showing all four stages completed 
 +
 image::evals-pipeline-mlflow-results.png[MLflow experiment showing evaluation run with traces and scores,link=self,window=blank,width=700]
 +
-Click on any trace to see the full detail — the input question, the agent's response, and the individual assessment scores on the right panel. For example, clicking the "What loan products do you offer?" trace shows that `contains_expected` passed (the response includes "30-year"), `response_length` scored 1 (adequate length), and the expectations panel shows what the pipeline was checking for.
+Click on any trace to see the full detail, including the input question, the agent's response, and the individual assessment scores on the right panel. For example, clicking the "What loan products do you offer?" trace shows that `contains_expected` passed (the response includes "30-year"), `response_length` scored 1 (adequate length), and the expectations panel shows what the pipeline was checking for.
 +
 image::evals-pipeline-trace-detail.png[Trace detail showing input question and assessment scores,link=self,window=blank,width=700]
 +
 TIP: If the assessment columns are not visible, click *Columns* and enable *All Assessments* and *All Expectations*.
 
-TIP: Notice the *Create schedule* option when creating a run. In production, this pipeline would be scheduled to run periodically (e.g., every 6 hours) or triggered on every commit to the prompt registry. A drop in evaluation score blocks the deployment — the same way a failing unit test blocks a code merge.
+TIP: Notice the *Create schedule* option when creating a run. In production, this pipeline would be scheduled to run periodically (e.g., every 6 hours) or triggered on every commit to the prompt registry. A drop in evaluation score blocks the deployment, the same way a failing unit test blocks a code merge.
 
 
 == Section Summary
@@ -356,16 +324,16 @@ TIP: Notice the *Create schedule* option when creating a run. In production, thi
 === What You Accomplished
 
 * Ran an IFEval benchmark in EvalHub against `qwen3-235b-a22b` to measure instruction-following capability
-* Evaluated RAG pipeline quality with RAGAS — measuring faithfulness, answer relevancy, and context precision across a test set of mortgage questions
-* Used an LLM as judge to evaluate {assistant_name}'s open-ended agent responses — with prompt registry, evaluation datasets, and results logged to MLflow
+* Evaluated RAG pipeline quality with RAGAS, measuring faithfulness, answer relevancy, and context precision across a test set of mortgage questions
+* Used an LLM as judge to evaluate {assistant_name}'s open-ended agent responses, with prompt registry, evaluation datasets, and results logged to MLflow
 * (Optional) Imported and ran a four-stage automated evaluation pipeline and reviewed traces and scorer results in MLflow
 
 === Key Takeaways
 
-* Benchmarks like IFEval measure baseline model capability — they catch model-level regressions (e.g., a model that stops following formatting instructions) but do not measure domain-specific quality
+* Benchmarks like IFEval measure baseline model capability. They catch model-level regressions (e.g., a model that stops following formatting instructions) but do not measure domain-specific quality
 * RAGAS decomposes RAG quality into components (faithfulness, relevancy, precision) so you can diagnose exactly what is going wrong and where
-* llm-as-judge enables evaluation of open-ended responses where there is no single correct answer — useful for catching persona regressions and reasoning failures
-* Automated evaluation pipelines remove the human from the quality gate — quality is measured continuously and can be scheduled or triggered on every change
+* llm-as-judge enables evaluation of open-ended responses where there is no single correct answer, useful for catching persona regressions and reasoning failures
+* Automated evaluation pipelines remove the human from the quality gate: quality is measured continuously and can be scheduled or triggered on every change
 
 === What's Next?
 

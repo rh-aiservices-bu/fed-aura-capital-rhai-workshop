@@ -1,16 +1,15 @@
-= Exercise 3: Tools and MCP
+= Tools and MCP
 :navtitle: MCP and Tool Access
 :imagesdir: ../assets/images
 :toc: macro
 :toclevels: 1
-:toc-placement: preamble
 :icons: font
 
-{assistant_name} called five tools in her risk assessment. Those tools did not come from the LLM — they came from external servers that the platform connected her to through a standard protocol called MCP.
+{assistant_name} called five tools in her risk assessment. Those tools did not come from the LLM. They came from external servers that the platform connected her to through a standard protocol called MCP.
 
-**MCP — Model Context Protocol** is an open standard that defines how AI agents discover and call external tools. Before MCP, connecting an agent to a tool meant hardcoding the tool's definition into the agent's code — every agent had to know about every tool it might ever use. MCP changes this: any agent that speaks the protocol can connect to any server that speaks it, without any custom integration code. Think of it like USB for AI tool access — a universal connector that works regardless of what is on either end.
+**MCP (Model Context Protocol)** is an open standard that defines how AI agents discover and call external tools. Before MCP, connecting an agent to a tool meant hardcoding the tool's definition into the agent's code, so every agent had to know about every tool it might ever use. MCP changes this: any agent that speaks the protocol can connect to any server that speaks it, without any custom integration code. Think of it like USB for AI tool access, a universal connector that works regardless of what is on either end.
 
-The platform hosts an MCP gateway that registers tool servers centrally. Agents connect to the gateway, the gateway routes calls to the appropriate server, and the results come back through the same channel. Adding a new tool means either adding it to an existing server or registering a new one with the gateway — no changes to any agent.
+The platform hosts an MCP gateway that registers tool servers centrally. Agents connect to the gateway, the gateway routes calls to the appropriate server, and the results come back through the same channel. Adding a new tool means either adding it to an existing server or registering a new one with the gateway, with no changes to any agent.
 
 == Exercise 3: Explore the MCP Catalog
 
@@ -18,21 +17,21 @@ The platform hosts an MCP gateway that registers tool servers centrally. Agents 
 +
 image::mcp-catalog-tab.png[MCP Catalog,link=self,window=blank,width=700]
 
-. You will see a catalog of available tool servers — some built by Red Hat, and some from the broader partner ecosystem.
+. You will see a catalog of available tool servers, some built by Red Hat, and some from the broader partner ecosystem.
 
 . There are also already 2 MCP servers deployed in your environment. Go to *AI Asset endpoints > MCP servers* in order to see them. The two servers are:
 +
-* *Risk Server MCP* — ML-backed loan approval prediction, provides assessments a loan officer needs to know
-* *Weather MCP* — provides weather and climate data, used by {assistant_name} to flag flood risk and climate exposure for property locations
+* *Risk Server MCP* - ML-backed loan approval prediction, provides assessments a loan officer needs to know
+* *Weather MCP* - provides weather and climate data, used by {assistant_name} to flag flood risk and climate exposure for property locations
 +
 image::mcp-catalog-deployed.png[MCP catalog showing the Risk Server and Weather MCP servers with active status,link=self,window=blank,width=700]
 
 
-== Exercise 4: The Risk MCP Server — With and Without Tools
+== Exercise 4: The Risk MCP Server, With and Without Tools
 
 The Risk Server MCP has a predictive AI model running behind one of its tools.
 
-When {assistant_name} calls `uw_predict_loan_approval`, the MCP server does not apply a rules-based formula — it passes the application metrics through a scikit-learn classification model trained on historical loan application data. That model was trained using AutoML (which you can explore in the Advanced section at the end of this section). This is how {company_name} connects classical machine learning to generative AI: the LLM orchestrates and decides what to ask, and the ML model predicts.
+When {assistant_name} calls `uw_predict_loan_approval`, the MCP server does not apply a rules-based formula. Instead, it passes the application metrics through a scikit-learn classification model trained on historical loan application data. That model was trained using AutoML (which you can explore in the Advanced section at the end of this section). This is how {company_name} connects classical machine learning to generative AI: the LLM orchestrates and decides what to ask, and the ML model predicts.
 
 The Risk Server exposes four tools:
 
@@ -53,7 +52,7 @@ The Risk Server exposes four tools:
 | Synthesizes the outputs of the other tools into a structured recommendation
 |===
 
-The difference between a chatbot and an agent is not the model — it is tool access. Let's see that difference directly by sending the same prompt with and without the Risk Server connected.
+The difference between a chatbot and an agent is not the model. It is tool access. Let's see that difference directly by sending the same prompt with and without the Risk Server connected.
 
 === Without MCP
 
@@ -66,7 +65,7 @@ The difference between a chatbot and an agent is not the model — it is tool ac
 I have a client earning $8,000/month with $2,400 in monthly debts. What's their debt-to-income ratio and is it acceptable for a conventional mortgage?
 ----
 
-. Observe the response. The model calculates DTI from the numbers you gave (30%) but hedges: "this is generally considered acceptable, but you should verify with your specific underwriting guidelines." It is doing arithmetic from the prompt — there is no tool call, no lookup against {company_name}'s actual thresholds, and no certainty.
+. Observe the response. The model calculates DTI from the numbers you gave (30%) but hedges: "this is generally considered acceptable, but you should verify with your specific underwriting guidelines." It is doing arithmetic from the prompt. There is no tool call, no lookup against {company_name}'s actual thresholds, and no certainty.
 
 === With MCP
 
@@ -77,7 +76,7 @@ image::mcp-playground-connect.png[Playground Settings panel showing the MCP tab 
 
 . Send the exact same prompt again.
 
-. Observe the difference. The model now calls `calculate_dti`, returns values grounded in {company_name}'s underwriting rules, and gives a clear assessment — acceptable or not — without hedging:
+. Observe the difference. The model now calls `calculate_dti`, returns values grounded in {company_name}'s underwriting rules, and gives a clear assessment (acceptable or not) without hedging:
 +
 image::mcp-with-response.png[Playground response with MCP showing tool-backed DTI assessment without hedge language,link=self,window=blank,width=700]
 
@@ -102,7 +101,7 @@ image::mcp-with-response.png[Playground response with MCP showing tool-backed DT
 | Clear pass/fail against defined thresholds
 |===
 
-TIP: The question was identical. The model was identical. The only difference was whether {assistant_name} had tool access. This is why MCP matters — it is not about making the model smarter, it is about giving it access to real systems with real data.
+TIP: The question was identical. The model was identical. The only difference was whether {assistant_name} had tool access. This is why MCP matters: it is not about making the model smarter; it is about giving it access to real systems with real data.
 
 NOTE: For this exercise, the Risk MCP server requires no authentication. However, you can enforce authentication scoped per MCP server through the MCP gateway.
 

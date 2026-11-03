@@ -138,11 +138,11 @@ image::module5-domain-prompt-response.png[Domain prompt response showing mortgag
 
 === Why this approach breaks down
 
-What you just did is called **context injection** — pasting information directly into the prompt so the model can use it. The model itself never changes, it is frozen; it only knows what was in its training data, plus whatever you put in the prompt right now. We can try to add everything about {company_name} this way, but there's a hard limit: models have a **maximum context window**, and performance degrades as prompts get longer.
+What you just did is called **context injection**: pasting information directly into the prompt so the model can use it. The model itself never changes, it is frozen; it only knows what was in its training data, plus whatever you put in the prompt right now. We can try to add everything about {company_name} this way, but there's a hard limit: models have a **maximum context window**, and performance degrades as prompts get longer.
 
 IMPORTANT: Prompt engineering is valuable for defining persona and behavior, but it is not the right tool for injecting large, changing knowledge bases. Here is why:
 
-* **Scale**: {company_name} has policy documents, compliance manuals, rate sheets, product guides, and regulatory filings. Five product descriptions fit in a prompt — an entire document library does not.
+* **Scale**: {company_name} has policy documents, compliance manuals, rate sheets, product guides, and regulatory filings. Five product descriptions fit in a prompt. An entire document library does not.
 * **Maintenance burden**: When rates change or new products launch, someone must update every system prompt manually. There is no single source of truth.
 * **Staleness**: The prompt is static text baked into the configuration. It does not know when information becomes outdated.
 

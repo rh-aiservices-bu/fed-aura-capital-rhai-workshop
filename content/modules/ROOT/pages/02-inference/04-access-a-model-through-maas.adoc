@@ -9,7 +9,7 @@
 
 You've been observing a model `qwen3-235b-a22b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, hate to break it to you, but {assistant_name} hasn't been using the little model you deployed. Because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. The model that {assistant_name} is using is `qwen3-235b-a22b`, which is a much larger model and requires GPU to run.
 
-But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. With MaaS, an admin can expose models as endpoints that can be consumed by different applications and users.
+But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a central collection of shared models that can be used by multiple applications for multiple use cases. This is where Models as a Service (MaaS) comes in. With MaaS, an admin can expose models as endpoints that can be consumed by different applications and users.
 
 And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `qwen3-235b-a22b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
 
@@ -46,15 +46,19 @@ To consume a MaaS endpoint from code or a tool, you need a scoped API key. Let's
 . Give the key a name, for example `my-key`. You can add a description if you wish.
 
 . Select the *Premium Tier* subscription. The subscription defines the model you have access to and the rate limits for the key. Observe that you have 10,000 tokens per minute as the rate limit for `qwen3-235b-a22b`. 
-
-. Leave the Expiration as 30 days. Click *Create API Key*.
 +
 image::inference-maas-create-api-key.png[Create API key dialog showing the Premium Tier subscription, the models it covers, and a 30 day expiration,link=self,window=blank,width=700]
 
-. Save the generated key somewhere safe. You will need it to call the endpoint from code or a tool. And you'll only get to see it once.
+. Change the expiration date by selecting *After* from the drop down and make it 30 days. 
+
+. Click *Create API Key*.
++
+image::inference-maas-api-key.png[API key created dialog showing the masked key, its name, subscription, and expiration,link=self,window=blank,width=700]
+
+. Copy the generated key somewhere safe. You will need it to call the endpoint from code or a tool. And you'll only get to see it once.
 +
 --
-Paste it here so you can refer to it during the exercises. It stays in your browser only, nothing is sent anywhere:
+Also, paste it here so you can refer to it during the exercises. It stays in your browser only, nothing is sent anywhere:
 
 ++++
 <div class="key-notepad">
@@ -104,8 +108,6 @@ Paste it here so you can refer to it during the exercises. It stays in your brow
 --
 
 +
-image::inference-maas-api-key.png[API key created dialog showing the masked key, its name, subscription, and expiration,link=self,window=blank,width=700]
-+
 NOTE: Each user generates their own key. The MaaS gateway tracks usage per key, which is how the platform enforces rate limits and produces the per-user usage data.
 
 == Exercise 6: Consume the MaaS Endpoint with cURL
@@ -119,12 +121,23 @@ With your key in hand, let's call the model directly from the terminal.
 <style>
   .maas-env-wrap {
     position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: #1e1e1e;
+    border-radius: 6px;
+    padding-right: 0.5rem;
+    min-width: 0;
+    max-width: 100%;
     margin: 0.5rem 0;
   }
   .maas-env-block {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
     background: #1e1e1e;
     border-radius: 6px;
-    padding: 0.75rem 3.5rem 0.75rem 1rem;
+    padding: 0.75rem 1rem;
     font-family: monospace;
     font-size: 0.82rem;
     color: #d4d4d4;
@@ -133,8 +146,8 @@ With your key in hand, let's call the model directly from the terminal.
   .maas-env-key { color: #9cdcfe; }
   .maas-env-placeholder { color: #6b7280; font-style: italic; }
   .maas-env-btn {
-    position: absolute;
-    top: 0.4rem;
+    flex-shrink: 0;
+    margin-top: 0.4rem;
     background: #28a745;
     color: white;
     border: none;
@@ -142,11 +155,8 @@ With your key in hand, let's call the model directly from the terminal.
     padding: 0.3rem 0.55rem;
     font-size: 0.8rem;
     cursor: pointer;
-    opacity: 0.35;
-    transition: opacity 0.2s;
   }
-  .maas-env-btn:hover { opacity: 1; }
-  #maas-copy-btn { right: 0.5rem; }
+  .maas-env-btn:hover { background: #218838; }
 </style>
 <div class="listingblock maas-env-wrap">
   <div class="maas-env-block" id="maas-env-block"><span class="maas-env-key">export MAAS_API_KEY=</span><span id="maas-key-display" class="maas-env-placeholder">&lt;paste-your-api-key&gt;</span>

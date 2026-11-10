@@ -15,6 +15,13 @@ By the end of this section, you will be able to:
 * Interact with {assistant_name} as different personas and observe how responses change based on role
 * Connect running pods to the platform architecture diagram
 
+== Your workshop credentials
+
+You will use the following credentials to access the platform. They will also be provided throughout the exercises whenever needed.
+
+* Username: [.notranslate]#{user}#
+* Password: [.notranslate]#{password}#
+
 == Exercise 1: Access the environment and verify the deployment
 
 TIP: Throughout this workshop, all key services are accessible as *tabs* in the workshop interface - no need to open separate browser windows.

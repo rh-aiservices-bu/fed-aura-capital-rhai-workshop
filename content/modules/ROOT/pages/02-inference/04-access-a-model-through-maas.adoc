@@ -218,7 +218,7 @@ You should see a response from `qwen3-235b-a22b`. The API is OpenAI-compatible, 
 
 Let's explore another use case apart from {assistant_name}: using MaaS as a coding assistant.
 
-Most AI coding assistants default to cloud-hosted models, sending your code to an external provider. In a regulated environment like financial services, that's often not acceptable. But because MaaS exposes an OpenAI-compatible API, you are not locked into any particular tool or model: any coding assistant that supports a custom endpoint works. You can swap the model behind it (a smaller, faster model for autocomplete, a larger one for complex reasoning) without changing your tooling.
+Most AI coding assistants default to cloud-hosted models, sending your code to an external provider. In a regulated environment like financial services, that’s often not acceptable, instead you need to host your own models internally and share them. Because MaaS exposes an OpenAI-compatible API, you can safely broker or proxy models to many users and you are not locked into any particular tool or model: any coding assistant that supports a custom endpoint works. You can swap the model behind MaaS (a smaller, faster model for autocomplete, a larger one for complex reasoning) without changing your tooling.
 
 This exercise uses *OpenCode*, an open-source AI coding assistant built into the workbench, connected to the {company_name} MaaS endpoint: coding assistance powered by a self-hosted model, with no code leaving the cluster.
 
@@ -239,7 +239,7 @@ image::inference-workbench-create-codeserver-2.png[FedAura Capital Custom Code S
 . Scroll down and enter your API key, model name, and endpoint URL as environment variables. These will be available to you in the workbench, so you'd be using your own key:
 + *Environment variables* > *Secret* > *Key / value*
 +
-Click *Add variable* three times to create three rows, then fill in each row with the key and value from the table below:
+Click *Add variable* once, then click on add another key/pair 2 more times, then fill in each row with the key and value from the table below:
 +
 [subs=attributes+]
 ++++
@@ -317,19 +317,29 @@ image::inference-workbench-create-codeserver-3.png[Add OpenCode environment vari
 +
 . Hit *Create workbench*. You will see the workbench in the list with status *Starting* and then *Running*. Wait for the workbench to start.
 +
-. Once it is running, click the workbench name to open the Code Server environment.
+. Once it is running, you can either click the workbench name to open the Code Server environment. This opens up a new tab. Or, we already prepared a tab *Workbench* in the top menu bar, which you can click to open the workbench.
 +
 image::inference-workbench-codeserver-starting.png[Workbench fedaura-code-server running,link=self,window=blank,width=700]
 +
-. Open the terminal and run *opencode* as the command, and observe that the OpenCode coding assistant is now connected to the MaaS endpoint. You can send prompts to the model and get responses here. :)
+. Open the terminal by clicking the three lines on the top left > *Terminal* > *New Terminal*.
 +
 image::inference-workbench-terminal.png[Open up the terminal,link=self,window=blank,width=700]
+
+. Run *opencode* as the command in this terminal (within Workbench), and observe that the OpenCode coding assistant is now connected to the MaaS endpoint. You can send prompts to the model and get responses here. :)
 +
-. Run  *opencode* as the command, ask it to create a Python function, or send the prompt you like :)
+[source,bash,role=execute,subs=attributes+]
+----
+opencode
+----
 +
 image::inference-workbench-terminal-opencode.png[OpenCode within a Workbench,link=self,window=blank,width=700]
-+
 
+. Ask it to create a Python function, or send the prompt you like :)
++
+[source,bash,role=execute,subs=attributes+]
+----
+Write me a Python function that calculates the mortgage payment given the principal, interest rate, and number of payments.
+----
 
 === On-premises vs cloud inference
 

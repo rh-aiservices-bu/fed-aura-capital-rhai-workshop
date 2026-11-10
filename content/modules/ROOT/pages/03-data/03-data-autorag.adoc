@@ -142,6 +142,8 @@ image::module5-autorag-eval-section.png[Evaluation dataset section with S3 brows
 Select `autorag-test-data.json`. This file contains test questions and expected answers that AutoRAG uses to evaluate each RAG configuration:
 +
 image::module5-autorag-eval-dataset.png[S3 file browser with autorag-test-data.json selected,link=self,window=blank,width=500]
++
+Note: If you'd like to see the content of the test data file, https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/blob/main/collateral/autorag-test-data.json[check here].
 
 . Change **Maximum RAG patterns** to `4` (default is 8). This reduces the number of configurations AutoRAG tests, which speeds up the run. Leave all other settings at their defaults (optimization metric: Answer faithfulness).
 

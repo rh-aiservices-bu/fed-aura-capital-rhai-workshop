@@ -9,7 +9,9 @@
 
 In the previous exercise you deployed Qwen3 0.6B on a single node using vLLM. That works for experimentation, but as soon as multiple users send requests at the same time, a single replica becomes a bottleneck. The obvious fix is to add more replicas, but here's the catch: OpenShift's default load balancing routes requests round-robin across replicas without knowing anything about what each one is doing. One replica might be halfway through generating a long response while another is completely idle, and new requests still get spread evenly. The result is unpredictable latency and wasted capacity.
 
-llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. You get the same vLLM inference engine underneath. llm-d makes the traffic distribution smarter.
+llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. 
+
+*You get the same vLLM inference engine underneath. llm-d makes the traffic distribution smarter.*
 
 NOTE: In this exercise, you are deploying to CPU again. The llm-d architecture and deployment steps are identical on GPU. The only difference is the hardware profile you select.
 
@@ -21,9 +23,11 @@ NOTE: In this exercise, you are deploying to CPU again. The llm-d architecture a
 
 . You will be prompted for the model location. Leave the defaults as-is and click *Next*.
 
-. On the deployment configuration screen, keep the name as-is. Under deployment options, select *LLM inference service with llm-d*.
+. On the model deployment configuration screen, keep the name as-is. Under deployment deployment options, select *LLM inference service with llm-d*.
 
-. For *Topology type* keep `Single node`, and for *Topology configuration*, from the drop down menu, select `Single node on CPU`.
+. For *Topology type* keep `Single node`. 
+
+. For *Topology configuration*, from the drop down menu, select `Single node on CPU`.
 +
 NOTE: Do not leave `Single node (default)` selected. Be sure you pick `Single node on CPU` in the dropdown.
 
@@ -31,17 +35,27 @@ NOTE: Do not leave `Single node (default)` selected. Be sure you pick `Single no
 +
 image::inference-cpu-resource-limits.png[Resource requests and limits configuration for llm-d deployment,link=self,window=blank,width=700]
 
-. For *Routing* configuration, from the drop down menu, select `CPU LLM-d scheduling-policy` routing config. It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
+. For *Routing* configuration, from the drop down menu, select `CPU LLM-d scheduling-policy` routing config. 
++
+It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
 
 . For *Replica count* set the number of replicas to *2*. Click *Next*:
 +
 image::inference-llmd-replica-config.png[Replica count set to 2 in the deployment configuration,link=self,window=blank,width=700]
 +
-NOTE: Two replicas means llm-d will distribute incoming requests across two vLLM instances in a smart way.
-
+NOTE: Two replicas means llm-d will distribute incoming requests across two vLLM instances in a smart way. 
++
+_We are not going to simulate a load of multiple users so you won't see the latency difference in this exercise. We aim to give you the experience of deploying a model with llm-d._
++
 . On the next screen, select *Add as AI asset endpoint*. Don't worry about the MaaS option yet.
 +
 image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
++
+_This is important because it allows you to access the model through the GenAI Playground._
+
+. For *Gateway*, select the default `openshift-ai-inference | openshift-ingress` gateway.
++
+image::inference-gateway.png[Ingress gateway configuration,link=self,window=blank,width=700]
 
 . Make sure you *unchecked* the *Token authentication* option.
 
@@ -51,7 +65,7 @@ image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
 +
-Click **Next** and then *Deploy*.
+Click **Next** and then *Deploy model*.
 . While waiting for the model to deploy, go to the *Terminal* tab and run the following command to list the pods created by the llm-d deployment:
 +
 [source,bash,role=execute,subs=attributes+]

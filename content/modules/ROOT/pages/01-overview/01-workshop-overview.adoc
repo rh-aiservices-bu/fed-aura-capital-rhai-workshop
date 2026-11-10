@@ -33,7 +33,7 @@ As part of your onboarding, your team shares a link to a recorded all-hands from
 
 [quote]
 ____
-When we started, {assistant_name} was a chatbot connected to an external API. Every borrower question left our network, costs scaled with every conversation, and we had no control over what the model knew or how it behaved. Regulators started asking questions. Our CISO blocked production deployment. We had to rethink the whole thing.
+When we started, {assistant_name} was a chatbot connected to an external API. Every borrower (customer) question left our network, costs scaled with every conversation, and we had no control over what the model knew or how it behaved. Regulators started asking questions. Our CISO blocked production deployment. We had to rethink the whole thing.
 
 We rebuilt the platform in four phases. First, we took control of our own inference - deployed our own models, stopped paying per-token, and exposed them as a managed service. Second, we made the AI actually useful - gave it our policies, our products, our data. Third, we connected it to real tools and made every decision traceable. Fourth, we locked it down: guardrails, adversarial testing, sandboxed agents, full audit trail.
 

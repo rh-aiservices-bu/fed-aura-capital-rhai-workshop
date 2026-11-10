@@ -33,6 +33,10 @@ image::inference-cpu-accelerator-config.png[Accelerator configuration showing vL
 +
 image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
 
+. For *Gateway*, select the default `openshift-ai-inference | openshift-ingress` gateway.
++
+image::inference-gateway.png[Ingress gateway configuration,link=self,window=blank,width=700]
+
 . Make sure you *unchecked* the *Token authentication* option.
 
 . On this screen, we can add `Add custom runtime arguments` if we want to pass any additional arguments to the vLLM runtime. 
@@ -45,9 +49,9 @@ Click *Add variable* and let's add `VLLM_CPU_KVCACHE_SPACE=8` to set the size of
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
 + 
-Click **Next** and then *Deploy*.
+Click **Next** and then *Deploy model*.
 +
-. Wait for the deployment to show a green status indicator. It takes a couple of minutes while the model weights are loaded:
+. Scroll to the far right and wait for the deployment to show a green Ready status under *Status* column. It takes a couple of minutes while the model weights are loaded:
 +
 image::inference-cpu-deployment-ready.png[Model deployment list showing Qwen3 0.6B with a green ready status,link=self,window=blank,width=700]
 +
@@ -64,6 +68,8 @@ image::inference-playground.png[Create Playground with Qwen3 0.6B,link=self,wind
 . And select the model you just deployed. (Please don't worry about `qwen3-235b-a22b` yet, keep it unchecked.) Set *Max tokens* to `1024` and click *Create*:
 +
 image::inference-playground-create.png[Select Qwen3 0.6B and set Max tokens to 1024,link=self,window=blank,width=700]
+
+_Earlier you set max token length as 2048. This means your prompt and the model's response together cannot exceed 2048 tokens. In this case, we are limiting the model's response to 1024 tokens, which gives you enough room for a long prompt and a long response, while staying within the 2048 token limit._
 
 . When the Playground is ready, send a prompt of your choice. For example:
 +
@@ -86,6 +92,8 @@ Send the same question again `What is the capital of France?`. You should get a 
 image::inference-playground-system-prompt.png[GenAI Playground showing the system prompt field and a Gen Z style response,link=self,window=blank,width=700]
 +
 NOTE: The Instructions field is how you pass a system prompt to the model. These instructions shape its persona, tone, and behavior before the user says anything. This is the simplest form of prompt engineering, and it works on any model regardless of how it was deployed.
+
+_Don't worry about saving your System Prompt for now. You can explore that later._
 
 === What's Next?
 

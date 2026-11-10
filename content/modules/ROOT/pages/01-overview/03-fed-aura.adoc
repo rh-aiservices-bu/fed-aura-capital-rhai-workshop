@@ -51,7 +51,7 @@ The platform now shapes {assistant_name} into a domain expert through configured
 
 _"From useful to productive AI"_
 
-{assistant_name} could answer domain-specific questions, but could not take action. When a borrower asked "How much house can I afford?", she estimated a range with assumptions. An agentic {assistant_name} calls the affordability calculator and returns a precise figure with a DTI breakdown.
+{assistant_name} could answer domain-specific questions, but could not take action. When a borrower asked "How much house can I afford?", she estimated a range with assumptions. An agentic {assistant_name} calls the affordability calculator and returns a precise figure with a debt-to-income (DTI) breakdown.
 
 The platform connects agents to real tools through the MCP Ecosystem, captures every decision path in MLflow traces, and continuously measures quality with automated evaluation pipelines.
 

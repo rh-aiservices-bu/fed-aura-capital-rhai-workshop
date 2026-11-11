@@ -15,7 +15,7 @@ image::inference-cpu-deploy-button.png[Model card for Qwen3 0.6B with the Deploy
 
 . Select your project `Workspace {user}` and click *Next*.
 
-. You will be prompted for where the model lives. This information is already populated because the catalog has the information. Don't change anything, just click *Next*.
+. You will be prompted for where the model lives and what's the model type is. This information is already populated because the catalog has the information. Don't change anything, just click *Next*.
 
 . On the deployment configuration screen, keep the name as-is. 
 
@@ -91,20 +91,24 @@ Send the same question again `What is the capital of France?`. You should get a 
 +
 image::inference-playground-system-prompt.png[GenAI Playground showing the system prompt field and a Gen Z style response,link=self,window=blank,width=700]
 +
-NOTE: The Instructions field is how you pass a system prompt to the model. These instructions shape its persona, tone, and behavior before the user says anything. This is the simplest form of prompt engineering, and it works on any model regardless of how it was deployed.
-
 _Don't worry about saving your System Prompt for now. You can explore that later._
 
-=== What's Next?
-
-You have deployed a model on a single node with one replica. That works for testing, but it is just one model getting all the requests. We may need to scale the model for production use. But we need to do it smartly. In the next exercise, you will deploy the same model using llm-d: a distributed inference scheduler that routes requests across multiple replicas for higher throughput and lower latency under load.
+NOTE: The Instructions field is how you pass a system prompt to the model. These instructions shape its persona, tone, and behavior before the user says anything. This is the simplest form of prompt engineering, and it works on any model regardless of how it was deployed.
 
 === Clean up
 
-Let's delete the model deployment to free up resources for llm-d. More exciting things are coming up!
+Delete this deployment to free up resources before the next exercise, where you'll deploy the same model with a different serving configuration.
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
 . Click the three dots next to the Qwen3 0.6B deployment you just created and click *Delete*.
 . Confirm the deletion.
 +
 image::inference-delete-model.png[Delete Qwen3 0.6B to free up resources,link=self,window=blank,width=700]
+
+=== What's Next?
+
+You've deployed and tested a model running with a single replica. As more users interact with {assistant_name}, that replica may struggle to keep up with simultaneous requests.
+
+Adding replicas provides more capacity, but requests also need to be distributed effectively across them. In the next exercise, you'll deploy the same model with two replicas using llm-d, which routes requests based on how busy each replica is.
+
+You'll explore how to configure this deployment on CPU. The exercise focuses on the deployment process rather than measuring performance under load.

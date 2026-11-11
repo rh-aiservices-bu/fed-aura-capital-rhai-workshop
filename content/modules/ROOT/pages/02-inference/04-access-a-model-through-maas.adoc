@@ -7,13 +7,11 @@
 
 == Exercise 4: Models as a Service
 
-You've been observing a model `qwen3-235b-a22b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, hate to break it to you, but {assistant_name} hasn't been using the little model you deployed. Because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. The model that {assistant_name} is using is `qwen3-235b-a22b`, which is a much larger model and requires GPU to run.
+The small CPU-hosted model you deployed helped you learn how model serving works. For {company_name}'s more demanding use cases, {assistant_name} uses a larger model: `qwen3-235b-a22b`, hosted on GPU infrastructure by the platform team.
 
-But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a central collection of shared models that can be used by multiple applications for multiple use cases. This is where Models as a Service (MaaS) comes in. With MaaS, an admin can expose models as endpoints that can be consumed by different applications and users.
+Rather than asking each application team to deploy and manage its own model, the bank provides shared models through Models-as-a-Service (MaaS). The platform team manages the deployments and controls access, while application teams consume the models through an API.
 
-And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `qwen3-235b-a22b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
-
-MaaS provides a consistent and governed way to access models, which means {company_name} can manage the model deployments centrally while still providing access to the models for different teams and applications.
+In this exercise, you'll explore the `qwen3-235b-a22b` endpoint available to you and try it in the playground. In the next exercise, you'll create an API key to use it from code or other tools.
 
 === Explore AI Asset Endpoints
 
@@ -27,7 +25,7 @@ image::inference-maas-endpoint-details.png[AI Asset Endpoint details,link=self,w
 
 . Close the dialog and click *Add to playground* to confirm the endpoint is live and responding. The Playground creates a temporary API key on your behalf and connects to the endpoint so you can test it quickly.
 +
-TIP: If the Playground does not show up, refresh the page.
+TIP: If the Configure Playground panel does not show up, refresh the page.
 
 . In the *Configure playground* dialog, pick which model endpoints you want available in your project playground. Keep `qwen3-235b-a22b` selected and click *Configure*.
 +
@@ -216,7 +214,7 @@ You should see a response from `qwen3-235b-a22b`. The API is OpenAI-compatible, 
 
 == Exercise 7: (Optional) Use OpenCode with MaaS as Your Coding Assistant
 
-Let's explore another use case apart from {assistant_name}: using MaaS as a coding assistant.
+Let's explore another use case apart from {assistant_name}: using MaaS with a coding assistant.
 
 Most AI coding assistants default to cloud-hosted models, sending your code to an external provider. In a regulated environment like financial services, that’s often not acceptable, instead you need to host your own models internally and share them. Because MaaS exposes an OpenAI-compatible API, you can safely broker or proxy models to many users and you are not locked into any particular tool or model: any coding assistant that supports a custom endpoint works. You can swap the model behind MaaS (a smaller, faster model for autocomplete, a larger one for complex reasoning) without changing your tooling.
 
@@ -461,7 +459,7 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
 
 == Exercise 8: Observe Your Usage
 
-. On OpenShift AI dashboard go to *Observe & monitor > Dashboard* and click on `qwen3-235b-a22b`. Select the *Usage* tab:
+. On OpenShift AI dashboard go to *Observe & monitor > Dashboard* and click on `qwen3-235b-a22b`. Select the *Usage (logs)* tab:
 +
 image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
 

@@ -103,7 +103,7 @@ image::mcp-with-response.png[Playground response with MCP showing tool-backed DT
 
 TIP: The question was identical. The model was identical. The only difference was whether {assistant_name} had tool access. This is why MCP matters: it is not about making the model smarter; it is about giving it access to real systems with real data.
 
-NOTE: For this exercise, the Risk MCP server requires no authentication. However, you can enforce authentication scoped per MCP server through the MCP gateway.
+// NOTE: For this exercise, the Risk MCP server requires no authentication. However, you can enforce authentication scoped per MCP server through the MCP gateway.
 
 === What's Next?
 

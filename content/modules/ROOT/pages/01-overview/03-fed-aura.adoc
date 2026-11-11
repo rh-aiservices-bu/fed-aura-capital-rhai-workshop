@@ -16,7 +16,7 @@ _"From token consumer to token producer"_
 
 {company_name} used to pay per-token to an external LLM vendor. Every API call left the network, costs were unpredictable, and there was no control over which model version served a request.
 
-The platform now runs self-hosted models with vLLM, a distributed inference layer with llm-d, and exposes them through a managed API gateway via Models as a Service (MaaS).
+To keep data inside the network, make costs more predictable, and control model versions, the platform now runs self-hosted models with vLLM, uses llm-d for distributed inference, and exposes them through a managed API gateway via Models as a Service (MaaS).
 
 [cols="1,1",options="header"]
 |===
@@ -35,7 +35,7 @@ _"From generic to useful AI"_
 
 A deployed model is still generic. {assistant_name} could not quote {company_name}'s rates, did not know internal policies, and gave textbook answers with disclaimers.
 
-The platform now shapes {assistant_name} into a domain expert through configured system prompts stored in the Prompt Registry, and grounds her responses in the bank's private documents via RAG. AutoRAG automatically finds the best RAG configuration for {company_name}'s documents by testing combinations of different settings.
+The bank experimented with ways to make {assistant_name} a more reliable domain expert. It refined her instructions using system prompts stored in the Prompt Registry and connected her to private bank documents so she could ground her answers in trusted information. Using AutoRAG, the bank tested different ways to retrieve and use those documents to find the configuration that worked best for {company_name}.
 
 [cols="1,1",options="header"]
 |===

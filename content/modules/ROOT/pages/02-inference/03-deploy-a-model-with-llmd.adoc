@@ -278,20 +278,21 @@ The diagram below contrasts what happens when multiple requests arrive simultane
 
 Both replicas run the same Qwen3 0.6B vLLM engine. llm-d only changes how traffic is distributed across them.
 
-=== What's Next?
-
-You've now deployed the same model two ways: single-node vLLM and distributed llm-d with two replicas. In both cases you owned the deployment end-to-end: you decided the model, the resources, the replicas.
-
-Now imagine every team at {company_name} doing the same thing. The borrower team deploys their own model. The underwriting team deploys theirs. The CEO dashboard team deploys another. Each one holds GPU capacity for its own use, sits mostly idle between requests, and bills to no one in particular. There's no visibility into who deployed what, how much each team is consuming, or whether a model is even being used. When something breaks, nobody knows whose model it is.
-
-This is the problem Models as a Service solves. Instead of every team running their own stack, a shared gateway exposes models as API endpoints, with authentication so only authorized applications can call them, rate limiting so one team can't starve another, and usage metering so you can see exactly who is using what. Teams get the same model access without the operational overhead, and the platform gets visibility across the whole organization.
-
-That's what Exercise 4 covers.
-
 === Clean up
 
-Again, delete the llm-d deployment again to free up resources before moving to the MaaS exercise.
+Again, delete the model deployment to free up resources before moving on.
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
-. Click the three dots next to the Qwen3 0.6B deployment you just created and click *Delete*.
+. Click the three dots next to the Qwen3 0.6B deployment you created and click *Delete*.
 . Confirm the deletion.
+
+=== What's Next?
+
+You've deployed a model using single-node vLLM and distributed serving with llm-d. These exercises showed how the platform team deploys models and manages their resources.
+
+But application teams at {company_name} shouldn't each need to repeat that work. {assistant_name}, and other applications can share centrally managed models, reducing duplicated deployments and making better use of available resources.
+
+Models as a Service (MaaS) gives these teams API access to shared models, with authentication, rate limits, and usage tracking. The platform team manages the infrastructure, while application teams focus on building their applications.
+
+In Exercise 4, you'll switch from deploying a model to consuming one: a larger, GPU-hosted model that the platform team has already made available to you.
+

@@ -172,7 +172,7 @@ LangGraph
 └── output_shield
 ----
 +
-The `tool_auth` and `tools` spans are simply *not there*. The public agent was never given the pipeline tools, so it had nothing to call - and the *Chat* tab shows it saying exactly that: _"I don't have access to internal pipeline or application status information."_
+The `tool_auth` and `tools` spans are simply *not there*. The public agent was never given the pipeline tools, so it had nothing to call, therefore nothing to authorize against - and the *Chat* tab shows it saying exactly that: _"I don't have access to internal pipeline or application status information."_
 
 . That absence is the whole point, and it explains the execution time gap you noticed in step 3. The CEO path spends its extra seconds authorizing and running `ceo_pipeline_summary`; the public path returns as soon as the model has declined.
 

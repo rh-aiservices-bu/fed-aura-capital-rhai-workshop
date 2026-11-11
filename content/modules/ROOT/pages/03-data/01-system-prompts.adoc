@@ -103,7 +103,11 @@ The system prompt took priority - the model followed the pirate instructions ove
 === Add domain knowledge to the prompt
 
 [start=4]
-. Click **Reset** to clear the pirate prompt, then enter this domain-specific version:
+. Click **Reset** to clear the pirate prompt.
++
+image::module5-domain-prompt-edit.png[Click Reset to clear the pirate prompt,link=self,window=blank,width=500]
+
+. Then enter this domain-specific version:
 +
 [source,text]
 ----
@@ -118,8 +122,6 @@ mortgage products:
 
 Always present products in a comparison format. Be helpful and professional.
 ----
-+
-image::module5-domain-prompt-edit.png[Click Reset to clear the pirate prompt,link=self,window=blank,width=500]
 
 . Save the updated prompt. Name it `lenora-mortgage-prompt` and click **Create**:
 +

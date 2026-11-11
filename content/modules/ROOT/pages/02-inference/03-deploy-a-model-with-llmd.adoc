@@ -47,7 +47,7 @@ NOTE: Two replicas means llm-d will distribute incoming requests across two vLLM
 +
 _We are not going to simulate a load of multiple users so you won't see the latency difference in this exercise. We aim to give you the experience of deploying a model with llm-d._
 +
-. On the next screen, select *Add as AI asset endpoint*. Don't worry about the MaaS option yet.
+. On the next screen, select *Add as AI asset endpoint*. Under *Use case*, enter `chat` again. Leave the MaaS option unselected.
 +
 image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
 +
@@ -57,25 +57,46 @@ _This is important because it allows you to access the model through the GenAI P
 +
 image::inference-gateway.png[Ingress gateway configuration,link=self,window=blank,width=700]
 
-. Make sure you *unchecked* the *Token authentication* option.
+. Make sure you *unchecked* the *Token authentication* option again. We will come back to authentication in Exercise 4 :)
 
 . Again, let's add `custom runtime arguments` and pass `--max-model-len=2048` to limit the maximum length of the model's context window to 2048 tokens. 
++
+[source,text]
+----
+--max-model-len=2048
+----
 
-. Then add `custom runtime environment variables` as `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB.
+. Under *Custom runtime environment variables*, click *Add variable* and enter the key and value below to allocate 8 GB for the key-value (KV) cache.
++
+*Key:*
++
+[source,text]
+----
+VLLM_CPU_KVCACHE_SPACE
+----
++
+*Value:*
++
+[source,text]
+----
+8
+----
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
 +
 Click **Next** and then *Deploy model*.
-. While waiting for the model to deploy, go to the *Terminal* tab and run the following command to list the pods created by the llm-d deployment:
+. While the model deploys, let's see what is happening under the hood! Open the *Terminal* tab and run the following command to watch its pods:
 +
 [source,bash,role=execute,subs=attributes+]
 ----
-oc get pods -n wksp-{user} -l app.kubernetes.io/part-of=llminferenceservice
+oc get pods -n wksp-{user} -l app.kubernetes.io/part-of=llminferenceservice -w
 ----
 +
-You should see *2 replicas* of the same model, alongside a *router pod*. The router is responsible for deciding which replica is most suitable to handle each incoming request, based on factors like current load and cache state.
+You should see *two model-serving pods* (one per replica) and a *router pod*. With the routing policy selected in this exercise, the router directs incoming requests to the least busy replica.
 +
 image::inference-llmd-pods-terminal.png[Terminal showing llm-d pods with 2 replicas and a router,link=self,window=blank,width=700]
++
+Once the pods are running, press `Ctrl+C` to stop watching. This does not stop the pods.
 . Let's go back to RHOAI Console and wait for the deployment to show a green status indicator. This takes a minute or two while the model weights are pulled and loaded:
 +
 image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready status with 2 replicas,link=self,window=blank,width=700]

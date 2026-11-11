@@ -92,18 +92,11 @@ image::mortgage-app.png[]
 +
 image::explore-products.png[Explore Products button on the {company_name} landing page,link=self,window=blank,width=400]
 
-. In the chat panel, ask {assistant_name} about mortgage products:
+. In the chat panel, it automatically prompts {assistant_name} about mortgage products with a sample question. You can ask your own question too. 
 +
-[source,text]
-----
-What mortgage products do you offer? I'd like to compare my options.
-----
-+
-The Prospect Agent should respond with mortgage product options:
+The agent should respond with mortgage product options:
 +
 image::module5-prospect-products.png[{assistant_name} responding with mortgage product options,link=self,window=blank,width=700]
-+
-Remember this question - we will revisit it in section 3 under different configurations to see how the answer changes when you add system prompts and RAG :)
 
 NOTE: The LLM backend has rate limiting and may occasionally time out. If the agent does not respond or you see an error, reload the page and ask the question again.
 

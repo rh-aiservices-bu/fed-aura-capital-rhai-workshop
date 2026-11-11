@@ -72,7 +72,7 @@ The response looked right. But what tools ran in order to get that response? Wha
 +
 image::agents-mlflow-experiments-nav.png[OpenShift AI Dashboard showing MLflow experiments,link=self,window=blank,width=700]
 
-. Find the experiment called *mortgage-ai* for the mortgage-ai project and click on *Traces*. You should see a list of recent agent interactions, including the risk assessment you just triggered.
+. Select the experiment called *mortgage-ai* for the mortgage-ai project and click on *Traces*. You should see a list of recent agent interactions, including the risk assessment you just triggered.
 +
 image::agents-mlflow-experiments-traces.png[MLflow trace list showing recent agent interactions,link=self,window=blank,width=700]
 

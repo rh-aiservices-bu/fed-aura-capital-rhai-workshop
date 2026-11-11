@@ -37,15 +37,34 @@ image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self
 +
 image::inference-gateway.png[Ingress gateway configuration,link=self,window=blank,width=700]
 
-. Make sure you *unchecked* the *Token authentication* option.
+. Make sure you *unchecked* the *Token authentication* option. In Exercise 4, you'll explore to control access to models.
 
 . On this screen, we can add `Add custom runtime arguments` if we want to pass any additional arguments to the vLLM runtime. 
 +
 Let's pass `--max-model-len=2048` to limit the maximum length of the model's context window to 2048 tokens. This controls how many tokens (words and word pieces) the model can process in a single request, including both the input prompt and the generated output. We set it to 2048 (lower than the model's default) to reduce memory usage, since we are deploying on a CPU with limited resources.
 +
+[source,text]
+----
+--max-model-len=2048
+----
++
 . We can also add `custom runtime environment variables` if we want to pass any additional environment variables to the vLLM runtime. 
 +
-Click *Add variable* and let's add `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB. Setting this to 8GB gives the model enough cache space to handle requests efficiently.
+Click *Add variable* and enter the key and value below. This allocates 8 GB for the key-value (KV) cache, which gives the model enough cache space to handle requests efficiently.
++
+*Key:*
++
+[source,text]
+----
+VLLM_CPU_KVCACHE_SPACE
+----
++
+*Value:*
++
+[source,text]
+----
+8
+----
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
 + 

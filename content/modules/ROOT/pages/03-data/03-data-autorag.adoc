@@ -22,6 +22,8 @@ The product catalog you uploaded was a well-structured PDF - clean headings, con
 
 But look at what a real {company_name} internal document looks like. Open the https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/blob/dev/collateral/internal-policies-enhanced.pdf[{company_name} Internal Underwriting Policies,window=blank] PDF and scroll through it:
 
+_Alternatively you can download the PDF if it doesn't open in your browser._
++
 image::module5-docling-example-page1.png[Internal Underwriting Policies page 1 - DTI limits section with bar chart showing ratios by loan type,link=self,window=blank,width=600]
 
 image::module5-docling-example-page2.png[Internal Underwriting Policies page 2 - Jumbo thresholds infographic and rate lock timeline diagram,link=self,window=blank,width=600]
@@ -115,7 +117,7 @@ The Playground's RAG toggle is a manual workflow - you upload files one at a tim
 +
 image::module5-autorag-sidebar.png[OpenShift AI sidebar showing Gen AI studio expanded with AutoRAG Tech Preview option,link=self,window=blank,width=250]
 
-. Click **Create AutoRAG optimization run**. Enter the following details and click **Next**:
+. Click **Create run**. Enter the following details and click **Next**:
 +
 * **Name**: `fed-aura-autorag`
 * **Description**: `{company_name} AutoRAG`
@@ -127,15 +129,15 @@ image::module5-autorag-create.png[Create AutoRAG form with name and OGX connecti
 +
 image::module5-autorag-experiment.png[AutoRAG experiment configuration showing Knowledge setup with S3 connection,link=self,window=blank,width=400]
 
-. Select the `docs` folder from the MinIO bucket. This folder contains the {company_name} documents that AutoRAG will index and use for retrieval:
+. Select the `docs` folder from the bucket. This folder contains the {company_name} documents that AutoRAG will index and use for retrieval:
 +
-image::module5-autorag-select-docs.png[File browser showing MinIO bucket contents with docs folder selected,link=self,window=blank,width=500]
+image::module5-autorag-select-docs.png[File browser showing the bucket contents with docs folder selected,link=self,window=blank,width=500]
 
 . Under **Configure details**, set the **Vector I/O provider** to `pgvector (remote Pgvector)`. This is the same PostgreSQL vector database used by the Playground RAG:
 +
 image::module5-autorag-pgvector.png[Vector I/O provider dropdown set to pgvector,link=self,window=blank,width=600]
 
-. For the **Evaluation dataset**, click **S3** to browse the MinIO bucket:
+. For the **Evaluation dataset**, click **S3** to browse the bucket:
 +
 image::module5-autorag-eval-section.png[Evaluation dataset section with S3 browse option,link=self,window=blank,width=500]
 +
@@ -144,6 +146,8 @@ Select `autorag-test-data.json`. This file contains test questions and expected 
 image::module5-autorag-eval-dataset.png[S3 file browser with autorag-test-data.json selected,link=self,window=blank,width=500]
 +
 Note: If you'd like to see the content of the test data file, https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/blob/main/collateral/autorag-test-data.json[check here].
+
+. Leave the **Optimization metric** as `Overall score` so we evaluate both faithfulness and correctness.
 
 . Change **Maximum RAG patterns** to `4` (default is 8). This reduces the number of configurations AutoRAG tests, which speeds up the run. Leave all other settings at their defaults (optimization metric: Answer faithfulness).
 

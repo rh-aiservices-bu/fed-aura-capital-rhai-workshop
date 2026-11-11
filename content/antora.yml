@@ -11,9 +11,9 @@ asciidoc:
     company_name: "Fed Aura Capital"
     assistant_name: "Lenora"
     # Version placeholders - can be overridden by Showroom at runtime
-    ocp_version: "4.20"
-    rhoai_version: "3.5"
-    mlflow_version: "3.10.1"
+    ocp_version: "4.22"
+    rhoai_version: "3.5.2"
+    mlflow_version: "3.14.0"
     # Environment placeholders - replaced by Showroom at runtime
     openshift_console_url: "https://console-openshift-console.apps.cluster.example.com"
     openshift_api_url: "https://api.cluster.example.com:6443"

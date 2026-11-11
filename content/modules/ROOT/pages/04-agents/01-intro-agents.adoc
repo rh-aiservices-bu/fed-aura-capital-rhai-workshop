@@ -30,7 +30,7 @@ By the end of this section, you will be able to:
 
 You have already seen {assistant_name} as a Borrower and a CEO. Now step into the Underwriter persona, the role closest to where the AI's precision matters most. Loan officers assess risk, review applications, and make recommendations. When they ask {assistant_name} a question, they need exact numbers, not estimates.
 
-. Navigate to the *{company_name} App* tab. Click *Sign In* and select the *Underwriter* persona:
+. Navigate to the *Mortgage AI App* tab. Click *Sign In* and select the *Underwriter* persona:
 +
 // TODO: screenshot of Underwriter persona login (agents-underwriter-login.png)
 image::agents-underwriter-login.png[Sign in dialog with Underwriter persona selected,link=self,window=blank,width=350]

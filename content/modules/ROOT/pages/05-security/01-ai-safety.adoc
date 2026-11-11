@@ -57,7 +57,7 @@ The {company_name} app assigns different capabilities depending on who logs in. 
 
 You will need two tabs from section 1.4 for this page: the *{company_name} App* and the *OpenShift AI Dashboard*, with your workshop project selected.
 
-. Navigate to the *{company_name} App* tab. You are still signed in as the Underwriter from section 4.1, so click *Sign Out* first:
+. Navigate to the *Mortgage AI App* tab. You are still signed in as the Underwriter from section 4.1, so click *Sign Out* first:
 +
 image::security-sign-out.png[Application header showing the Underwriter persona and the Sign Out button,link=self,window=blank,width=290]
 

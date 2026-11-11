@@ -84,7 +84,7 @@ Now that you have confirmed the platform is healthy, open the application and in
 
 === Try the Prospect experience (unauthenticated)
 
-. Navigate to the *{company_name} App* tab:
+. Navigate to the *Mortgage AI App* tab:
 +
 image::mortgage-app.png[]
 

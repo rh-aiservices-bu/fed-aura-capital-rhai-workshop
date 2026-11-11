@@ -27,7 +27,7 @@ To keep data inside the network, make costs more predictable, and control model 
 | No usage metering or access control | Subscription tiers with API key management
 |===
 
-*Sections*: 2.1 Model Catalog & Deployment, 2.2 Deploy a Model, 2.3 Deploy a Model with llm-d, 2.4 Models as a Service
+*Related Sections*: 2.1 Model Catalog & Deployment, 2.2 Deploy a Model, 2.3 Deploy a Model with llm-d, 2.4 Models as a Service
 
 === Pillar 2 - Connecting Data to Models and Agents
 
@@ -45,7 +45,7 @@ The bank experimented with ways to make {assistant_name} a more reliable domain 
 | No way to update model knowledge without retraining | Upload new documents; knowledge updates in minutes
 |===
 
-*Sections*: 3.1 System Prompts, 3.2 RAG & Knowledge Grounding, 3.3 AutoRAG
+*Related Sections*: 3.1 System Prompts, 3.2 RAG & Knowledge Grounding, 3.3 AutoRAG
 
 === Pillar 3 - Accelerate Agentic AI Innovation
 
@@ -63,7 +63,7 @@ The platform connects agents to real tools through the MCP Ecosystem, captures e
 | Manual quality spot-checking | Automated evaluation pipelines with EvalHub
 |===
 
-*Sections*: 4.1 Agentic AI & Tracing, 4.2 Tools and MCP, 4.3 Continuous Evaluation
+*Related Sections*: 4.1 Agentic AI & Tracing, 4.2 Tools and MCP, 4.3 Continuous Evaluation
 
 === Pillar 4 - Securing AI from Sandbox to Production
 
@@ -83,7 +83,7 @@ Open Cybersecurity Schema Framework) audit logging
 | No security observability | Structured audit events, SIEM-ready
 |===
 
-*Sections*: 5.1 AI Safety, 5.2 Guardrails & Adversarial Testing, 5.3 OpenShell Agent Sandboxing
+*Related Sections*: 5.1 AI Safety, 5.2 Guardrails & Adversarial Testing, 5.3 OpenShell Agent Sandboxing
 
 == The personas
 

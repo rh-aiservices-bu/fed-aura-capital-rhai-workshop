@@ -15,6 +15,13 @@ By the end of this section, you will be able to:
 * Interact with {assistant_name} as different personas and observe how responses change based on role
 * Connect running pods to the platform architecture diagram
 
+== Your workshop credentials
+
+You will use the following credentials to access the platform. They will also be provided throughout the exercises whenever needed.
+
+* Username: [.notranslate]#{user}#
+* Password: [.notranslate]#{password}#
+
 == Exercise 1: Access the environment and verify the deployment
 
 TIP: Throughout this workshop, all key services are accessible as *tabs* in the workshop interface - no need to open separate browser windows.
@@ -26,7 +33,7 @@ TIP: Throughout this workshop, all key services are accessible as *tabs* in the 
 oc login --insecure-skip-tls-verify $(oc whoami --show-server) -u {user} -p {password}
 ----
 
-. Navigate to the *OCP Console* tab. If you haven't yet, log in with the same credentials you just used: username `{user}`, password `{password}`:
+. Navigate to the *OCP Console* tab. Log in with the same credentials you just used: username `{user}`, password `{password}`:
 +
 image::agentic-app-pre1.png[OpenShift SSO login page,link=self,window=blank,width=500]
 
@@ -69,22 +76,7 @@ Expected output:
 ]
 ----
 +
-**What this result means:** Both the API and Database components report `"status": "healthy"`. This confirms the FastAPI pod is running and can connect to PostgreSQL. Without a healthy database connection, the agents cannot access their knowledge base, retrieve application data, or execute RAG workflows. If either component shows a status other than `"healthy"`, wait a minute and try again - the deployment may still be starting up.
-
-=== Network and security context
-
-NOTE: Your namespace includes NetworkPolicies that restrict east-west traffic between pods. The mortgage-ai-api pod can reach mortgage-ai-db and MinIO, but not pods in other namespaces. In section 5.3 (OpenShell Agent Sandboxing), you will explore OpenShell sandboxing, which adds application-level security on top of these network boundaries.
-
-[%collapsible]
-.View the NetworkPolicies in your namespace (click to expand)
-====
-[source,console,role=execute,subs=attributes+]
-----
-oc get networkpolicies -n wksp-{user}
-----
-
-NetworkPolicies define which pods can communicate with each other at the network level. This is the first layer of the defense-in-depth security model you will explore in section 5.
-====
+If either component shows a status other than `"healthy"`, wait a minute and try again - the deployment may still be starting up.
 
 == Exercise 2: Meet {assistant_name} and the agent personas
 
@@ -92,7 +84,7 @@ Now that you have confirmed the platform is healthy, open the application and in
 
 === Try the Prospect experience (unauthenticated)
 
-. Navigate to the *{company_name} App* tab:
+. Navigate to the *Mortgage AI App* tab:
 +
 image::mortgage-app.png[]
 
@@ -100,18 +92,11 @@ image::mortgage-app.png[]
 +
 image::explore-products.png[Explore Products button on the {company_name} landing page,link=self,window=blank,width=400]
 
-. In the chat panel, ask {assistant_name} about mortgage products:
+. In the chat panel, it automatically prompts {assistant_name} about mortgage products with a sample question. You can ask your own question too. 
 +
-[source,text]
-----
-What mortgage products do you offer? I'd like to compare my options.
-----
-+
-The Prospect Agent should respond with mortgage product options:
+The agent should respond with mortgage product options:
 +
 image::module5-prospect-products.png[{assistant_name} responding with mortgage product options,link=self,window=blank,width=700]
-+
-Remember this question - we will revisit it in section 3 under different configurations to see how the answer changes when you add system prompts and RAG :)
 
 NOTE: The LLM backend has rate limiting and may occasionally time out. If the agent does not respond or you see an error, reload the page and ask the question again.
 
@@ -137,7 +122,8 @@ What is the minimum down payment for an FHA loan?
 ----
 +
 Observe the response. {assistant_name} answers with policy-grounded information from {company_name}'s internal documents - this is RAG (Retrieval-Augmented Generation) in action. She is not guessing; she is retrieving from the company's knowledge base.
-// TODO: capture screenshot of borrower FHA answer (explore-borrower-fha.png)
++
+image::borrow-chat.png[Sign in dialog with Persona Demo Login,link=self,window=blank,width=700]
 
 . Now ask a question that triggers a tool call:
 +
@@ -220,10 +206,10 @@ The platform is built around a set of cooperating components. At the center is {
 +
 [source,bash,role=execute,subs=attributes+]
 ----
-oc get pods -n wksp-{user} -o custom-columns="NAME:.metadata.name,STATUS:.status.phase,CONTAINERS:.spec.containers[*].name"
+oc get pods -n wksp-{user} -l "app.kubernetes.io/name=mortgage-ai" -o custom-columns="NAME:.metadata.name,STATUS:.status.phase,CONTAINERS:.spec.containers[*].name"
 ----
 +
-You should see 5 core pods running. Here is what each one does and where it fits:
+You should see 3 core pods running. Here is what each one does and where it fits:
 
 [cols="1,2,2",options="header"]
 |===
@@ -240,14 +226,6 @@ You should see 5 core pods running. Here is what each one does and where it fits
 |mortgage-ai-db
 |Data Layer
 |PostgreSQL with pgvector. Stores application data, conversation history, and vector embeddings for RAG.
-
-|minio
-|Storage Layer
-|S3-compatible object storage. Holds uploaded documents (borrower PDFs, policy files) for document processing.
-
-|keycloak
-|Identity Layer
-|OIDC identity provider. Authenticates users and maps them to personas with role-based access control.
 |===
 
 [%collapsible]

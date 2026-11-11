@@ -7,7 +7,11 @@
 
 From answering questions to taking action.
 
-The data section showed RAG grounding {assistant_name} with documents. But {assistant_name} doesn't just look up facts - she calls tools, runs calculations, and coordinates across systems. When we say _tools_, we mean functions (APIs, database queries, calculators) that the agent can invoke at runtime. The model decides when and with what arguments to call a tool, but it is the agent framework that actually executes it and returns the result back to the model for further reasoning. This section covers the agentic layer: tool access via MCP, continuous evaluation with EvalHub, and utilizing a predictive AI model to power the risk assessments.
+The data section shows RAG grounding {assistant_name} with documents. But {assistant_name} doesn't just look up facts - she calls tools, runs calculations, and coordinates across systems. 
+
+When we say _tools_, we mean functions (APIs, database queries, calculators) that the agent can invoke at runtime. The model decides when and with what arguments to call a tool, but it is the agent framework that actually executes it and returns the result back to the model for further reasoning. 
+
+This section covers the agentic layer: tool access via MCP, continuous evaluation with EvalHub, and utilizing a predictive AI model to power the risk assessments.
 
 Estimated time: *25 minutes*
 
@@ -26,12 +30,12 @@ By the end of this section, you will be able to:
 
 You have already seen {assistant_name} as a Borrower and a CEO. Now step into the Underwriter persona, the role closest to where the AI's precision matters most. Loan officers assess risk, review applications, and make recommendations. When they ask {assistant_name} a question, they need exact numbers, not estimates.
 
-. Navigate to the *{company_name} App* tab. Click *Sign In* and select the *Underwriter* persona:
+. Navigate to the *Mortgage AI App* tab. Click *Sign In* and select the *Underwriter* persona:
 +
 // TODO: screenshot of Underwriter persona login (agents-underwriter-login.png)
 image::agents-underwriter-login.png[Sign in dialog with Underwriter persona selected,link=self,window=blank,width=350]
 
-. In the queue, click Lisa Washington's application and note its number. Here it is `#44`, but it can change per environment, so use the number you see:
+. In the Underwriting Queue, click Lisa Washington's application and note its number. Here it is `#44`, but it can change per environment, so use the number you see:
 +
 image::agents-application-number.png[Application header showing Lisa Washington and the application number,link=self,window=blank,width=400]
 
@@ -68,11 +72,11 @@ The response looked right. But what tools ran in order to get that response? Wha
 +
 image::agents-mlflow-experiments-nav.png[OpenShift AI Dashboard showing MLflow experiments,link=self,window=blank,width=700]
 
-. Find the experiment called *mortgage-ai* for the mortgage-ai project and click on *Traces*. You should see a list of recent agent interactions, including the risk assessment you just triggered.
+. Select the experiment called *mortgage-ai* for the mortgage-ai project and click on *Traces*. You should see a list of recent agent interactions, including the risk assessment you just triggered.
 +
 image::agents-mlflow-experiments-traces.png[MLflow trace list showing recent agent interactions,link=self,window=blank,width=700]
 
-. Locate the most recent trace for your request and click it:
+. Locate the trace from running the risk assessment and click it. It should be the one with the title `Run a risk assessment on application #44` (application number may change 😅)
 +
 . Switch to *Details & Timeline* tab. Walk through the trace tree from top to bottom. You will see the full decision path:
 +
@@ -95,7 +99,11 @@ image::agents-trace-tree.png[MLflow trace showing the full agent decision path f
 +
 image::agents-trace-calculate-dti.png[calculate_dti tool step showing inputs and output dti_value in the trace,link=self,window=blank,width=700]
 
-. Look at the total latency for the trace. Each step is timestamped, so you can see exactly where time was spent: the LLM call, the tool auth check, each individual tool execution.
+. Click the "Show execution timeline"  icon at the top to look at the total latency for the trace. Each step is timestamped, so you can see exactly where time was spent: the LLM call, the tool auth check, each individual tool execution.
++
+image::agents-trace-execution-timeline.png[Execution timeline showing latency for each step in the trace,link=self,window=blank,width=700]
+
+_If the view is too small, you can always switch to Tabs view by clicking the *<* icon in the right corner to view the trace in full screen._
 
 TIP: When something goes wrong in production (a wrong recommendation, a slow response, a failed tool call), this is where you go first. The trace is a full audit log of every decision the agent made.
 

@@ -7,13 +7,11 @@
 
 == Exercise 4: Models as a Service
 
-You've been observing a model `qwen3-235b-a22b` in the AI Asset Endpoints list, but you didn't deploy this one. Well, hate to break it to you, but {assistant_name} hasn't been using the little model you deployed. Because the small model you deployed on CPU is not good enough for {company_name}'s use case both in terms of capability and performance. The model that {assistant_name} is using is `qwen3-235b-a22b`, which is a much larger model and requires GPU to run.
+The small CPU-hosted model you deployed helped you learn how model serving works. For {company_name}'s more demanding use cases, {assistant_name} uses a larger model: `qwen3-235b-a22b`, hosted on GPU infrastructure by the platform team.
 
-But of course, {company_name} has other AI use cases as well, and they don't want to deploy a model for every use case. Instead, they want to have a model that can be used for multiple use cases. This is where Models as a Service (MaaS) comes in. With MaaS, an admin can expose models as endpoints that can be consumed by different applications and users.
+Rather than asking each application team to deploy and manage its own model, the bank provides shared models through Models-as-a-Service (MaaS). The platform team manages the deployments and controls access, while application teams consume the models through an API.
 
-And as a user, you are granted access to the MaaS endpoints that are relevant to your role. That's why you've been seeing `qwen3-235b-a22b` in the list. You can see the list of available endpoints in the AI Asset Endpoints list, and you can use them in your applications without having to worry about the underlying model deployment and management.
-
-MaaS provides a consistent and governed way to access models, which means {company_name} can manage the model deployments centrally while still providing access to the models for different teams and applications.
+In this exercise, you'll explore the `qwen3-235b-a22b` endpoint available to you and try it in the playground. In the next exercise, you'll create an API key to use it from code or other tools.
 
 === Explore AI Asset Endpoints
 
@@ -27,7 +25,7 @@ image::inference-maas-endpoint-details.png[AI Asset Endpoint details,link=self,w
 
 . Close the dialog and click *Add to playground* to confirm the endpoint is live and responding. The Playground creates a temporary API key on your behalf and connects to the endpoint so you can test it quickly.
 +
-TIP: If the Playground does not show up, refresh the page.
+TIP: If the Configure Playground panel does not show up, refresh the page.
 
 . In the *Configure playground* dialog, pick which model endpoints you want available in your project playground. Keep `qwen3-235b-a22b` selected and click *Configure*.
 +
@@ -39,22 +37,23 @@ image::inference-maas-try-in-playground.png[GenAI Playground opened from the qwe
 
 == Exercise 5: Generate an API Key
 
-To consume a MaaS endpoint from code or a tool, you need a scoped API key. Let's generate one now.
+MaaS uses API keys to control access to shared models, apply rate limits, and track usage. Earlier, the Playground created a temporary key on your behalf so you can test the model quickly. Now, let's create your own API key to call the model from code or other tools.
 
 . Go to *API Keys* page, and click *Create API Key*.
 
 . Give the key a name, for example `my-key`. You can add a description if you wish.
 
 . Select the *Premium Tier* subscription. The subscription defines the model you have access to and the rate limits for the key. Observe that you have 10,000 tokens per minute as the rate limit for `qwen3-235b-a22b`. 
-
-. Leave the Expiration as 30 days. Click *Create API Key*.
 +
 image::inference-maas-create-api-key.png[Create API key dialog showing the Premium Tier subscription, the models it covers, and a 30 day expiration,link=self,window=blank,width=700]
 
-. Save the generated key somewhere safe. You will need it to call the endpoint from code or a tool. And you'll only get to see it once.
+. Change the expiration date by selecting *After* from the drop down and make it 30 days. 
+
+. Click *Create API Key*.
 +
---
-Paste it here so you can refer to it during the exercises. It stays in your browser only, nothing is sent anywhere:
+image::inference-maas-api-key.png[API key created dialog showing the masked key, its name, subscription, and expiration,link=self,window=blank,width=700]
+
+. Copy the generated key and paste it into the field below for use during the exercises. You won't be able to view the key again after closing the dialog.
 
 ++++
 <div class="key-notepad">
@@ -101,12 +100,10 @@ Paste it here so you can refer to it during the exercises. It stays in your brow
 <div class="key-notepad-note">Your key is saved in your browser's local storage so it carries across pages. Click Clear to remove it.</div>
 </div>
 ++++
---
+---
 
-+
-image::inference-maas-api-key.png[API key created dialog showing the masked key, its name, subscription, and expiration,link=self,window=blank,width=700]
-+
 NOTE: Each user generates their own key. The MaaS gateway tracks usage per key, which is how the platform enforces rate limits and produces the per-user usage data.
+
 
 == Exercise 6: Consume the MaaS Endpoint with cURL
 
@@ -119,12 +116,23 @@ With your key in hand, let's call the model directly from the terminal.
 <style>
   .maas-env-wrap {
     position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: #1e1e1e;
+    border-radius: 6px;
+    padding-right: 0.5rem;
+    min-width: 0;
+    max-width: 100%;
     margin: 0.5rem 0;
   }
   .maas-env-block {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
     background: #1e1e1e;
     border-radius: 6px;
-    padding: 0.75rem 3.5rem 0.75rem 1rem;
+    padding: 0.75rem 1rem;
     font-family: monospace;
     font-size: 0.82rem;
     color: #d4d4d4;
@@ -133,8 +141,8 @@ With your key in hand, let's call the model directly from the terminal.
   .maas-env-key { color: #9cdcfe; }
   .maas-env-placeholder { color: #6b7280; font-style: italic; }
   .maas-env-btn {
-    position: absolute;
-    top: 0.4rem;
+    flex-shrink: 0;
+    margin-top: 0.4rem;
     background: #28a745;
     color: white;
     border: none;
@@ -142,11 +150,8 @@ With your key in hand, let's call the model directly from the terminal.
     padding: 0.3rem 0.55rem;
     font-size: 0.8rem;
     cursor: pointer;
-    opacity: 0.35;
-    transition: opacity 0.2s;
   }
-  .maas-env-btn:hover { opacity: 1; }
-  #maas-copy-btn { right: 0.5rem; }
+  .maas-env-btn:hover { background: #218838; }
 </style>
 <div class="listingblock maas-env-wrap">
   <div class="maas-env-block" id="maas-env-block"><span class="maas-env-key">export MAAS_API_KEY=</span><span id="maas-key-display" class="maas-env-placeholder">&lt;paste-your-api-key&gt;</span>
@@ -197,24 +202,28 @@ curl -sk $MAAS_URL/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "qwen3-235b-a22b",
-    "messages": [{"role": "user", "content": "What is Models as a Service?"}],
+    "messages": [{"role": "user", "content": "Write me a haiku about GenAI Playground"}],
     "max_tokens": 256
   }' | jq -r '.choices[0].message.content'
 ----
 +
 You should see a response from `qwen3-235b-a22b`. The API is OpenAI-compatible, so any application that already talks to OpenAI can point at this endpoint instead, with no code changes beyond swapping the base URL and key.
 
-== Exercise 7: (Optional) Use OpenCode with MaaS as Your Coding Assistant
+== Exercise 7: (Optional) Connect OpenCode to MaaS
 
-Let's explore another use case apart from {assistant_name}: using MaaS as a coding assistant.
+{company_name}'s developers can use shared models for coding assistance too. In this exercise, you'll connect OpenCode, an AI coding assistant included in your workbench, to the same MaaS endpoint you used with cURL.
 
-Most AI coding assistants default to cloud-hosted models, sending your code to an external provider. In a regulated environment like financial services, that's often not acceptable. But because MaaS exposes an OpenAI-compatible API, you are not locked into any particular tool or model: any coding assistant that supports a custom endpoint works. You can swap the model behind it (a smaller, faster model for autocomplete, a larger one for complex reasoning) without changing your tooling.
+Sending source code and prompts to an external model provider can raise confidentiality concerns for the bank. By connecting OpenCode to a self-hosted model through MaaS, developers can get coding assistance while keeping model requests inside the bank's environment.
 
-This exercise uses *OpenCode*, an open-source AI coding assistant built into the workbench, connected to the {company_name} MaaS endpoint: coding assistance powered by a self-hosted model, with no code leaving the cluster.
+MaaS also lets teams reuse centrally managed models without deploying their own. Its OpenAI-compatible API allows developers to connect coding tools that support a custom endpoint, while the platform team manages model access and infrastructure.
 
-By pointing OpenCode at MaaS, you ensure that your code and prompts stay within your data center: they are never sent to a third-party model provider. But a capable coding agent can do more than just generate code: it can access files, call APIs, and interact with endpoints. Keeping the model on-premises is one half of the story. In the xref:05-security/03-openshell.adoc[OpenShell Agent Sandboxing] section, you will see the other half: how to constrain _what the agent can do_: blocking network access to external endpoints, preventing data uploads, and ensuring the agent cannot take actions it is not supposed to.
+You'll configure three values: the endpoint URL, your API key, and the model name.
 
-. Navigate to *OpenShift AI Dashboard > Data Science Projects > wksp-{user}*. Click *Create workbench* and fill in the form:
+NOTE: For this workshop, we extended OpenShift AI's Code Server workbench image by installing OpenCode. The platform provides base workbench images and lets you build custom images based on them. 
+
+=== Create and Configure Your Workbench
+
+. Navigate to *OpenShift AI Dashboard > Projects > wksp-{user}*. Click *Create workbench* and fill in the form:
 +
 image::inference-workbench-create-codeserver.png[Create workbench in your project,link=self,window=blank,width=700]
 +
@@ -226,10 +235,7 @@ image::inference-workbench-create-codeserver.png[Create workbench in your projec
 +
 image::inference-workbench-create-codeserver-2.png[FedAura Capital Custom Code Server image selected with CPU Profile,link=self,window=blank,width=700]
 +
-. Scroll down and enter your API key, model name, and endpoint URL as environment variables. These will be available to you in the workbench, so you'd be using your own key:
-+ *Environment variables* > *Secret* > *Key / value*
-+
-Click *Add variable* three times to create three rows, then fill in each row with the key and value from the table below:
+. Scroll down to *Environment variables* and select *Secret > Key / value*. Click *Add variable*, then add two more key/value pairs. Fill in the three rows using the table below, including your API key from Exercise 5:
 +
 [subs=attributes+]
 ++++
@@ -305,29 +311,51 @@ Click *Add variable* three times to create three rows, then fill in each row wit
 +
 image::inference-workbench-create-codeserver-3.png[Add OpenCode environment variables,link=self,window=blank,width=700]
 +
-. Hit *Create workbench*. You will see the workbench in the list with status *Starting* and then *Running*. Wait for the workbench to start.
+. Click *Create workbench* and wait for its status to change from *Starting* to *Running*.
 +
-. Once it is running, click the workbench name to open the Code Server environment.
+. Use the *Workbench* tab in the top menu bar, or click the workbench name to open Code Server in a new tab.
 +
 image::inference-workbench-codeserver-starting.png[Workbench fedaura-code-server running,link=self,window=blank,width=700]
 +
-. Open the terminal and run *opencode* as the command, and observe that the OpenCode coding assistant is now connected to the MaaS endpoint. You can send prompts to the model and get responses here. :)
+=== Try OpenCode
+
+. In the Code Server, open the menu at the top left and select *Terminal > New Terminal*.
 +
 image::inference-workbench-terminal.png[Open up the terminal,link=self,window=blank,width=700]
+
+. Run the following command to start OpenCode, configured to use your MaaS endpoint:
 +
-. Run  *opencode* as the command, ask it to create a Python function, or send the prompt you like :)
+[source,bash,role=execute,subs=attributes+]
+----
+opencode
+----
 +
 image::inference-workbench-terminal-opencode.png[OpenCode within a Workbench,link=self,window=blank,width=700]
+
+. Enter the following prompt in OpenCode and review the generated function:
 +
+[source,bash,role=execute,subs=attributes+]
+----
+Write a Python function that calculates the monthly mortgage payment given the principal, annual interest rate, and total number of monthly payments. Handle a zero interest rate.
+----
 
+OpenCode now uses the bank's shared model through MaaS. You've reused the same endpoint and API key with another tool, without deploying another model.
 
-=== On-premises vs cloud inference
+NOTE: Coding agents can also access files and run commands. In xref:05-security/03-openshell.adoc[OpenShell Agent Sandboxing], you'll explore how to control those actions.
 
-Everything you just did ran entirely within the OpenShift cluster. No data left the environment. This is the key advantage of self-hosted inference for regulated industries like financial services: full data residency, no external API dependencies, and inference costs tied to your own hardware rather than per-token cloud pricing.
+== Exercise 8: Observe Your Usage
 
-MaaS gives you the developer experience of a cloud API (stable endpoints, API keys, usage dashboards) with the data control of on-premises infrastructure.
+. On OpenShift AI dashboard go to *Observe & monitor > Dashboard* and click on `qwen3-235b-a22b`. Select the *Usage (logs)* tab:
++
+image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
 
-But self-hosted models are not the only thing MaaS can expose. The same gateway can also front external providers like OpenAI, Anthropic, or Gemini. From a user's perspective, nothing changes: you still browse the AI Asset Endpoints list, generate an API key, and call the endpoint the same way. The gateway handles the routing: whether the request goes to a locally deployed model or to an external API is transparent to the consumer. This means teams can use a mix of self-hosted and cloud models without managing separate credentials, SDKs, or rate-limiting policies for each one.
+. You should see the token consumption from your curl call, Playground and OpenCode sessions. This is the data {company_name}'s platform team can also use to track adoption and manage capacity across teams.
+
+=== Self-hosted and External Models
+
+The model requests in these exercises go through MaaS to a self-hosted model running in an OpenShift cluster. This lets application teams use an API while the platform team manages the model infrastructure and access.
+
+A gateway can also provide access to external model providers.
 
 ++++
 <div class="maas-gateway-diagram">
@@ -439,14 +467,6 @@ But self-hosted models are not the only thing MaaS can expose. The same gateway 
 </div>
 ++++
 
-== Exercise 8: Observe Your Usage
-
-. On OpenShift AI dashboard go to *Observe & monitor > Dashboard* and click on `qwen3-235b-a22b`. Select the *Usage* tab:
-+
-image::inference-maas-usage-dashboard.png[Usage dashboard showing token consumption, request count, and rate limit events for your key,link=self,window=blank,width=700]
-
-. You should see the token consumption from your curl call and Playground session. This is the data {company_name}'s platform team can also use to track adoption and manage capacity across teams.
-
 === A question for {assistant_name}
 
 Before we close this section, in the Playground, try asking something specific about {company_name}.
@@ -467,7 +487,7 @@ The model can generate fluent text, but it doesn't know anything about {company_
 You started with a model in a catalog and ended with a production-grade inference platform. Here is what that progression looked like:
 
 * *Model Catalog* - models don't just appear in production. They go through a governed library with metadata about origin, license, and validation status before anyone can deploy them.
-* *Single-node vLLM* - deploying a model is straightforward, but a single replica under concurrent load becomes a bottleneck with no intelligent routing.
+* *Single-replica vLLM* - deploying a model is straightforward, but a single replica under concurrent load becomes a bottleneck with no intelligent routing.
 * *llm-d* - adding replicas only helps if requests are routed smartly. llm-d tracks replica load and distributes work to minimize wait time across the pool. The API and the user experience stay identical. The improvement is entirely under the hood.
 * *Models as a Service* - even well-distributed inference creates chaos if every team manages their own stack. MaaS puts a shared gateway in front: one endpoint, scoped API keys, rate limits, and usage visibility per consumer.
 

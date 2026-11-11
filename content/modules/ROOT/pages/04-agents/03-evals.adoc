@@ -22,9 +22,73 @@ By the end of this section, you will be able to:
 
 EvalHub is the centralized evaluation interface for the platform. It lets you run standardized benchmarks against any model endpoint and compare results across versions.
 
+. First of all, because the model we would like to evaluate requires an API key, we need to create a Kubernetes Secret that EvalHub can reference. Switch to the *Terminal* tab. Run the following command:
++
+[subs=attributes+]
+++++
+<style>
+  .evalhub-secret-wrap { position: relative; margin: 0.5rem 0; }
+  .evalhub-secret-block {
+    background: #1e1e1e; border-radius: 6px;
+    padding: 0.75rem 3.5rem 0.75rem 1rem;
+    font-family: monospace; font-size: 0.82rem; color: #d4d4d4; white-space: pre;
+  }
+  .evalhub-copy-btn {
+    position: absolute; top: 0.4rem; right: 0.5rem;
+    background: #28a745; color: white; border: none; border-radius: 4px;
+    padding: 0.3rem 0.55rem; font-size: 0.8rem; cursor: pointer;
+    opacity: 0.4; transition: opacity 0.2s;
+  }
+  .evalhub-copy-btn:hover { opacity: 1; }
+  .evalhub-placeholder { color: #6b7280; font-style: italic; }
+</style>
+<div class="listingblock evalhub-secret-wrap">
+  <div class="evalhub-secret-block" id="evalhub-secret-block">oc apply -n wksp-{user} -f - &lt;&lt;EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: evalhub-secret
+  namespace: wksp-{user}
+type: Opaque
+stringData:
+  api-key: <span class="evalhub-placeholder" id="evalhub-key-val">&lt;paste-your-api-key&gt;</span>
+EOF</div>
+  <button class="evalhub-copy-btn" title="Copy" onclick="(function(){
+    var text = document.getElementById('evalhub-secret-block').innerText;
+    navigator.clipboard.writeText(text).then(function(){
+      var b = document.getElementById('evalhub-copy-btn');
+      b.textContent = '✓'; setTimeout(function(){ b.textContent = '⎘'; }, 1200);
+    });
+  })()" id="evalhub-copy-btn">⎘</button>
+</div>
+<script>
+  (function() {
+    function syncEvalhubKey() {
+      var keyVal = document.getElementById('evalhub-key-val');
+      if (!keyVal) return;
+      var k = '';
+      var keyInput = document.getElementById('api-key-input');
+      if (keyInput) k = keyInput.value.trim();
+      if (!k) { try { k = localStorage.getItem('workshop-api-key') || ''; } catch(e) {} }
+      keyVal.textContent = k || '<paste-your-api-key>';
+      keyVal.className = k ? '' : 'evalhub-placeholder';
+    }
+    function attach() {
+      var k = document.getElementById('api-key-input');
+      if (k) k.addEventListener('input', syncEvalhubKey);
+      syncEvalhubKey();
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); }
+    else { attach(); }
+  })();
+</script>
+++++
+
++
+TIP: If you no longer have your API key, follow xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_5_generate_an_api_key[Exercise 5: Generate an API Key] to go back to the *API Keys* tab and create a new one.
+
 . Navigate to *OpenShift AI Dashboard > Develop & train > Evaluations*. And click *Start evaluation run*
 +
-// TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
 image::evals-evalhub-main.png[EvalHub interface to start a new evaluation run,link=self,window=blank,width=700]
 
 . For the evaluation type, select *Benchmark*. A benchmark runs a single test, while a benchmark suite runs a predefined group of them:
@@ -40,33 +104,13 @@ IFEval tests whether a model can follow explicit formatting instructions, things
 . Fill in the evaluation run form:
 +
 --
-* *Run name*: `IFEval`
-* *MLflow Experiment*: Create new, call it `EvalHub`
+* *Evaluation name*: `IFEval`
+* *MLflow Experiment*: Create new experiment, call it `EvalHub`
 * *Source*: `Model` - we are evaluating how capable the model is on the given topic, not a full application
 * *Model*: Select *Other (External endpoint)*
 ** *Model name*: `qwen3-235b-a22b`
-** *Endpoint URL*: `https://maas.{openshift_cluster_ingress_domain}/v1`
+** *Endpoint URL*: `\https://maas.{openshift_cluster_ingress_domain}/v1`
 --
-+
-. The model is behind an API key, so we need to create a Kubernetes Secret that EvalHub can reference. Switch to the *Terminal* tab and run:
-+
-[source,console,role=execute,subs=attributes+]
-----
-oc apply -n wksp-{user} -f - <<EOF
-apiVersion: v1
-kind: Secret
-metadata:
-  name: evalhub-secret
-  namespace: wksp-{user}
-type: Opaque
-stringData:
-  api-key: <paste-your-api-key>
-EOF
-----
-+
-IMPORTANT: Replace `<paste-your-api-key>` with your API key before you press Enter. If you run the command with the placeholder still there, the Secret is created with that text and *Validate connection* fails a few steps later.
-+
-TIP: If you no longer have your API key, you can always go back to the *API Keys* tab and create a new one.
 +
 TIP: If you get an error, please log in to the OpenShift cluster again with the following command and then re-run the secret creation command:
 +
@@ -75,7 +119,7 @@ TIP: If you get an error, please log in to the OpenShift cluster again with the 
 oc login --insecure-skip-tls-verify $(oc whoami --show-server) -u {user} -p {password}
 ----
 
-. Switch back to *EvalHub* and set the *API Key Secret* to `evalhub-secret`, the Secret you just created.
+. Set the *API Key Secret* to `evalhub-secret`, the Secret you created earlier.
 
 . With the secret selected, click *Validate connection*. This checks that EvalHub can reach the endpoint with that key, so you catch a wrong secret or a bad key now rather than after a failed run. Wait for *Connection established successfully* before continuing:
 +
@@ -95,6 +139,8 @@ image::evals-benchmark-parameters.png[Benchmark parameters enabled with the JSON
 . When it is completed, you can click the name *IFEval* to see the full evaluation report.
 +
 image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy score and per-question breakdown,link=self,window=blank,width=700]
++
+_You may need to refresh the page to see Completed status._
 +
 Here is what the results mean:
 +
@@ -117,12 +163,13 @@ RAGAS is a framework that evaluates three things:
 * **Answer relevancy** - does the answer actually address the question asked?
 * **Context precision** - did the retrieval step surface the right document chunks, or did it retrieve irrelevant content?
 
-. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*. If you haven't created a workbench yet, follow the steps in xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Exercise 7] to set one up.
+. Go to the *Workbench* tab. If you haven't created a workbench yet, follow the steps in xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Exercise 7] to set one up.
 
 . Let's clone this repository to get the evaluation notebooks. Open up a terminal by clicking the *hamburger menu* (☰) at the top-left corner, then selecting *Terminal > New Terminal*. In the terminal, run:
 +
 [source,bash]
 ----
+cd /opt/app-root/src
 git clone https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop.git
 ----
 +
@@ -173,7 +220,7 @@ RAGAS requires a test set with known source documents. But what about open-ended
 
 That is where llm-as-judge comes in. Instead of scoring against a ground truth, you use a second LLM to evaluate the quality of the first LLM's responses. The judge model reads the question, the context the agent had available, and the agent's answer, then scores dimensions like correctness, helpfulness, and groundedness.
 
-. Open `evaluate_agent.ipynb` from the `notebooks/` folder:
+. Open `04-evaluate_agent.ipynb` from the `notebooks/` folder:
 +
 image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in the Workbench,link=self,window=blank,width=700]
 
@@ -216,7 +263,7 @@ LLM_MODEL = "qwen3-235b-a22b"</pre>
 </script>
 ++++
 +
-TIP: If you no longer have your API key, go back to the *API Keys* tab and create a new one.
+TIP: If you no longer have your API key, follow xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_5_generate_an_api_key[Exercise 5: Generate an API Key] to go back to the *API Keys* tab and create a new one.
 +
 . Run the cells in order. The notebook walks through several stages:
 +
@@ -273,13 +320,13 @@ The pipeline packages the simple evaluation into four automated steps:
 * *run-simple-eval-op* - runs the three deterministic scorers (`contains_expected`, `has_numeric_result`, `response_length`)
 * *report-results-op* - prints the evaluation summary and logs results
 
-. First, right-click and *Save As* the https://raw.githubusercontent.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/main/collateral/eval-pipeline.yaml[pipeline definition file,window=blank] to your local machine.
+. First, right-click and *Save Link As* the https://raw.githubusercontent.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/main/collateral/eval-pipeline.yaml[pipeline definition file,window=blank] to your local machine.
 
 . Navigate to *OpenShift AI Dashboard > Develop & train > Pipelines > Pipeline definitions*. Click *Import pipeline*.
 +
 image::evals-pipeline-definitions.png[Pipeline definitions page with Import pipeline button highlighted,link=self,window=blank,width=700]
 
-. In the import dialog, select *Upload a file* and upload the `eval-pipeline.yaml` file you downloaded. The pipeline name will auto-populate as `agent-simple-evaluation-pipeline`. Click *Import pipeline*.
+. In the import dialog, select *Upload a file* and upload the `eval-pipeline.yaml` file you downloaded. Name the pipeline `agent-simple-evaluation-pipeline`. Click *Import pipeline*.
 +
 image::evals-pipeline-import.png[Import pipeline dialog showing eval-pipeline.yaml uploaded,link=self,window=blank,width=700]
 
@@ -291,9 +338,9 @@ image::evals-pipeline-create-run.png[Actions dropdown with Create run highlighte
 +
 --
 * *Name*: `eval-run`
-* *MLflow integration*: Select an experiment for *MLflow experiment*
+* *MLflow integration*: Select `mortgage-ai-eval` experiment for *MLflow experiment*
 * *Parameters*:
-** *mlflow_tracking_uri*: `https://mlflow.redhat-ods-applications.svc.cluster.local:8443/mlflow`
+** *mlflow_tracking_uri*: `\https://mlflow.redhat-ods-applications.svc.cluster.local:8443/mlflow`
 ** *mlflow_workspace*: `wksp-{user}`
 ** Leave the rest as defaults
 --
@@ -306,7 +353,7 @@ Click *Create run*. Each step runs in its own container. Authentication to MLflo
 +
 image::evals-pipeline-stages.png[Pipeline run showing all four stages completed successfully,link=self,window=blank,width=700]
 
-. When the pipeline completes, navigate to *OpenShift AI Dashboard > Develop & train > Experiments > Evaluation runs* and find the new evaluation run. You can see the individual traces and scorer results for each test question.
+. When the pipeline completes, navigate to *OpenShift AI Dashboard > Develop & train > Experiments > `mortgage-ai-eval` > Evaluation runs* and find your evaluation run. You can see the individual traces and scorer results for each test question.
 +
 image::evals-pipeline-mlflow-results.png[MLflow experiment showing evaluation run with traces and scores,link=self,window=blank,width=700]
 +

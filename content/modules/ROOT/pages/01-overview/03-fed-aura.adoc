@@ -16,7 +16,7 @@ _"From token consumer to token producer"_
 
 {company_name} used to pay per-token to an external LLM vendor. Every API call left the network, costs were unpredictable, and there was no control over which model version served a request.
 
-The platform now runs self-hosted models with vLLM, a distributed inference layer with llm-d, and exposes them through a managed API gateway via Models as a Service (MaaS).
+To keep data inside the network, make costs more predictable, and control model versions, the platform now runs self-hosted models with vLLM, uses llm-d for distributed inference, and exposes them through a managed API gateway via Models as a Service (MaaS).
 
 [cols="1,1",options="header"]
 |===
@@ -27,7 +27,7 @@ The platform now runs self-hosted models with vLLM, a distributed inference laye
 | No usage metering or access control | Subscription tiers with API key management
 |===
 
-*Sections*: 2.1 Model Catalog & Deployment, 2.2 Deploy a Model, 2.3 Deploy a Model with llm-d, 2.4 Models as a Service
+*Related Sections*: 2.1 Model Catalog & Deployment, 2.2 Deploy a Model, 2.3 Deploy a Model with llm-d, 2.4 Models as a Service
 
 === Pillar 2 - Connecting Data to Models and Agents
 
@@ -35,7 +35,7 @@ _"From generic to useful AI"_
 
 A deployed model is still generic. {assistant_name} could not quote {company_name}'s rates, did not know internal policies, and gave textbook answers with disclaimers.
 
-The platform now shapes {assistant_name} into a domain expert through configured system prompts stored in the Prompt Registry, and grounds her responses in the bank's private documents via RAG. AutoRAG automatically finds the best RAG configuration for {company_name}'s documents by testing combinations of different settings.
+The bank experimented with ways to make {assistant_name} a more reliable domain expert. It refined her instructions using system prompts stored in the Prompt Registry and connected her to private bank documents so she could ground her answers in trusted information. Using AutoRAG, the bank tested different ways to retrieve and use those documents to find the configuration that worked best for {company_name}.
 
 [cols="1,1",options="header"]
 |===
@@ -45,13 +45,13 @@ The platform now shapes {assistant_name} into a domain expert through configured
 | No way to update model knowledge without retraining | Upload new documents; knowledge updates in minutes
 |===
 
-*Sections*: 3.1 System Prompts, 3.2 RAG & Knowledge Grounding, 3.3 AutoRAG
+*Related Sections*: 3.1 System Prompts, 3.2 RAG & Knowledge Grounding, 3.3 AutoRAG
 
 === Pillar 3 - Accelerate Agentic AI Innovation
 
 _"From useful to productive AI"_
 
-{assistant_name} could answer domain-specific questions, but could not take action. When a borrower asked "How much house can I afford?", she estimated a range with assumptions. An agentic {assistant_name} calls the affordability calculator and returns a precise figure with a DTI breakdown.
+{assistant_name} could answer domain-specific questions, but could not take action. When a borrower asked "How much house can I afford?", she estimated a range with assumptions. An agentic {assistant_name} calls the affordability calculator and returns a precise figure with a debt-to-income (DTI) breakdown.
 
 The platform connects agents to real tools through the MCP Ecosystem, captures every decision path in MLflow traces, and continuously measures quality with automated evaluation pipelines.
 
@@ -63,7 +63,7 @@ The platform connects agents to real tools through the MCP Ecosystem, captures e
 | Manual quality spot-checking | Automated evaluation pipelines with EvalHub
 |===
 
-*Sections*: 4.1 Agentic AI & Tracing, 4.2 Tools and MCP, 4.3 Continuous Evaluation
+*Related Sections*: 4.1 Agentic AI & Tracing, 4.2 Tools and MCP, 4.3 Continuous Evaluation
 
 === Pillar 4 - Securing AI from Sandbox to Production
 
@@ -83,7 +83,7 @@ Open Cybersecurity Schema Framework) audit logging
 | No security observability | Structured audit events, SIEM-ready
 |===
 
-*Sections*: 5.1 AI Safety, 5.2 Guardrails & Adversarial Testing, 5.3 OpenShell Agent Sandboxing
+*Related Sections*: 5.1 AI Safety, 5.2 Guardrails & Adversarial Testing, 5.3 OpenShell Agent Sandboxing
 
 == The personas
 

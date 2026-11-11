@@ -43,11 +43,9 @@ In section 2.4, you created a GenAI Playground connected to the `qwen3-235b-a22b
 
 TIP: If you skipped section 2.4, create a Playground now with the `qwen3-235b-a22b` endpoint before continuing.
 
-. Open the GenAI Playground you created in section 2.4:
+. Go to GenAI Playground. Clear any previous conversation history so you start with a clean slate. Click **New Chat** in the upper right corner of the GenAI Playground.
 +
 image::module5-genaiplaygroundclean.png[GenAI Playground connected to the qwen3-235b-a22b endpoint,link=self,window=blank,width=700]
-+
-Clear any previous conversation history so you start with a clean slate. Click **New Chat** in the upper right corner of the GenAI Playground.
 
 === What is a system prompt?
 
@@ -103,7 +101,11 @@ The system prompt took priority - the model followed the pirate instructions ove
 === Add domain knowledge to the prompt
 
 [start=4]
-. Click **Reset** to clear the pirate prompt, then enter this domain-specific version:
+. Click **Reset** to clear the pirate prompt.
++
+image::module5-domain-prompt-edit.png[Click Reset to clear the pirate prompt,link=self,window=blank,width=500]
+
+. Then enter this domain-specific version:
 +
 [source,text]
 ----
@@ -118,8 +120,6 @@ mortgage products:
 
 Always present products in a comparison format. Be helpful and professional.
 ----
-+
-image::module5-domain-prompt-edit.png[Click Reset to clear the pirate prompt,link=self,window=blank,width=500]
 
 . Save the updated prompt. Name it `lenora-mortgage-prompt` and click **Create**:
 +
@@ -146,7 +146,7 @@ IMPORTANT: Prompt engineering is valuable for defining persona and behavior, but
 * **Maintenance burden**: When rates change or new products launch, someone must update every system prompt manually. There is no single source of truth.
 * **Staleness**: The prompt is static text baked into the configuration. It does not know when information becomes outdated.
 
-When you saved the pirate prompt earlier, you used the **Prompt Registry** - a platform feature for versioning and tracking prompts. You can compare versions, roll back changes, and share prompts across teams. That solves the versioning problem. But it does not solve the knowledge problem. Even a perfectly versioned prompt cannot hold an entire document library.
+When you saved the pirate prompt earlier, you used the **Prompt Registry** - a platform feature for versioning and tracking prompts. You can compare versions, roll back changes, and share prompts across teams. That helps us to track and version the prompt changes. But it does not solve the knowledge problem. Even a perfectly versioned prompt cannot hold an entire document library.
 
 The system prompt should define _who the assistant is_ and _how it behaves_. The knowledge it needs to answer questions should come from somewhere else. That somewhere else is RAG.
 

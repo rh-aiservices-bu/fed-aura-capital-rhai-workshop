@@ -44,7 +44,7 @@ TIP: The sandbox is a real Kubernetes object, so you can inspect it from the ter
 
 Now connect to the running sandbox and see what the agent can access.
 
-. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*. If you haven't created a workbench yet, follow the steps in xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Exercise 7] to set one up.
+. Go to your Workbench: *OpenShift AI Dashboard > Projects > wksp-{user} > Workbench*. If you haven't created a workbench yet, follow the steps in xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Exercise 7] to set one up.
 
 . Open a new terminal in the workbench: *File > New Terminal* in the code server.
 

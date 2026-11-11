@@ -18,13 +18,27 @@ The right panel includes the following tabs:
 | Tab | Purpose
 | OCP Console | OpenShift Container Platform web console for cluster management
 | Terminal | Command-line access for `oc` commands and debugging
-| RHOAI Console | Red Hat AI dashboard for model management, experiments, and pipelines
 | {company_name} App | The mortgage lending web application with all four personas
-| MLflow Console | MLflow tracking server for traces, evaluations, and prompt registry
-| Grafana | Dashboards for metrics and monitoring
+| RHOAI Console | Red Hat AI dashboard for model management, experiments, and pipelines
+| Workbench | A cloud IDE for coding and running experiments
+| RHOAI Docs | Documentation for Red Hat AI
 |===
 
+NOTE: Workbench tab is not available until you create a workbench in the RHOAI Console in the second chapter of this workshop.
+
 TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depending on your screen size and preference.
+
+**View modes** (with *<* icon in the right corner):
+
+* **Instructions**: Full-page instructions (hide environment tabs)
+* **Split**: Side-by-side view (current default) - see both instructions and environment
+* **Tabs**: Full-page environment (hide instructions)
+
+**Adjusting the layout**: In Split mode, drag the middle divider left or right to resize the panels.
+
+TIP: Most exercises work best in Split mode so you can reference instructions while working in the environment tabs.
+
+image::view-modes.png[]
 
 == Software versions
 
@@ -41,7 +55,7 @@ TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depen
 
 == Glossary
 
-.Key terms used throughout this workshop
+.You can refer here for definitions of key terms used throughout this workshop.
 [%collapsible]
 ====
 [cols="1,3",options="header"]

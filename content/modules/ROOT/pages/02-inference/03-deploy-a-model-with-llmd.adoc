@@ -9,7 +9,9 @@
 
 In the previous exercise you deployed Qwen3 0.6B on a single node using vLLM. That works for experimentation, but as soon as multiple users send requests at the same time, a single replica becomes a bottleneck. The obvious fix is to add more replicas, but here's the catch: OpenShift's default load balancing routes requests round-robin across replicas without knowing anything about what each one is doing. One replica might be halfway through generating a long response while another is completely idle, and new requests still get spread evenly. The result is unpredictable latency and wasted capacity.
 
-llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. You get the same vLLM inference engine underneath. llm-d makes the traffic distribution smarter.
+llm-d solves this by replacing the default routing with a scheduler that understands LLM workloads. It knows which replicas are busy, how long each request is likely to take, and how to route new requests to minimize wait time across the whole pool. 
+
+*You get the same vLLM inference engine underneath. llm-d makes the traffic distribution smarter.*
 
 NOTE: In this exercise, you are deploying to CPU again. The llm-d architecture and deployment steps are identical on GPU. The only difference is the hardware profile you select.
 
@@ -21,9 +23,11 @@ NOTE: In this exercise, you are deploying to CPU again. The llm-d architecture a
 
 . You will be prompted for the model location. Leave the defaults as-is and click *Next*.
 
-. On the deployment configuration screen, keep the name as-is. Under deployment options, select *LLM inference service with llm-d*.
+. On the model deployment configuration screen, keep the name as-is. Under deployment deployment options, select *LLM inference service with llm-d*.
 
-. For *Topology type* keep `Single node`, and for *Topology configuration*, from the drop down menu, select `Single node on CPU`.
+. For *Topology type* keep `Single node`. 
+
+. For *Topology configuration*, from the drop down menu, select `Single node on CPU`.
 +
 NOTE: Do not leave `Single node (default)` selected. Be sure you pick `Single node on CPU` in the dropdown.
 
@@ -31,37 +35,68 @@ NOTE: Do not leave `Single node (default)` selected. Be sure you pick `Single no
 +
 image::inference-cpu-resource-limits.png[Resource requests and limits configuration for llm-d deployment,link=self,window=blank,width=700]
 
-. For *Routing* configuration, from the drop down menu, select `CPU LLM-d scheduling-policy` routing config. It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
+. For *Routing* configuration, from the drop down menu, select `CPU LLM-d scheduling-policy` routing config. 
++
+It is a load aware intelligent routing, which means requests will be routed to the least busy replica. This is a default routing policy for llm-d, but you can also create your own routing policies for different use cases, such as session aware, prefix-cache aware, predicted-latency based, etc. 
 
 . For *Replica count* set the number of replicas to *2*. Click *Next*:
 +
 image::inference-llmd-replica-config.png[Replica count set to 2 in the deployment configuration,link=self,window=blank,width=700]
 +
-NOTE: Two replicas means llm-d will distribute incoming requests across two vLLM instances in a smart way.
-
-. On the next screen, select *Add as AI asset endpoint*. Don't worry about the MaaS option yet.
+NOTE: Two replicas means llm-d will distribute incoming requests across two vLLM instances in a smart way. 
++
+_We are not going to simulate a load of multiple users so you won't see the latency difference in this exercise. We aim to give you the experience of deploying a model with llm-d._
++
+. On the next screen, select *Add as AI asset endpoint*. Under *Use case*, enter `chat` again. Leave the MaaS option unselected.
 +
 image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
++
+_This is important because it allows you to access the model through the GenAI Playground._
 
-. Make sure you *unchecked* the *Token authentication* option.
+. For *Gateway*, select the default `openshift-ai-inference | openshift-ingress` gateway.
++
+image::inference-gateway.png[Ingress gateway configuration,link=self,window=blank,width=700]
+
+. Make sure you *unchecked* the *Token authentication* option again. We will come back to authentication in Exercise 4 :)
 
 . Again, let's add `custom runtime arguments` and pass `--max-model-len=2048` to limit the maximum length of the model's context window to 2048 tokens. 
++
+[source,text]
+----
+--max-model-len=2048
+----
 
-. Then add `custom runtime environment variables` as `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB.
+. Under *Custom runtime environment variables*, click *Add variable* and enter the key and value below to allocate 8 GB for the key-value (KV) cache.
++
+*Key:*
++
+[source,text]
+----
+VLLM_CPU_KVCACHE_SPACE
+----
++
+*Value:*
++
+[source,text]
+----
+8
+----
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
 +
-Click **Next** and then *Deploy*.
-. While waiting for the model to deploy, go to the *Terminal* tab and run the following command to list the pods created by the llm-d deployment:
+Click **Next** and then *Deploy model*.
+. While the model deploys, let's see what is happening under the hood! Open the *Terminal* tab and run the following command to watch its pods:
 +
 [source,bash,role=execute,subs=attributes+]
 ----
-oc get pods -n wksp-{user} -l app.kubernetes.io/part-of=llminferenceservice
+oc get pods -n wksp-{user} -l app.kubernetes.io/part-of=llminferenceservice -w
 ----
 +
-You should see *2 replicas* of the same model, alongside a *router pod*. The router is responsible for deciding which replica is most suitable to handle each incoming request, based on factors like current load and cache state.
+You should see *two model-serving pods* (one per replica) and a *router pod*. With the routing policy selected in this exercise, the router directs incoming requests to the least busy replica.
 +
 image::inference-llmd-pods-terminal.png[Terminal showing llm-d pods with 2 replicas and a router,link=self,window=blank,width=700]
++
+Once the pods are running, press `Ctrl+C` to stop watching. This does not stop the pods.
 . Let's go back to RHOAI Console and wait for the deployment to show a green status indicator. This takes a minute or two while the model weights are pulled and loaded:
 +
 image::inference-llmd-deployment-ready.png[llm-d deployment showing green ready status with 2 replicas,link=self,window=blank,width=700]
@@ -264,20 +299,21 @@ The diagram below contrasts what happens when multiple requests arrive simultane
 
 Both replicas run the same Qwen3 0.6B vLLM engine. llm-d only changes how traffic is distributed across them.
 
-=== What's Next?
-
-You've now deployed the same model two ways: single-node vLLM and distributed llm-d with two replicas. In both cases you owned the deployment end-to-end: you decided the model, the resources, the replicas.
-
-Now imagine every team at {company_name} doing the same thing. The borrower team deploys their own model. The underwriting team deploys theirs. The CEO dashboard team deploys another. Each one holds GPU capacity for its own use, sits mostly idle between requests, and bills to no one in particular. There's no visibility into who deployed what, how much each team is consuming, or whether a model is even being used. When something breaks, nobody knows whose model it is.
-
-This is the problem Models as a Service solves. Instead of every team running their own stack, a shared gateway exposes models as API endpoints, with authentication so only authorized applications can call them, rate limiting so one team can't starve another, and usage metering so you can see exactly who is using what. Teams get the same model access without the operational overhead, and the platform gets visibility across the whole organization.
-
-That's what Exercise 4 covers.
-
 === Clean up
 
-Again, delete the llm-d deployment again to free up resources before moving to the MaaS exercise.
+Again, delete the model deployment to free up resources before moving on.
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
-. Click the three dots next to the Qwen3 0.6B deployment you just created and click *Delete*.
+. Click the three dots next to the Qwen3 0.6B deployment you created and click *Delete*.
 . Confirm the deletion.
+
+=== What's Next?
+
+You've deployed a model using single-node vLLM and distributed serving with llm-d. These exercises showed how the platform team deploys models and manages their resources.
+
+But application teams at {company_name} shouldn't each need to repeat that work. {assistant_name}, and other applications can share centrally managed models, reducing duplicated deployments and making better use of available resources.
+
+Models as a Service (MaaS) gives these teams API access to shared models, with authentication, rate limits, and usage tracking. The platform team manages the infrastructure, while application teams focus on building their applications.
+
+In Exercise 4, you'll switch from deploying a model to consuming one: a larger, GPU-hosted model that the platform team has already made available to you.
+

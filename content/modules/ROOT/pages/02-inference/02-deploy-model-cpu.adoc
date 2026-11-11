@@ -15,7 +15,7 @@ image::inference-cpu-deploy-button.png[Model card for Qwen3 0.6B with the Deploy
 
 . Select your project `Workspace {user}` and click *Next*.
 
-. You will be prompted for where the model lives. This information is already populated because the catalog has the information. Don't change anything, just click *Next*.
+. You will be prompted for where the model lives and what's the model type is. This information is already populated because the catalog has the information. Don't change anything, just click *Next*.
 
 . On the deployment configuration screen, keep the name as-is. 
 
@@ -33,21 +33,44 @@ image::inference-cpu-accelerator-config.png[Accelerator configuration showing vL
 +
 image::inference-ai-asset-endpoint.png[AI asset endpoint configuration,link=self,window=blank,width=700]
 
-. Make sure you *unchecked* the *Token authentication* option.
+. For *Gateway*, select the default `openshift-ai-inference | openshift-ingress` gateway.
++
+image::inference-gateway.png[Ingress gateway configuration,link=self,window=blank,width=700]
+
+. Make sure you *unchecked* the *Token authentication* option. In Exercise 4, you'll explore to control access to models.
 
 . On this screen, we can add `Add custom runtime arguments` if we want to pass any additional arguments to the vLLM runtime. 
 +
 Let's pass `--max-model-len=2048` to limit the maximum length of the model's context window to 2048 tokens. This controls how many tokens (words and word pieces) the model can process in a single request, including both the input prompt and the generated output. We set it to 2048 (lower than the model's default) to reduce memory usage, since we are deploying on a CPU with limited resources.
 +
+[source,text]
+----
+--max-model-len=2048
+----
++
 . We can also add `custom runtime environment variables` if we want to pass any additional environment variables to the vLLM runtime. 
 +
-Click *Add variable* and let's add `VLLM_CPU_KVCACHE_SPACE=8` to set the size of the key-value cache to 8GB. Setting this to 8GB gives the model enough cache space to handle requests efficiently.
+Click *Add variable* and enter the key and value below. This allocates 8 GB for the key-value (KV) cache, which gives the model enough cache space to handle requests efficiently.
++
+*Key:*
++
+[source,text]
+----
+VLLM_CPU_KVCACHE_SPACE
+----
++
+*Value:*
++
+[source,text]
+----
+8
+----
 +
 image::inference-custom-runtime-args-and-env-vars.png[Custom runtime arguments and environment variables,link=self,window=blank,width=700]
 + 
-Click **Next** and then *Deploy*.
+Click **Next** and then *Deploy model*.
 +
-. Wait for the deployment to show a green status indicator. It takes a couple of minutes while the model weights are loaded:
+. Scroll to the far right and wait for the deployment to show a green Ready status under *Status* column. It takes a couple of minutes while the model weights are loaded:
 +
 image::inference-cpu-deployment-ready.png[Model deployment list showing Qwen3 0.6B with a green ready status,link=self,window=blank,width=700]
 +
@@ -64,6 +87,8 @@ image::inference-playground.png[Create Playground with Qwen3 0.6B,link=self,wind
 . And select the model you just deployed. (Please don't worry about `qwen3-235b-a22b` yet, keep it unchecked.) Set *Max tokens* to `1024` and click *Create*:
 +
 image::inference-playground-create.png[Select Qwen3 0.6B and set Max tokens to 1024,link=self,window=blank,width=700]
+
+_Earlier you set max token length as 2048. This means your prompt and the model's response together cannot exceed 2048 tokens. In this case, we are limiting the model's response to 1024 tokens, which gives you enough room for a long prompt and a long response, while staying within the 2048 token limit._
 
 . When the Playground is ready, send a prompt of your choice. For example:
 +
@@ -85,18 +110,24 @@ Send the same question again `What is the capital of France?`. You should get a 
 +
 image::inference-playground-system-prompt.png[GenAI Playground showing the system prompt field and a Gen Z style response,link=self,window=blank,width=700]
 +
+_Don't worry about saving your System Prompt for now. You can explore that later._
+
 NOTE: The Instructions field is how you pass a system prompt to the model. These instructions shape its persona, tone, and behavior before the user says anything. This is the simplest form of prompt engineering, and it works on any model regardless of how it was deployed.
-
-=== What's Next?
-
-You have deployed a model on a single node with one replica. That works for testing, but it is just one model getting all the requests. We may need to scale the model for production use. But we need to do it smartly. In the next exercise, you will deploy the same model using llm-d: a distributed inference scheduler that routes requests across multiple replicas for higher throughput and lower latency under load.
 
 === Clean up
 
-Let's delete the model deployment to free up resources for llm-d. More exciting things are coming up!
+Delete this deployment to free up resources before the next exercise, where you'll deploy the same model with a different serving configuration.
 
 . In the *OpenShift AI Dashboard*, go to *AI Hub > Models*.
 . Click the three dots next to the Qwen3 0.6B deployment you just created and click *Delete*.
 . Confirm the deletion.
 +
 image::inference-delete-model.png[Delete Qwen3 0.6B to free up resources,link=self,window=blank,width=700]
+
+=== What's Next?
+
+You've deployed and tested a model running with a single replica. As more users interact with {assistant_name}, that replica may struggle to keep up with simultaneous requests.
+
+Adding replicas provides more capacity, but requests also need to be distributed effectively across them. In the next exercise, you'll deploy the same model with two replicas using llm-d, which routes requests based on how busy each replica is.
+
+You'll explore how to configure this deployment on CPU. The exercise focuses on the deployment process rather than measuring performance under load.

@@ -1,4 +1,49 @@
-openai
-ragas
-langchain-community<0.4
-langchain-google-vertexai
+# Workshop Python dependencies for the FedAura code-server workbench.
+#
+# Pinned to the versions verified working in a running workbench on 2026-11-11
+# (cluster ocp.xtbrh, wksp-user30). Keep these in sync with the %pip install
+# cells in notebooks/04-evaluate_ragas.ipynb and
+# notebooks/04-evaluate_agent.ipynb - the cells pin the same versions, so once
+# this image is deployed they resolve as already-satisfied and return instantly
+# instead of the ~3 minute install.
+#
+# Only direct dependencies are pinned. Transitive resolution (transformers,
+# tokenizers, safetensors, ...) is left to pip.
+#
+# Index provenance: the image's pip.conf points at Red Hat's channel
+# (packages.redhat.com/.../rhoai/3.5/cpu-ubi9/simple/), which satisfies all of
+# these except the three marked "PyPI" below. Those three are kept at the
+# versions the notebooks were actually tested against; Red Hat's channel only
+# has sentence-transformers 5.2.0 and langchain-openai 1.7.3, and carries no
+# langchain-google-vertexai at all.
+
+# --- notebooks/04-evaluate_ragas.ipynb ---
+eval-hub-sdk[client]==0.4.4
+pyyaml==6.0.3
+boto3==1.43.50
+pandas==2.3.3
+tabulate==0.10.0
+
+# --- notebooks/04-evaluate_agent.ipynb ---
+mlflow==3.14.0
+kubernetes==35.0.0
+langchain==1.4.3
+langchain-core==1.6.6
+langchain-openai==1.1.9  # PyPI
+langchain-community==0.3.31
+langgraph==1.2.12
+openai==1.109.1
+pydantic==2.13.4
+pydantic-settings==2.14.2  # RH channel max; lab asks >=2.1.0
+nest_asyncio==1.6.0
+python-dotenv==1.2.2
+einops==0.8.2
+
+# Pulls torch. The CPU wheel is installed in a separate earlier step in the
+# Containerfile so pip resolves torch as already-satisfied and never fetches
+# the +cu CUDA build.
+sentence-transformers==6.2.0  # PyPI
+
+# --- evaluation / RAG extras (pre-existing) ---
+ragas==0.4.3
+langchain-google-vertexai==3.2.4  # PyPI

@@ -29,7 +29,7 @@ By the end of this section, you will be able to:
 
 . Navigate to *OpenShift AI Dashboard > Develop & Train > AutoML*. 
 
-. Create an experiment called *fed-aura-automl*.
+. Create a run called *fed-aura-automl*.
 +
 image::automl-create.png[Run AutoML experiment,link=self,window=blank,width=700]
 
@@ -40,7 +40,7 @@ image::automl-select-documents.png[AutoML experiment form with the automl S3 con
 . On the right side, configure the experiment details:
 +
 --
-* *Target column*: `loan_approved` - the column the model will learn to predict
+* *Target column*: `loan_approved` - the column the model will learn to predict. You'll find it at the end of the list :)
 * *Prediction type*: *Multiclass classification* (recommended) - the model will classify applications into approval categories
 * *Run preset*: *Faster* (4 vCPU / 16 GiB) - sufficient for this dataset size
 * Leave the rest default

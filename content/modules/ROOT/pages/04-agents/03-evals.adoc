@@ -89,7 +89,6 @@ TIP: If you no longer have your API key, follow xref:02-inference/04-access-a-mo
 
 . Navigate to *OpenShift AI Dashboard > Develop & train > Evaluations*. And click *Start evaluation run*
 +
-// TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
 image::evals-evalhub-main.png[EvalHub interface to start a new evaluation run,link=self,window=blank,width=700]
 
 . For the evaluation type, select *Benchmark*. A benchmark runs a single test, while a benchmark suite runs a predefined group of them:
@@ -141,6 +140,8 @@ image::evals-benchmark-parameters.png[Benchmark parameters enabled with the JSON
 +
 image::evals-evalhub-results.png[EvalHub evaluation results showing accuracy score and per-question breakdown,link=self,window=blank,width=700]
 +
+_You may need to refresh the page to see Completed status._
++
 Here is what the results mean:
 +
 --
@@ -162,12 +163,13 @@ RAGAS is a framework that evaluates three things:
 * **Answer relevancy** - does the answer actually address the question asked?
 * **Context precision** - did the retrieval step surface the right document chunks, or did it retrieve irrelevant content?
 
-. Go to your Workbench: *OpenShift AI Dashboard > Data Science Projects > wksp-{user} > Workbench*. If you haven't created a workbench yet, follow the steps in xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Exercise 7] to set one up.
+. Go to the *Workbench* tab. If you haven't created a workbench yet, follow the steps in xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optional_use_opencode_with_maas_as_your_coding_assistant[Exercise 7] to set one up.
 
 . Let's clone this repository to get the evaluation notebooks. Open up a terminal by clicking the *hamburger menu* (☰) at the top-left corner, then selecting *Terminal > New Terminal*. In the terminal, run:
 +
 [source,bash]
 ----
+cd /opt/app-root/src
 git clone https://github.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop.git
 ----
 +
@@ -218,7 +220,7 @@ RAGAS requires a test set with known source documents. But what about open-ended
 
 That is where llm-as-judge comes in. Instead of scoring against a ground truth, you use a second LLM to evaluate the quality of the first LLM's responses. The judge model reads the question, the context the agent had available, and the agent's answer, then scores dimensions like correctness, helpfulness, and groundedness.
 
-. Open `evaluate_agent.ipynb` from the `notebooks/` folder:
+. Open `04-evaluate_agent.ipynb` from the `notebooks/` folder:
 +
 image::evals-agent-notebook.png[Jupyter notebook evaluate_agent.ipynb open in the Workbench,link=self,window=blank,width=700]
 
@@ -318,13 +320,13 @@ The pipeline packages the simple evaluation into four automated steps:
 * *run-simple-eval-op* - runs the three deterministic scorers (`contains_expected`, `has_numeric_result`, `response_length`)
 * *report-results-op* - prints the evaluation summary and logs results
 
-. First, right-click and *Save As* the https://raw.githubusercontent.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/main/collateral/eval-pipeline.yaml[pipeline definition file,window=blank] to your local machine.
+. First, right-click and *Save Link As* the https://raw.githubusercontent.com/rh-aiservices-bu/fed-aura-capital-rhai-workshop/main/collateral/eval-pipeline.yaml[pipeline definition file,window=blank] to your local machine.
 
 . Navigate to *OpenShift AI Dashboard > Develop & train > Pipelines > Pipeline definitions*. Click *Import pipeline*.
 +
 image::evals-pipeline-definitions.png[Pipeline definitions page with Import pipeline button highlighted,link=self,window=blank,width=700]
 
-. In the import dialog, select *Upload a file* and upload the `eval-pipeline.yaml` file you downloaded. The pipeline name will auto-populate as `agent-simple-evaluation-pipeline`. Click *Import pipeline*.
+. In the import dialog, select *Upload a file* and upload the `eval-pipeline.yaml` file you downloaded. Name the pipeline `agent-simple-evaluation-pipeline`. Click *Import pipeline*.
 +
 image::evals-pipeline-import.png[Import pipeline dialog showing eval-pipeline.yaml uploaded,link=self,window=blank,width=700]
 
@@ -336,9 +338,9 @@ image::evals-pipeline-create-run.png[Actions dropdown with Create run highlighte
 +
 --
 * *Name*: `eval-run`
-* *MLflow integration*: Select an experiment for *MLflow experiment*
+* *MLflow integration*: Select `mortgage-ai-eval` experiment for *MLflow experiment*
 * *Parameters*:
-** *mlflow_tracking_uri*: `https://mlflow.redhat-ods-applications.svc.cluster.local:8443/mlflow`
+** *mlflow_tracking_uri*: `\https://mlflow.redhat-ods-applications.svc.cluster.local:8443/mlflow`
 ** *mlflow_workspace*: `wksp-{user}`
 ** Leave the rest as defaults
 --
@@ -351,7 +353,7 @@ Click *Create run*. Each step runs in its own container. Authentication to MLflo
 +
 image::evals-pipeline-stages.png[Pipeline run showing all four stages completed successfully,link=self,window=blank,width=700]
 
-. When the pipeline completes, navigate to *OpenShift AI Dashboard > Develop & train > Experiments > Evaluation runs* and find the new evaluation run. You can see the individual traces and scorer results for each test question.
+. When the pipeline completes, navigate to *OpenShift AI Dashboard > Develop & train > Experiments > `mortgage-ai-eval` > Evaluation runs* and find your evaluation run. You can see the individual traces and scorer results for each test question.
 +
 image::evals-pipeline-mlflow-results.png[MLflow experiment showing evaluation run with traces and scores,link=self,window=blank,width=700]
 +

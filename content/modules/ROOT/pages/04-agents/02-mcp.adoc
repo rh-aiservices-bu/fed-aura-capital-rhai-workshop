@@ -56,9 +56,9 @@ The difference between a chatbot and an agent is not the model. It is tool acces
 
 === Without MCP
 
-. Go to *Gen AI Studio > Playground* and create a new Playground with the `qwen3-235b-a22b` model. Do *not* connect any MCP tools.
+. Go to *Gen AI Studio > Playground*. If you don't have any playground yet, create a new one with the `qwen3-235b-a22b` model. If you already have one, you can continue using it. 
 
-. Send:
+. Currently there isn't any MCP tools connected. Send the below prompt:
 +
 [source,text]
 ----

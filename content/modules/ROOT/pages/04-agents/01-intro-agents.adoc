@@ -99,7 +99,11 @@ image::agents-trace-tree.png[MLflow trace showing the full agent decision path f
 +
 image::agents-trace-calculate-dti.png[calculate_dti tool step showing inputs and output dti_value in the trace,link=self,window=blank,width=700]
 
-. Look at the total latency for the trace. Each step is timestamped, so you can see exactly where time was spent: the LLM call, the tool auth check, each individual tool execution.
+. Click the "Show execution timeline"  icon at the top to look at the total latency for the trace. Each step is timestamped, so you can see exactly where time was spent: the LLM call, the tool auth check, each individual tool execution.
++
+image::agents-trace-execution-timeline.png[Execution timeline showing latency for each step in the trace,link=self,window=blank,width=700]
+
+_If the view is too small, you can always switch to Tabs view by clicking the *<* icon in the right corner to view the trace in full screen._
 
 TIP: When something goes wrong in production (a wrong recommendation, a slow response, a failed tool call), this is where you go first. The trace is a full audit log of every decision the agent made.
 

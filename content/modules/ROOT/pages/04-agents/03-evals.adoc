@@ -22,6 +22,71 @@ By the end of this section, you will be able to:
 
 EvalHub is the centralized evaluation interface for the platform. It lets you run standardized benchmarks against any model endpoint and compare results across versions.
 
+. First of all, because the model we would like to evaluate requires an API key, we need to create a Kubernetes Secret that EvalHub can reference. Switch to the *Terminal* tab. Run the following command:
++
+[subs=attributes+]
+++++
+<style>
+  .evalhub-secret-wrap { position: relative; margin: 0.5rem 0; }
+  .evalhub-secret-block {
+    background: #1e1e1e; border-radius: 6px;
+    padding: 0.75rem 3.5rem 0.75rem 1rem;
+    font-family: monospace; font-size: 0.82rem; color: #d4d4d4; white-space: pre;
+  }
+  .evalhub-copy-btn {
+    position: absolute; top: 0.4rem; right: 0.5rem;
+    background: #28a745; color: white; border: none; border-radius: 4px;
+    padding: 0.3rem 0.55rem; font-size: 0.8rem; cursor: pointer;
+    opacity: 0.4; transition: opacity 0.2s;
+  }
+  .evalhub-copy-btn:hover { opacity: 1; }
+  .evalhub-placeholder { color: #6b7280; font-style: italic; }
+</style>
+<div class="listingblock evalhub-secret-wrap">
+  <div class="evalhub-secret-block" id="evalhub-secret-block">oc apply -n wksp-{user} -f - &lt;&lt;EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: evalhub-secret
+  namespace: wksp-{user}
+type: Opaque
+stringData:
+  api-key: <span class="evalhub-placeholder" id="evalhub-key-val">&lt;paste-your-api-key&gt;</span>
+EOF</div>
+  <button class="evalhub-copy-btn" title="Copy" onclick="(function(){
+    var text = document.getElementById('evalhub-secret-block').innerText;
+    navigator.clipboard.writeText(text).then(function(){
+      var b = document.getElementById('evalhub-copy-btn');
+      b.textContent = '✓'; setTimeout(function(){ b.textContent = '⎘'; }, 1200);
+    });
+  })()" id="evalhub-copy-btn">⎘</button>
+</div>
+<script>
+  (function() {
+    function syncEvalhubKey() {
+      var keyVal = document.getElementById('evalhub-key-val');
+      if (!keyVal) return;
+      var k = '';
+      var keyInput = document.getElementById('api-key-input');
+      if (keyInput) k = keyInput.value.trim();
+      if (!k) { try { k = localStorage.getItem('workshop-api-key') || ''; } catch(e) {} }
+      keyVal.textContent = k || '<paste-your-api-key>';
+      keyVal.className = k ? '' : 'evalhub-placeholder';
+    }
+    function attach() {
+      var k = document.getElementById('api-key-input');
+      if (k) k.addEventListener('input', syncEvalhubKey);
+      syncEvalhubKey();
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); }
+    else { attach(); }
+  })();
+</script>
+++++
+
++
+TIP: If you no longer have your API key, follow xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_5_generate_an_api_key[Exercise 5: Generate an API Key] to go back to the *API Keys* tab and create a new one.
+
 . Navigate to *OpenShift AI Dashboard > Develop & train > Evaluations*. And click *Start evaluation run*
 +
 // TODO: screenshot of EvalHub main interface with existing runs (evals-evalhub-main.png)
@@ -40,33 +105,13 @@ IFEval tests whether a model can follow explicit formatting instructions, things
 . Fill in the evaluation run form:
 +
 --
-* *Run name*: `IFEval`
-* *MLflow Experiment*: Create new, call it `EvalHub`
+* *Evaluation name*: `IFEval`
+* *MLflow Experiment*: Create new experiment, call it `EvalHub`
 * *Source*: `Model` - we are evaluating how capable the model is on the given topic, not a full application
 * *Model*: Select *Other (External endpoint)*
 ** *Model name*: `qwen3-235b-a22b`
-** *Endpoint URL*: `https://maas.{openshift_cluster_ingress_domain}/v1`
+** *Endpoint URL*: `\https://maas.{openshift_cluster_ingress_domain}/v1`
 --
-+
-. The model is behind an API key, so we need to create a Kubernetes Secret that EvalHub can reference. Switch to the *Terminal* tab and run:
-+
-[source,console,role=execute,subs=attributes+]
-----
-oc apply -n wksp-{user} -f - <<EOF
-apiVersion: v1
-kind: Secret
-metadata:
-  name: evalhub-secret
-  namespace: wksp-{user}
-type: Opaque
-stringData:
-  api-key: <paste-your-api-key>
-EOF
-----
-+
-IMPORTANT: Replace `<paste-your-api-key>` with your API key before you press Enter. If you run the command with the placeholder still there, the Secret is created with that text and *Validate connection* fails a few steps later.
-+
-TIP: If you no longer have your API key, you can always go back to the *API Keys* tab and create a new one.
 +
 TIP: If you get an error, please log in to the OpenShift cluster again with the following command and then re-run the secret creation command:
 +
@@ -75,7 +120,7 @@ TIP: If you get an error, please log in to the OpenShift cluster again with the 
 oc login --insecure-skip-tls-verify $(oc whoami --show-server) -u {user} -p {password}
 ----
 
-. Switch back to *EvalHub* and set the *API Key Secret* to `evalhub-secret`, the Secret you just created.
+. Set the *API Key Secret* to `evalhub-secret`, the Secret you created earlier.
 
 . With the secret selected, click *Validate connection*. This checks that EvalHub can reach the endpoint with that key, so you catch a wrong secret or a bad key now rather than after a failed run. Wait for *Connection established successfully* before continuing:
 +
@@ -216,7 +261,7 @@ LLM_MODEL = "qwen3-235b-a22b"</pre>
 </script>
 ++++
 +
-TIP: If you no longer have your API key, go back to the *API Keys* tab and create a new one.
+TIP: If you no longer have your API key, follow xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_5_generate_an_api_key[Exercise 5: Generate an API Key] to go back to the *API Keys* tab and create a new one.
 +
 . Run the cells in order. The notebook walks through several stages:
 +

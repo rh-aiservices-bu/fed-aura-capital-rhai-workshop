@@ -59,7 +59,7 @@ Nothing was blocked. The input rail read the question, the output rail read the 
 +
 NOTE: Expect this to take *10-20 seconds*, noticeably longer than an unguarded chat. A single turn now does considerably more work: the input rail is evaluated, the knowledge base is searched, the answer is generated, and the output rail is evaluated before you see anything. Safety and grounding both cost latency - which is why the rails are scoped to what actually needs them. The badges above the response show the elapsed time and time to first token.
 
-. Now ask {assistant_name} the *exact same question* in the *{company_name} App* tab:
+. Now ask {assistant_name} the *exact same question* in the *Mortgage AI App* tab:
 +
 image::security-app-fha-answer.png[The Fed Aura Capital assistant answering the mortgage products question,link=self,window=blank,width=400]
 +

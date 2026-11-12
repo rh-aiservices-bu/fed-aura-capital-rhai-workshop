@@ -155,7 +155,7 @@ IMPORTANT: That flexibility comes at a price. Rails that reason with a language 
 
 Rails also carry business policy - rules that are nothing to do with safety and everything to do with being a regulated lender. {company_name} keeps a simple one: {assistant_name} does not discuss competitors.
 
-. In the *{company_name} App* tab, ask about a competitor:
+. In the *Mortgage AI App* tab, ask about a competitor:
 +
 [source,text]
 ----

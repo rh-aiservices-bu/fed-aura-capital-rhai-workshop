@@ -141,7 +141,7 @@ image::security-harmful-refused.png[The playground refusing a request for help f
 +
 For {company_name} the stakes here are different from the injection attempt. An assistant that answered this question would be coaching a customer through loan fraud, in writing, in a transcript the company is obliged to retain.
 
-. Ask it in the *{company_name} App* tab as well, since that is where a real customer would ask it:
+. Ask it in the *Mortgage AI App* tab as well, since that is where a real customer would ask it:
 +
 image::security-app-harmful-refused.png[The Fed Aura Capital assistant refusing the request for help forging income documents,link=self,window=blank,width=400]
 

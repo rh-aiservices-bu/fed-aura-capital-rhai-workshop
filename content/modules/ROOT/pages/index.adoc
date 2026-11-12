@@ -48,14 +48,6 @@ This workshop is designed for:
 
 This workshop assumes basic familiarity with Kubernetes concepts and a general understanding of AI/ML terminology. No prior experience with Red Hat AI is required.
 
-== Workshop environment
-
-You will work with {company_name}'s AI-powered mortgage lending platform, built with LangGraph multi-agent orchestration, Model Context Protocol (MCP) tools, developed and served on Red Hat AI.
-
-You have several tabs available on the right hand side of the lab interface. For example, you will use *OCP Console* to access OpenShift and the *Terminal* tab to run commands. 
-
-Each exercise will provide the necessary credentials and guide you on which tabs to use.
-
 == Estimated time
 
 This workshop will take approximately *3 to 4 hours* to complete.

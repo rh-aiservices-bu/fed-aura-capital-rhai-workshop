@@ -18,7 +18,7 @@ The right panel includes the following tabs:
 | Tab | Purpose
 | OCP Console | OpenShift Container Platform web console for cluster management
 | Terminal | Command-line access for `oc` commands and debugging
-| {company_name} App | The mortgage lending web application with all four personas
+| Mortgage AI App | The mortgage lending web application with all four personas
 | RHOAI Console | Red Hat AI dashboard for model management, experiments, and pipelines
 | Workbench | A cloud IDE for coding and running experiments
 | RHOAI Docs | Documentation for Red Hat AI

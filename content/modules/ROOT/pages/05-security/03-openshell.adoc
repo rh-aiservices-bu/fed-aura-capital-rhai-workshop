@@ -11,6 +11,8 @@ In the xref:02-inference/04-access-a-model-through-maas.adoc#_exercise_7_optiona
 
 A coding agent does not know what is sensitive and what is not. Given file system access and network connectivity, it will happily upload internal documents (underwriting thresholds, pricing overrides, meeting notes with confidential figures) to any endpoint it can reach. Even with a self-hosted model, the agent's actions are the risk. OpenShell prevents that.
 
+image::fed-aura-platform-architecture-openshell-focus.svg[Platform architecture highlighting OpenShell in the security boundary,link=self,window=blank,width=800]
+
 Estimated time: *10 minutes*
 
 NOTE: OpenShell is Dev Preview in RHOAI 3.5 and Tech Preview in 3.6, with GA targeted for a later release. What you see here represents the direction of secure agent onboarding on OpenShift AI.

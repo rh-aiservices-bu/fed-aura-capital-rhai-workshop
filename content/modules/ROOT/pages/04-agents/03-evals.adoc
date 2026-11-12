@@ -9,6 +9,8 @@ You built {assistant_name}, tested her, and everything looked good. But the mode
 
 Continuous evaluation is how you stay ahead of that: automated pipelines that measure quality on every change, before it reaches production.
 
+image::fed-aura-platform-architecture-evaluations-focus.svg[Platform architecture highlighting evaluations,link=self,window=blank,width=700]
+
 == Learning Objectives
 
 By the end of this section, you will be able to:
@@ -197,20 +199,21 @@ TIP: The `evalhub-secret` is the same Kubernetes Secret you created in Exercise 
 +
 image::evals-run-all.png[The Run All button in the notebook toolbar,link=self,window=blank,width=200]
 +
+. It will ask you to choose a kernel. Select the *first option* which is `Python Environments..`.
++
+image::evals-select-kernel.png[Select kernel,link=self,window=blank,width=700]
++
+. Then it will ask you to choose which Python environment to use. Go with the *last option* which is `Virtual Env`.
++
+image::evals-select-python-env.png[Select Python environment,link=self,window=blank,width=700]
++
 The notebook:
 +
 .. Sends a test set of mortgage questions through the RAG pipeline
 .. Collects the retrieved context and the model's answers
 .. Passes everything to RAGAS for scoring
 +
-When you run the first code cell, it will ask you to choose a kernel. Select the first option. That means it will run the code within this workbench locally.
-+
-image::evals-select-kernel.png[Select kernel,link=self,window=blank,width=700]
-+
-Then it will ask you to choose which Python environment to use. Go with the `Virtual Env` one at the end of the list.
-+
-image::evals-select-python-env.png[Select Python environment,link=self,window=blank,width=700]
-+
+
 . Review the output metrics. Pay attention to:
 +
 * *Faithfulness* - if this is low, the model is adding information that was not in the retrieved documents

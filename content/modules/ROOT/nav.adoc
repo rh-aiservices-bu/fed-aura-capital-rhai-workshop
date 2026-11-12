@@ -1,7 +1,7 @@
 * 1. Welcome and Introduction
 ** xref:index.adoc[1.1 Welcome]
-** xref:01-overview/01-workshop-overview.adoc[1.2 Workshop Overview]
-** xref:01-overview/02-workshop-details.adoc[1.3 Workshop Details]
+** xref:01-overview/01-using-the-workshop-environment.adoc[1.2 Using the Workshop Environment]
+** xref:01-overview/02-workshop-overview.adoc[1.3 Workshop Overview]
 ** xref:01-overview/03-fed-aura.adoc[1.4 Fed Aura Capital]
 ** xref:01-overview/04-explore-platform.adoc[1.5 Explore the Platform]
 
@@ -30,3 +30,7 @@
 
 * 6. Conclusion
 ** xref:06-conclusion.adoc[6.1 Conclusion]
+
+* 7. Reference
+** xref:07-reference/01-software-versions.adoc[7.1 Software Versions]
+** xref:07-reference/02-glossary.adoc[7.2 Glossary]

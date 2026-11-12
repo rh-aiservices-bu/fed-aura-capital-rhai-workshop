@@ -27,7 +27,7 @@ In this workshop, you will build an end-to-end AI platform for mortgage lending 
 
 * *Connect agents to tools via MCP* - Use MCP servers so AI agents can call real tools: affordability calculators, risk assessments, compliance checks
 * *Trace and evaluate agent decisions* - Use MLflow tracing to follow every tool call and LLM invocation, and run evaluations to measure quality
-* *Train a machine learning model using the same platform (optional)* - Use AutoML to train the loan-approval classifier model without writing model training code
+* *Train a machine learning model using the same platform* - Use AutoML to train the loan-approval classifier model without writing model training code
 
 === icon:shield[] Securing AI from Sandbox to Production
 

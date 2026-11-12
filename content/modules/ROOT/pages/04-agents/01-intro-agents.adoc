@@ -13,6 +13,8 @@ When we say _tools_, we mean functions (APIs, database queries, calculators) tha
 
 This section covers the agentic layer: tool access via MCP, continuous evaluation with EvalHub, and utilizing a predictive AI model to power the risk assessments.
 
+image::fed-aura-platform-architecture-tracing-focus.svg[Platform architecture highlighting tracing,link=self,window=blank,width=700]
+
 Estimated time: *25 minutes*
 
 == Learning Objectives

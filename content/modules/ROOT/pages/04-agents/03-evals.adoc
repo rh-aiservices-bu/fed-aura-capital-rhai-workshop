@@ -193,7 +193,12 @@ PASSWORD = "{password}"
 +
 TIP: The `evalhub-secret` is the same Kubernetes Secret you created in Exercise 5 with your API key. If you skipped that step, go back and create it first.
 +
-. Run the cells. The notebook:
+. Run the cells. Click *Run All*:
++
+image::evals-run-all.png[The Run All button in the notebook toolbar,link=self,window=blank,width=200]
++
+The notebook:
++
 .. Sends a test set of mortgage questions through the RAG pipeline
 .. Collects the retrieved context and the model's answers
 .. Passes everything to RAGAS for scoring

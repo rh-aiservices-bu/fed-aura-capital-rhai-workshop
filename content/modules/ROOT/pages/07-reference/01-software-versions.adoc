@@ -1,0 +1,15 @@
+= Software Versions
+:navtitle: Software Versions
+:toc: macro
+:toclevels: 1
+
+[cols="1,1",options="header"]
+|===
+| Component | Version
+| Red Hat OpenShift Container Platform | {ocp_version}
+| Red Hat AI | {rhoai_version}
+| MLflow | {mlflow_version}
+| vLLM | 0.18.0
+| LangGraph / LangChain | Latest
+| Grafana | Latest
+|===

@@ -1,0 +1,55 @@
+= Using the Workshop Environment
+:imagesdir: ../assets/images
+:navtitle: Using the Workshop Environment
+:toc: macro
+:toclevels: 1
+
+== Workshop interface
+
+Your workshop environment provides multiple views:
+
+* *Left panel*: Workshop instructions (what you're reading now)
+* *Right panel*: Environment tabs for hands-on work
+
+The right panel includes the following tabs:
+
+[cols="1,3",options="header"]
+|===
+| Tab | Purpose
+| OCP Console | OpenShift Container Platform web console for cluster management
+| Terminal | Command-line access for `oc` commands and debugging
+| {company_name} App | The mortgage lending web application with all four personas
+| RHOAI Console | Red Hat AI dashboard for model management, experiments, and pipelines
+| Workbench | A cloud IDE for coding and running experiments
+| RHOAI Docs | Documentation for Red Hat AI
+|===
+
+NOTE: Workbench tab is not available until you create a workbench in the RHOAI Console in the second chapter of this workshop.
+
+TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depending on your screen size and preference.
+
+**View modes** (with *<* icon in the right corner):
+
+* **Instructions**: Full-page instructions (hide environment tabs)
+* **Split**: Side-by-side view (current default) - see both instructions and environment
+* **Tabs**: Full-page environment (hide instructions)
+
+**Adjusting the layout**: In Split mode, drag the middle divider left or right to resize the panels.
+
+TIP: Most exercises work best in Split mode so you can reference instructions while working in the environment tabs.
+
+image::view-modes.png[]
+
+== Reference materials
+
+Need a definition or a software version? See xref:07-reference/02-glossary.adoc[7.2 Glossary] and xref:07-reference/01-software-versions.adoc[7.1 Software Versions] in section 7, *Reference*, at the end of the workshop. You can return to these pages whenever you need them.
+
+== Authors
+
+[cols="1,1",options="header"]
+|===
+| Role | Name
+| Primary Author | Red Hat AI Business Unit
+| Workshop Lead | CAI Team
+| Contributors | CAI Team
+|===

@@ -44,4 +44,4 @@ ____
 
 == What's next
 
-Now that you understand the mission, the next page introduces the platform you will be working with: the xref:01-overview/02-fed-aura.adoc[four transformation pillars], the agent personas, and the architecture. After that, xref:01-overview/03-explore-platform.adoc[Explore the Platform] gives you your first hands-on exercises with {assistant_name}.
+Now that you understand the mission, the next page introduces the platform you will be working with: the xref:01-overview/03-fed-aura.adoc[four transformation pillars], the agent personas, and the architecture. After that, xref:01-overview/04-explore-platform.adoc[Explore the Platform] gives you your first hands-on exercises with {assistant_name}.

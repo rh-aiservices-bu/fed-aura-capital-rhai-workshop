@@ -3,9 +3,8 @@
 :toc: macro
 :toclevels: 1
 
-.You can refer here for definitions of key terms used throughout this workshop.
-[%collapsible]
-====
+Refer to this glossary for definitions of key terms used throughout the workshop.
+
 [cols="1,3",options="header"]
 |===
 | Term | Definition
@@ -91,4 +90,3 @@
 | vLLM
 | An open-source, high-throughput LLM serving engine. RHOAI includes vLLM-based serving runtimes for NVIDIA GPU, Intel Gaudi, and IBM Spyre accelerators.
 |===
-====

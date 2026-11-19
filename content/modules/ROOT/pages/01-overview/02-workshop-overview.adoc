@@ -21,7 +21,7 @@ This workshop takes you through the Red Hat AI product portfolio by putting you 
 
 == Meet {company_name}
 
-{company_name} is one of the largest fictitious banks in the country. Over the last year, the company deployed an AI-powered customer assistant named *{assistant_name}* to support borrowers, loan officers, underwriters, and executives throughout the mortgage lifecycle.
+{company_name} is one of the largest fictitious banks in the country. Over the last year, the company deployed an AI-powered assistant named *{assistant_name}* to support borrowers, loan officers, underwriters, and executives throughout the mortgage lifecycle.
 
 {assistant_name} started as a prototype chatbot connected to an external model. Today, she is a production-grade AI system running entirely on Red Hat AI with self-hosted models, domain-grounded knowledge, tool-calling agents, full observability, and defense-in-depth security.
 

@@ -8,6 +8,8 @@ From generic to grounded.
 
 In the previous section, you saw that system prompts can inject domain knowledge but do not scale. Retrieval-Augmented Generation (RAG) solves this by retrieving relevant passages from uploaded documents at query time and injecting them into the model's context automatically.
 
+image::fed-aura-platform-architecture-rag-focus.svg[The {company_name} platform architecture with the RAG and PostgreSQL pgvector knowledge layer highlighted,align=center]
+
 Estimated time: *15 minutes*
 
 == Learning Objectives

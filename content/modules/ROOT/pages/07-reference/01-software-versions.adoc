@@ -11,5 +11,4 @@
 | MLflow | {mlflow_version}
 | vLLM | 0.18.0
 | LangGraph / LangChain | Latest
-| Grafana | Latest
 |===

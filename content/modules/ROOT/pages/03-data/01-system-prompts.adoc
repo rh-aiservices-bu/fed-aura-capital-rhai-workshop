@@ -9,8 +9,7 @@ Private data for best results.
 {assistant_name} in the {company_name} application already gives accurate, product-specific answers grounded in internal documents.
 In this section, you will start from a bare model, add a system prompt, and discover where system prompts hit their limits - setting the stage for RAG.
 
-.Section 3 focus: trusted knowledge through RAG
-image::fed-aura-platform-architecture-rag-focus.svg[The {company_name} platform architecture with the RAG and PostgreSQL pgvector knowledge layer highlighted,align=center]
+image::fed-aura-platform-architecture-prompt-registry-focus.svg[The {company_name} platform architecture with prompt registry,align=center]
 
 Estimated time: *15 minutes*
 

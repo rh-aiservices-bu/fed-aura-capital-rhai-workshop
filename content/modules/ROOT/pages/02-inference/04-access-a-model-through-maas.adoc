@@ -11,6 +11,8 @@ The small CPU-hosted model you deployed helped you learn how model serving works
 
 Rather than asking each application team to deploy and manage its own model, the bank provides shared models through Models-as-a-Service (MaaS). The platform team manages the deployments and controls access, while application teams consume the models through an API.
 
+image::fed-aura-platform-architecture-maas-focus.svg[Platform architecture highlighting Models as a Service,link=self,window=blank,width=700]
+
 In this exercise, you'll explore the `qwen3-235b-a22b` endpoint available to you and try it in the playground. In the next exercise, you'll create an API key to use it from code or other tools.
 
 === Explore AI Asset Endpoints
@@ -323,9 +325,9 @@ image::inference-workbench-codeserver-starting.png[Workbench fedaura-code-server
 +
 image::inference-workbench-terminal.png[Open up the terminal,link=self,window=blank,width=700]
 
-. Run the following command to start OpenCode, configured to use your MaaS endpoint:
+. Run the following command to start OpenCode, configured to use your MaaS endpoint. Copy the below text and paste it into the workbench terminal:
 +
-[source,bash,role=execute,subs=attributes+]
+[source,text]
 ----
 opencode
 ----
@@ -334,7 +336,7 @@ image::inference-workbench-terminal-opencode.png[OpenCode within a Workbench,lin
 
 . Enter the following prompt in OpenCode and review the generated function:
 +
-[source,bash,role=execute,subs=attributes+]
+[source,text]
 ----
 Write a Python function that calculates the monthly mortgage payment given the principal, annual interest rate, and total number of monthly payments. Handle a zero interest rate.
 ----

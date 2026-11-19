@@ -23,13 +23,15 @@ Estimated time: *10 minutes*
 
 == Exercise 4: Guardrails in the Playground
 
-Before attacking the guardrails, see how they are wired into the inference pipeline - and confirm they are invisible when nothing is wrong.
+Before trying to bypass the guardrails, let's see what happens with an ordinary mortgage question. We'll use RAG (Retrieval-Augmented Generation), which retrieves relevant information from the bank's documents to help {assistant_name} answer. Guardrails check both the question and the generated response.
 
 . Open the *GenAI Playground* in the OpenShift AI dashboard, with your workshop project selected.
 
-. Open *Settings* and select the *Knowledge* tab. Make sure it is *On* with *Use uploaded documents* selected - this is the RAG configuration from section 3.2. Leave it enabled so {assistant_name} answers from {company_name}'s documents rather than from memory:
+. Open *Settings > Knowledge*. To use the bank's documents for this example, make sure *Knowledge* is *On*, *Use uploaded documents* is selected, and your uploaded document is listed:
 +
 image::security-knowledge-on.png[Knowledge tab toggled On with Use uploaded documents selected,link=self,window=blank,width=450]
++
+TIP: If you haven't added the documents yet, xref:03-data/02-rag.adoc#_exercise_2_rag_in_the_playground[Exercise 2: RAG in the Playground] walks you through the setup.
 
 . Now switch to the *Guardrails* tab. Both rails are switched on for this model:
 +
@@ -51,7 +53,7 @@ NOTE: That is what the toggles cover in principle. This lab enforces the determi
 What mortgage products do you offer? I'd like to compare my options.
 ----
 
-. {assistant_name} answers normally, with a *source retrieved* from the knowledge base:
+. {assistant_name} answers normally. With RAG enabled, you'll also see a *source retrieved* from the knowledge base:
 +
 image::security-guardrails-fha-answer.png[Playground answering the mortgage products question with guardrails enabled and one source retrieved,link=self,window=blank,width=700]
 +

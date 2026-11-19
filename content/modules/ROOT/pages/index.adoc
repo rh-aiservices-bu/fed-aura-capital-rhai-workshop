@@ -27,7 +27,7 @@ In this workshop, you will build an end-to-end AI platform for mortgage lending 
 
 * *Connect agents to tools via MCP* - Use MCP servers so AI agents can call real tools: affordability calculators, risk assessments, compliance checks
 * *Trace and evaluate agent decisions* - Use MLflow tracing to follow every tool call and LLM invocation, and run evaluations to measure quality
-* *Train a machine learning model using the same platform (optional)* - Use AutoML to train the loan-approval classifier model without writing model training code
+* *Train a machine learning model using the same platform* - Use AutoML to train the loan-approval classifier model without writing model training code
 
 === icon:shield[] Securing AI from Sandbox to Production
 
@@ -47,14 +47,6 @@ This workshop is designed for:
 == Prerequisites
 
 This workshop assumes basic familiarity with Kubernetes concepts and a general understanding of AI/ML terminology. No prior experience with Red Hat AI is required.
-
-== Workshop environment
-
-You will work with {company_name}'s AI-powered mortgage lending platform, built with LangGraph multi-agent orchestration, Model Context Protocol (MCP) tools, developed and served on Red Hat AI.
-
-You have several tabs available on the right hand side of the lab interface. For example, you will use *OCP Console* to access OpenShift and the *Terminal* tab to run commands. 
-
-Each exercise will provide the necessary credentials and guide you on which tabs to use.
 
 == Estimated time
 

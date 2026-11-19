@@ -18,15 +18,24 @@ The right panel includes the following tabs:
 | Tab | Purpose
 | OCP Console | OpenShift Container Platform web console for cluster management
 | Terminal | Command-line access for `oc` commands and debugging
-| {company_name} App | The mortgage lending web application with all four personas
+| Mortgage AI App | The mortgage lending web application with all four personas
 | RHOAI Console | Red Hat AI dashboard for model management, experiments, and pipelines
 | Workbench | A cloud IDE for coding and running experiments
 | RHOAI Docs | Documentation for Red Hat AI
 |===
 
-NOTE: Workbench tab is not available until you create a workbench in the RHOAI Console in the second chapter of this workshop.
+== Your workshop credentials
 
-TIP: You can switch between *Instructions*, *Split*, and *Tabs* view modes depending on your screen size and preference.
+You will use the following credentials to access the platform. They will also be provided throughout the exercises whenever needed.
+
+* Username: [.notranslate]#{user}#
+* Password: [.notranslate]#{password}#
+
+NOTE: Workbench tab is not available until you create a workbench in the second chapter of this workshop.
+
+== Adjusting your view
+
+You can switch between *Instructions*, *Split*, and *Tabs* view modes depending on your screen size and preference.
 
 **View modes** (with *<* icon in the right corner):
 

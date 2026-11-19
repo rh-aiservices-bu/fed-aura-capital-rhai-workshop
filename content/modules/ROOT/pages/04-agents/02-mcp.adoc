@@ -11,6 +11,8 @@
 
 The platform hosts an MCP gateway that registers tool servers centrally. Agents connect to the gateway, the gateway routes calls to the appropriate server, and the results come back through the same channel. Adding a new tool means either adding it to an existing server or registering a new one with the gateway, with no changes to any agent.
 
+image::fed-aura-platform-architecture-mcp-focus.svg[Platform architecture highlighting mcp tools,link=self,window=blank,width=700]
+
 == Exercise 3: Explore the MCP Catalog
 
 . Navigate to *AI Hub > MCP Servers* and observe catalog tab:

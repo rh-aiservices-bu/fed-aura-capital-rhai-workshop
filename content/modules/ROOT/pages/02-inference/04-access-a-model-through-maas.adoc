@@ -341,7 +341,7 @@ Write a Python function that calculates the monthly mortgage payment given the p
 
 OpenCode now uses the bank's shared model through MaaS. You've reused the same endpoint and API key with another tool, without deploying another model.
 
-NOTE: Coding agents can also access files and run commands. In xref:05-security/03-openshell.adoc[OpenShell Agent Sandboxing], you'll explore how to control those actions.
+NOTE: Coding agents can also access files and run commands. In xref:05-security/03-openshell.adoc[OpenShell Agent Sandboxing] section, you'll explore how to control those actions.
 
 == Exercise 8: Observe Your Usage
 
